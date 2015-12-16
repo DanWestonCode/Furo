@@ -5,11 +5,10 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 
-#include <SimpleMath.h>
+#include <DirectXMath.h>
 #include <d3d11.h>
 
 using namespace DirectX;
-using namespace DirectX::SimpleMath;
 
 class D3D
 {
@@ -22,15 +21,15 @@ public:
 	bool Initialize(int, int, bool, HWND, bool, float, float);
 	void Shutdown();
 
-	void BeginScene(Color);//(float, float, float, float);
+	void BeginScene(float, float, float, float);
 	void EndScene();
 
 	ID3D11Device* GetDevice();
 	ID3D11DeviceContext* GetDeviceContext();
 
-	void GetProjectionMatrix(Matrix&);
-	void GetWorldMatrix(Matrix&);
-	void GetOrthoMatrix(Matrix&);
+	void GetProjectionMatrix(XMMATRIX&);
+	void GetWorldMatrix(XMMATRIX&);
+	void GetOrthoMatrix(XMMATRIX&);
 
 	void GetVideoCardInfo(char*, int&);
 
@@ -47,8 +46,8 @@ private:
 	ID3D11DepthStencilView* m_depthStencilView;
 	ID3D11RasterizerState* m_rasterState;
 
-	Matrix m_projectionMatrix;
-	Matrix m_worldMatrix;
-	Matrix m_orthoMatrix;
+	XMMATRIX m_projectionMatrix;
+	XMMATRIX m_worldMatrix;
+	XMMATRIX m_orthoMatrix;
 };
 #endif // !_D3D_H_

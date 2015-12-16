@@ -22,9 +22,18 @@
     <Filter Include="Header Files\Engine">
       <UniqueIdentifier>{d564108e-7e55-43f2-9743-d7b948090d56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{33eb35fd-dc50-45fe-9bd0-6f6ea2268067}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="color.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="color.ps">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -42,6 +51,15 @@
     <ClInclude Include="D3D.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="ColorShader.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -57,6 +75,15 @@
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
     <ClCompile Include="D3D.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorShader.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
   </ItemGroup>

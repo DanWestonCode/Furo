@@ -310,15 +310,24 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	screenAspect = (float)screenWidth / (float)screenHeight;
 	// Create the projection matrix for 3D rendering.
 	//D3DXMatrixPerspectiveFovLH(&m_projectionMatrix, fieldOfView, screenAspect, screenNear, screenDepth);
-	m_projectionMatrix = Matrix::CreatePerspectiveFieldOfView(fieldOfView, screenAspect, screenNear, screenDepth);
+	////m_projectionMatrix = Matrix::CreatePerspectiveFieldOfView(fieldOfView, screenAspect, screenNear, screenDepth);
 
-	// Initialize the world matrix to the identity matrix.
-	m_worldMatrix.Identity(4, 4);
+	//// Initialize the world matrix to the identity matrix.
+	////m_worldMatrix.Identity(4, 4);
 	//D3DXMatrixIdentity(&m_worldMatrix);
 
-	// Create an orthographic projection matrix for 2D rendering.
-	m_orthoMatrix = Matrix::CreateOrthographic((float)screenWidth, (float)screenHeight, screenNear, screenDepth);
+	//// Create an orthographic projection matrix for 2D rendering.
+	////m_orthoMatrix = Matrix::CreateOrthographic((float)screenWidth, (float)screenHeight, screenNear, screenDepth);
 	//D3DXMatrixOrthoLH(&m_orthoMatrix, (float)screenWidth, (float)screenHeight, screenNear, screenDepth);
+
+	// Create the projection matrix for 3D rendering.
+	m_projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, screenAspect, screenNear, screenDepth);
+
+	// Initialize the world matrix to the identity matrix.
+	m_worldMatrix = XMMatrixIdentity();
+
+	// Create an orthographic projection matrix for 2D rendering.
+	m_orthoMatrix = XMMatrixOrthographicLH((float)screenWidth, (float)screenHeight, screenNear, screenDepth);
 
 	return true;
 }
@@ -382,19 +391,19 @@ void D3D::Shutdown()
 	return;
 }
 
-void D3D::BeginScene(Color _backBufferColor)//(float red, float green, float blue, float alpha)
+void D3D::BeginScene(float red, float green, float blue, float alpha)
 {
-	//float color[4];
+	float color[4];
 
 
-	//// Setup the color to clear the buffer to.
-	//color[0] = red;
-	//color[1] = green;
-	//color[2] = blue;
-	//color[3] = alpha;
+	// Setup the color to clear the buffer to.
+	color[0] = red;
+	color[1] = green;
+	color[2] = blue;
+	color[3] = alpha;
 
 	// Clear the back buffer.
-	m_deviceContext->ClearRenderTargetView(m_renderTargetView, _backBufferColor);
+	m_deviceContext->ClearRenderTargetView(m_renderTargetView, color);
 
 	// Clear the depth buffer.
 	m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
@@ -431,19 +440,19 @@ ID3D11DeviceContext* D3D::GetDeviceContext()
 }
 
 //helper functions
-void D3D::GetProjectionMatrix(Matrix& projectionMatrix)
+void D3D::GetProjectionMatrix(XMMATRIX& projectionMatrix)
 {
 	projectionMatrix = m_projectionMatrix;
 	return;
 }
 
-void D3D::GetWorldMatrix(Matrix& worldMatrix)
+void D3D::GetWorldMatrix(XMMATRIX& worldMatrix)
 {
 	worldMatrix = m_worldMatrix;
 	return;
 }
 
-void D3D::GetOrthoMatrix(Matrix& orthoMatrix)
+void D3D::GetOrthoMatrix(XMMATRIX& orthoMatrix)
 {
 	orthoMatrix = m_orthoMatrix;
 	return;

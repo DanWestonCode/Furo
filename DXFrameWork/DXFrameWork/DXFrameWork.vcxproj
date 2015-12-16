@@ -67,19 +67,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="color.ps" />
+    <None Include="color.vs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="ColorShader.h" />
     <ClInclude Include="D3D.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="System.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="ColorShader.cpp" />
     <ClCompile Include="D3D.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>

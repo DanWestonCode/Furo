@@ -1,7 +1,8 @@
 #include "D3D.h"
 
-D3D::D3D()
+D3D::D3D()	
 {
+	//init all pointers to null
 	m_swapChain = 0;
 	m_device = 0;
 	m_deviceContext = 0;
@@ -138,6 +139,8 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	factory->Release();
 	factory = 0;
 
+	//Start DX initializations
+
 	// Initialize the swap chain description.
 	ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
 
@@ -154,8 +157,8 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	// Set the refresh rate of the back buffer.
 	if (m_vsync_enabled)
 	{
-		swapChainDesc.BufferDesc.RefreshRate.Numerator = numerator;
-		swapChainDesc.BufferDesc.RefreshRate.Denominator = denominator;
+		swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
+		swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
 	}
 	else
 	{
@@ -188,7 +191,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
 	// Discard the back buffer contents after presenting.
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	swapChainDesc.SwapEffect =  DXGI_SWAP_EFFECT_DISCARD;
 
 	// Don't set the advanced flags.
 	swapChainDesc.Flags = 0;
@@ -432,7 +435,6 @@ ID3D11Device* D3D::GetDevice()
 {
 	return m_device;
 }
-
 
 ID3D11DeviceContext* D3D::GetDeviceContext()
 {

@@ -15,6 +15,7 @@ ColorShader::~ColorShader()
 {
 }
 
+//grab shaders from shader sub folders
 bool ColorShader::Initialize(ID3D11Device* device, HWND hwnd)
 {
 	bool result;
@@ -41,7 +42,6 @@ bool ColorShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, Mat
 {
 	bool result;
 
-
 	// Set the shader parameters that it will use for rendering.
 	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix);
 	if (!result)
@@ -55,8 +55,10 @@ bool ColorShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, Mat
 	return true;
 }
 
+//Load shader files and make them useble within DX11
 bool ColorShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename)
 {
+	//Set up of the layout for the vertex buffer 
 	HRESULT result;
 	ID3D10Blob* errorMessage;
 	ID3D10Blob* vertexShaderBuffer;
@@ -71,7 +73,7 @@ bool ColorShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFil
 	vertexShaderBuffer = 0;
 	pixelShaderBuffer = 0;
 
-	// Compile the vertex shader code.
+	// Compile the vertex shader code into buffers
 	result = D3DCompileFromFile(vsFilename, NULL, NULL, "ColorVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
 		&vertexShaderBuffer, &errorMessage);
 	if (FAILED(result))
@@ -90,7 +92,7 @@ bool ColorShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFil
 		return false;
 	}
 
-	// Compile the pixel shader code.
+	// Compile the pixel shader code into buffers
 	result = D3DCompileFromFile(psFilename, NULL, NULL, "ColorPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
 		&pixelShaderBuffer, &errorMessage);
 	if (FAILED(result))
@@ -109,7 +111,7 @@ bool ColorShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFil
 		return false;
 	}
 
-
+	//Create shader objects out of shaders
 	// Create the vertex shader from the buffer.
 	result = device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_vertexShader);
 	if (FAILED(result))
@@ -126,7 +128,7 @@ bool ColorShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFil
 
 	// Create the vertex input layout description.
 	// This setup needs to match the VertexType stucture in the Model and in the shader.
-	polygonLayout[0].SemanticName = "POSITION";
+	polygonLayout[0].SemanticName = "POSITION"; //match name in VS shader
 	polygonLayout[0].SemanticIndex = 0;
 	polygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	polygonLayout[0].InputSlot = 0;

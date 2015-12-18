@@ -29,9 +29,13 @@ private:
 	void ShutdownBuffers();
 	void RenderBuffers(ID3D11DeviceContext*);
 
+
 private:
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
+	VertexType* vertices;
 	int m_vertexCount, m_indexCount;
+
+	bool flip = false;
 };
 
 #endif

@@ -1,13 +1,13 @@
 #ifndef _D3D_H_
 #define  _D3D_H_
 
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "d3dcompiler.lib")
-
-#include <DirectXMath.h>
+//Specify libraries for linking
+#pragma comment(lib, "dxgi.lib") //D3D functionality
+#pragma comment(lib, "d3d11.lib") //Tools to interface the hardwares
+#pragma comment(lib, "d3dcompiler.lib") //used for compiling shaders
+	
 #include <d3d11.h>
-
+#include <DirectXMath.h>
 using namespace DirectX;
 
 class D3D

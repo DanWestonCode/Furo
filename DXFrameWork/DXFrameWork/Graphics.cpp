@@ -1,3 +1,9 @@
+/***************************************/
+/* Graphics class is where all graphics*/
+/* functionally is handled             */
+/* Created by Daniel Weston 18/12/2015 */
+/***************************************/
+
 #include "Graphics.h"
 
 Graphics::Graphics()
@@ -42,7 +48,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(0.0f, 0.0f, -5.0f);
+	m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
 
 	// Create the model object.
 	m_Model = new Model;
@@ -112,11 +118,10 @@ void Graphics::Shutdown()
 	return;
 }
 
-
+//at each frame render the graphics function
 bool Graphics::Frame()
 {
 	bool result;
-
 
 	// Render the graphics scene.
 	result = Render();
@@ -131,8 +136,6 @@ bool Graphics::Frame()
 
 bool Graphics::Render()
 {
-	
-
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	bool result;
 

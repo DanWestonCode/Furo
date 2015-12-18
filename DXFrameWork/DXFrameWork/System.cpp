@@ -1,7 +1,12 @@
+/***************************************/
+/* System class encapsulates the app   */
+/* Created by Daniel Weston 18/12/2015 */
+/***************************************/
 #include "System.h"
 
 System::System()
 {
+	//init pointers
 	m_Input = 0;
 	m_Graphics = 0;
 }
@@ -32,14 +37,14 @@ bool System::Initialize()
 	// Initialize the input object.
 	m_Input->Initialize();
 
-	//// Create the graphics object.  This object will handle rendering all the graphics for this application.
+	// Create the graphics object.  This object will handle rendering all the graphics for this application.
 	m_Graphics = new Graphics;
 	if (!m_Graphics)
 	{
 		return false;
 	}
 
-	//// Initialize the graphics object.
+	// Initialize the graphics object.
 	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
 	if (!result)
 	{
@@ -89,6 +94,7 @@ void System::Run()
 
 }
 
+//Process the application, end process when Esc pressed
 bool System::Frame()
 {
 	bool result;
@@ -109,9 +115,7 @@ bool System::Frame()
 	return true;
 }
 
-/*!
-* ... text ...
-*/
+//Where windows system messages are directed
 LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
 	switch (umsg)
@@ -140,6 +144,7 @@ LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPA
 	}
 }
 
+//Create WIN32 Window holding DX 
 void System::InitializeWindows(int& screenWidth, int& screenHeight)
 {
 	WNDCLASSEX wc;
@@ -205,9 +210,19 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 	}
 
 	// Create the window with the screen settings and get the handle to it.
-	m_hwnd = CreateWindowEx(WS_EX_APPWINDOW, m_applicationName, m_applicationName,
-		WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
-		posX, posY, screenWidth, screenHeight, NULL, NULL, m_hinstance, NULL);
+	m_hwnd = CreateWindowEx(
+		WS_EX_APPWINDOW,  //extended style 
+		m_applicationName, //name of window class
+		m_applicationName, //name in title
+		WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP, //window style (WS_OVERLAPPEDWINDOW)
+		posX, posY, //Top left corners for window
+		screenWidth, //width of window
+		screenHeight, //height of window
+		NULL, //handle to window parent
+		NULL, //handle to menu	
+		m_hinstance, //instance of current program
+		NULL //used for MDI Client window
+		);
 
 	// Bring the window up on the screen and set it as main focus.
 	ShowWindow(m_hwnd, SW_SHOW);
@@ -220,6 +235,8 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 	return;
 }
 
+//where windows messages are sent to
+//if everything is okay they are direcred into MessageHandler class
 LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 {
 	switch (umessage)

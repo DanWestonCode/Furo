@@ -1,5 +1,12 @@
+/***************************************/
+/* System class encapsulates the app   */
+/* Created by Daniel Weston 18/12/2015 */
+/***************************************/
 #ifndef _SYSTEM_H_
 #define _SYSTEM_H_
+//lean and mean preprocessor speeds up
+//building process via reducing size of
+//Win32 headers and excluding some
 #define WIN32_LEAN_AND_MEAN
 
 #include <windows.h>
@@ -17,6 +24,7 @@ public :
 	void Shutdown();
 	void Run();
 
+	//handles windows messages sent to app
 	LRESULT CALLBACK MessageHandler(HWND, UINT, WPARAM, LPARAM);
 
 private:

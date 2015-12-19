@@ -11,7 +11,7 @@
 #include "Effects.h"
 #include "GamePad.h"
 #include "GeometricPrimitive.h"
-#include "Model.h"
+#include "VertexModel.h"
 #include "PrimitiveBatch.h"
 #include "ScreenGrab.h"
 #include "SimpleMath.h"

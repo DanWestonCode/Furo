@@ -47,6 +47,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXFrameWork\Debug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -77,7 +78,8 @@
     <ClInclude Include="D3D.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="Model.h" />
+    <ClInclude Include="Quad.h" />
+    <ClInclude Include="VertexModel.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="System.h" />
   </ItemGroup>
@@ -87,9 +89,15 @@
     <ClCompile Include="D3D.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Quad.cpp" />
+    <ClCompile Include="VertexModel.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="WinMain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\InteractiveFluidDyanmics\InteractiveFluidDyanmics.vcxproj">
+      <Project>{1db8c053-3bc0-4878-81da-64aeeaea63b5}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

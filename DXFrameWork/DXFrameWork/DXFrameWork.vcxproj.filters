@@ -25,6 +25,33 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{33eb35fd-dc50-45fe-9bd0-6f6ea2268067}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine\Objects">
+      <UniqueIdentifier>{b1be850d-39b5-42a1-beee-21832caf2dbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Objects">
+      <UniqueIdentifier>{8cd5b18e-bc84-4e0f-baca-57ccf95c1dec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Main">
+      <UniqueIdentifier>{b16334cd-81af-4cda-b65d-adb56edab2ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Objects\Vertex Objects">
+      <UniqueIdentifier>{f317f77d-c5b2-4378-9c61-8e2ebc8de16d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Objects\Camera">
+      <UniqueIdentifier>{f6321d2c-d0cf-4e21-9633-086e64aa565e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Shaders">
+      <UniqueIdentifier>{8e0b80c9-b42e-4ca0-b273-d75dbf170a8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Objects\Vertex Objects">
+      <UniqueIdentifier>{e79f9d96-e16f-4fd2-85e8-0aa727956427}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Objects\Camera">
+      <UniqueIdentifier>{8b98caf0-6f55-4413-bbe8-99996b20bad7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Shaders">
+      <UniqueIdentifier>{157b7497-4376-4f92-a250-563135a7eb2b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -51,20 +78,20 @@
     <ClInclude Include="D3D.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="ColorShader.h">
-      <Filter>Header Files\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Header Files\Engine</Filter>
+    <ClInclude Include="VertexModel.h">
+      <Filter>Header Files\Engine\Objects\Vertex Objects</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Header Files\Engine</Filter>
+      <Filter>Header Files\Engine\Objects\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorShader.h">
+      <Filter>Header Files\Engine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Quad.h">
+      <Filter>Header Files\Engine\Objects\Vertex Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="WinMain.cpp">
-      <Filter>Source Files\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="System.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
@@ -77,14 +104,20 @@
     <ClCompile Include="D3D.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="ColorShader.cpp">
-      <Filter>Source Files\Engine</Filter>
+    <ClCompile Include="WinMain.cpp">
+      <Filter>Source Files\Engine\Main</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files\Engine</Filter>
+    <ClCompile Include="VertexModel.cpp">
+      <Filter>Source Files\Engine\Objects\Vertex Objects</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Engine</Filter>
+      <Filter>Source Files\Engine\Objects\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorShader.cpp">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Quad.cpp">
+      <Filter>Source Files\Engine\Objects\Vertex Objects</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

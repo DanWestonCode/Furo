@@ -48,22 +48,25 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
+	m_Camera->SetPosition(0.0f, 0.0f, -200.0f);
 
-	// Create the model object.
-	m_Model = new Model;
-	if (!m_Model)
-	{
-		return false;
-	}
+	//// Create the model object.
+	//m_Model = new VertexModel;
+	//if (!m_Model)
+	//{
+	//	return false;
+	//}
 
-	// Initialize the model object.
-	result = m_Model->Initialize(m_D3D->GetDevice());
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-		return false;
-	}
+	//// Initialize the model object.
+	//result = m_Model->Initialize(m_D3D->GetDevice());
+	//if (!result)
+	//{
+	//	MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
+	//	return false;
+	//}
+
+	m_Quad = new Quad;
+	m_Quad->Initialize(m_D3D->GetDevice());
 
 	// Create the color shader object.
 	m_ColorShader = new ColorShader;
@@ -108,6 +111,13 @@ void Graphics::Shutdown()
 		m_Model = 0;
 	}
 
+	if (m_Quad)
+	{
+		m_Quad->Shutdown();
+		delete m_Quad;
+		m_Quad = 0;
+	}
+
 	// Release the camera object.
 	if (m_Camera)
 	{
@@ -140,7 +150,7 @@ bool Graphics::Render()
 	bool result;
 
 	// Clear the buffers to begin the scene.
-	m_D3D->BeginScene(0.5f, 0.5f, 0.5f, 1.0f);
+	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 	
 
 	// Generate the view matrix based on the camera's position.
@@ -152,15 +162,15 @@ bool Graphics::Render()
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	m_Model->Render(m_D3D->GetDeviceContext());
+	//m_Model->Render(m_D3D->GetDeviceContext());
+	m_Quad->Render(m_D3D->GetDeviceContext());
 
 	// Render the model using the color shader.
-	result = m_ColorShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
+	result = m_ColorShader->Render(m_D3D->GetDeviceContext(), m_Quad->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
 	if (!result)
 	{
 		return false;
 	}
-
 
 	// Present the rendered scene to the screen.
 	m_D3D->EndScene();

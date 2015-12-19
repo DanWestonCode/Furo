@@ -13,18 +13,66 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Fluids">
+      <UniqueIdentifier>{753d331e-20b7-40d1-8c54-d57c8a0e068a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Fluids\2D">
+      <UniqueIdentifier>{ade4a9d4-05f5-406a-a39c-a0789c0ca406}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Fluids\3D">
+      <UniqueIdentifier>{1dab96e7-7d9a-4200-b6f3-1f4f3b4a1a38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Fluids">
+      <UniqueIdentifier>{860e2777-c456-446c-8a87-c523af9c51fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Fluids\2D">
+      <UniqueIdentifier>{db42c69d-75e9-4049-997f-5c64ffec8c8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Fluids\3D">
+      <UniqueIdentifier>{f9896ec7-fd10-4cbf-a033-fb93fd02a13f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Simulation">
+      <UniqueIdentifier>{f22fc8e4-a405-4975-b94a-4cf52578c8f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Simulation">
+      <UniqueIdentifier>{e5f5aa47-e90f-42d3-8077-6ee93f41d28d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="fluid.h">
+    <ClInclude Include="Furo.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fluid.h">
+      <Filter>Header Files\Fluids</Filter>
+    </ClInclude>
+    <ClInclude Include="FluidSolver.h">
+      <Filter>Header Files\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="FluidHelper.h">
+      <Filter>Header Files\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="FluidTwoDimensional.h">
+      <Filter>Header Files\Fluids\2D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="fluid.cpp">
+    <ClCompile Include="Furo.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fluid.cpp">
+      <Filter>Source Files\Fluids</Filter>
+    </ClCompile>
+    <ClCompile Include="FluidSolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FluidHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FluidTwoDimensional.cpp">
+      <Filter>Source Files\Fluids\2D</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

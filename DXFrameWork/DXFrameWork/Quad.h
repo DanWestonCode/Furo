@@ -13,6 +13,8 @@ public:
 	virtual bool Initialize(ID3D11Device*);
 	virtual void Shutdown();
 	virtual void Render(ID3D11DeviceContext*);
+
+	void UpdateTexture(float*);
 };
 
 #endif

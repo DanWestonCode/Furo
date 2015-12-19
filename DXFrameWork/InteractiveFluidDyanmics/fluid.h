@@ -9,6 +9,7 @@
 #ifndef _FLUID_H_
 #define _FLUID_H_
 
+#include "FluidSolver.h"
 class Fluid
 {
 //Functions
@@ -18,7 +19,11 @@ public:
 
 	void Initialize(int,float);
 	void Initialize(int, float, float, float);
-	void Shutdown();
+	virtual void Shutdown();
+
+protected:
+	int GetIndex(int x, int y);
+	void Swap(float* x, float* y);
 
 //Getters/Setters
 public:
@@ -34,8 +39,11 @@ public:
 	float GetDt(){ return m_dt; }
 	void SetDt(float d){ m_dt = d; }
 
+	float* GetDensity(){ return m_density; }
+
+
 //Variables
-private:
+protected:
 	int m_gridSize;
 	float m_diffusion, m_visc, m_dt;
 
@@ -45,6 +53,9 @@ private:
 	float* m_prevVelY;
 	float* m_density;
 	float* m_prevDensity;
+
+protected:
+	FluidSolver* m_fluidSolver;
 };
 
 #endif

@@ -1,4 +1,5 @@
 #include "Quad.h"
+#include "FluidHelper.h"
 
 Quad::Quad()
 {
@@ -22,7 +23,7 @@ bool Quad::Initialize(ID3D11Device* device)
 	HRESULT result;
 	unsigned long* indices;
 	
-	int numTris = 2;
+	int numTris = 202;
 	m_vertexCount = 6 * (numTris - 1) * (numTris - 1);
 	// Set the number of indices in the index array.
 	m_indexCount = m_vertexCount;
@@ -41,18 +42,18 @@ bool Quad::Initialize(ID3D11Device* device)
 		return false;
 	}
 
-	//set up incides
+	//set up indices
 	for (int i = 0; i < m_vertexCount; i++)
 	{
 		indices[i] = i;
 	}
 
 	int vert = 0;
-	Color colour = Color(0.0f, 0.0f, 1.0f, 1.0f);
+	Color colour = Color(1.0f, 1.0f, 1.0f, 0.0f);
 	//create vertices
-	for (int i = 0; i < (numTris - 1); i++)
+	for (int i = 0; i < (202 - 1); i++)
 	{
-		for (int j = 0; j < (numTris - 1); j++)
+		for (int j = 0; j < (202 - 1); j++)
 		{	
 			vertices[vert].color = colour;
 			vertices[vert++].position = Vector3((float)i, (float)j, 0.0f);
@@ -115,4 +116,31 @@ void Quad::Shutdown()
 	}
 
 	return;
+}
+
+void Quad::UpdateTexture(float* dens)
+{
+	int vert = 0;
+	for (int i = 0; i < (202 - 1); i++)
+	{
+		for (int j = 0; j < (202 - 1); j++)
+		{
+			float x = dens[FluidHelper::GetIndex(i, j, 200)];
+			x *= 255;
+			Color colour = Color(x, 0.0f, 0.0f, 1.0f);
+
+			vertices[vert].color = colour;
+			vert++;
+			vertices[vert].color = colour;
+			vert++;
+			vertices[vert].color = colour;
+			vert++;
+			vertices[vert].color = colour;
+			vert++;
+			vertices[vert].color = colour;
+			vert++;
+			vertices[vert].color = colour;
+			vert++;
+		}
+	}
 }

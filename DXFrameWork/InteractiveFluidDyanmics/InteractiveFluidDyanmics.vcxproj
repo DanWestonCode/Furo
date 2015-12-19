@@ -76,9 +76,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fluid.h" />
+    <ClInclude Include="FluidHelper.h" />
+    <ClInclude Include="FluidSolver.h" />
+    <ClInclude Include="Furo.h" />
+    <ClInclude Include="FluidTwoDimensional.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fluid.cpp" />
+    <ClCompile Include="FluidHelper.cpp" />
+    <ClCompile Include="FluidSolver.cpp" />
+    <ClCompile Include="Furo.cpp" />
+    <ClCompile Include="FluidTwoDimensional.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

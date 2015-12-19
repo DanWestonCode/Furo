@@ -42,6 +42,9 @@
   <PropertyGroup>
     <NuGetPackageImportStamp>a65a342e</NuGetPackageImportStamp>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXFrameWork\InteractiveFluidDyanmics;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>

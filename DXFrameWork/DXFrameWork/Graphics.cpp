@@ -66,7 +66,18 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	//}
 
 	m_Quad = new Quad;
+	if (!m_Quad)
+	{
+		return false;
+	}
 	m_Quad->Initialize(m_D3D->GetDevice());
+
+	m_furo = new Furo;
+	if (!m_furo)
+	{
+		return false;
+	}
+	m_furo->Initialize(Furo::FluidField::TwoDimensional, 100, 1.0f);
 
 	// Create the color shader object.
 	m_ColorShader = new ColorShader;
@@ -101,14 +112,6 @@ void Graphics::Shutdown()
 		m_ColorShader->Shutdown();
 		delete m_ColorShader;
 		m_ColorShader = 0;
-	}
-
-	// Release the model object.
-	if (m_Model)
-	{
-		m_Model->Shutdown();
-		delete m_Model;
-		m_Model = 0;
 	}
 
 	if (m_Quad)
@@ -161,8 +164,11 @@ bool Graphics::Render()
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
+	m_furo->Run();
+
+	m_Quad->UpdateTexture(m_furo->GetFluid()->GetDensity());
+
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	//m_Model->Render(m_D3D->GetDeviceContext());
 	m_Quad->Render(m_D3D->GetDeviceContext());
 
 	// Render the model using the color shader.

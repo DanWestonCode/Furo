@@ -6,9 +6,9 @@
 #include "D3D.h"
 
 #include "camera.h"
-#include "VertexModel.h"
 #include "colorshader.h"
 #include "Quad.h"
+#include "Furo.h"
 
 const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
@@ -33,10 +33,9 @@ private:
 
 	D3D* m_D3D;
 	Camera* m_Camera;
-	VertexModel* m_Model;
 	ColorShader* m_ColorShader;
 	Quad* m_Quad;
-
+	Furo* m_furo;
 };
 
 #endif

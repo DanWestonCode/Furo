@@ -1,4 +1,14 @@
+/*************************************************************/
+/*                                                           */
+/* Fluid is the base class for all fluid simulations created */
+/* using Furo. The fluid base class contains base member var */
+/* -iables which are shared between both 3D and 2D based sim */
+/*                                                           */
+/* Created by Daniel Weston 19/12/2015                       */
+/*************************************************************/
+
 #include "fluid.h"
+#include<cstring>
 
 Fluid::Fluid()
 {
@@ -9,6 +19,8 @@ Fluid::Fluid()
 	m_prevVelY = 0;
 	m_density = 0;
 	m_prevDensity = 0;
+
+	m_fluidSolver = 0;
 }
 
 Fluid::~Fluid()
@@ -18,10 +30,30 @@ Fluid::~Fluid()
 //initialize fluid - set up all vars w/default 
 void Fluid::Initialize(int _size, float _dt)
 {
+	//set up fluid props
 	m_gridSize = _size;
 	m_dt = _dt;
 	m_diffusion = 0.0f;
 	m_visc = 0.0f;
+
+	int size = (_size + 2) * (_size + 2);
+
+	//set up fluid structures
+	m_velocityX = new float[size];
+	m_velocityY = new float[size];
+	m_prevVelX = new float[size];
+	m_prevVelY = new float[size];
+	m_density = new float[size];
+	m_prevDensity = new float[size];
+
+	std::memset(m_velocityX, 0, sizeof(float)*_size*_size);
+	std::memset(m_velocityY, 0, sizeof(float)*_size*_size);
+	std::memset(m_prevVelX, 0, sizeof(float)*_size*_size);
+	std::memset(m_prevVelY, 0, sizeof(float)*_size*_size);
+	std::memset(m_density, 0, sizeof(float)*_size*_size);
+	std::memset(m_prevDensity, 0, sizeof(float)*_size*_size);
+
+	m_fluidSolver = new FluidSolver;
 }
 
 //initialize fluid override - set up all vars w/custom 
@@ -71,4 +103,14 @@ void Fluid::Shutdown()
 		delete m_prevDensity;
 		m_prevDensity = 0;
 	}
+	if (m_fluidSolver)
+	{
+		delete m_fluidSolver;
+		m_fluidSolver = 0;
+	}
+}
+
+int Fluid::GetIndex(int x, int y)
+{
+	return (x * (m_gridSize + 2)) + y;
 }

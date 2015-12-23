@@ -17,7 +17,7 @@ public:
 	void Initialize(FluidField, int, float);
 	void Shutdown();
 
-	void Run();
+	void Run(float);
 
 	Fluid* GetFluid();
 

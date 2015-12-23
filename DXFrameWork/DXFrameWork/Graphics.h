@@ -7,7 +7,11 @@
 
 #include "camera.h"
 #include "colorshader.h"
+#include "textureshader.h"
 #include "Quad.h"
+#include "InputManager.h"
+
+
 #include "Furo.h"
 
 const bool FULL_SCREEN = false;
@@ -24,10 +28,10 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame();
+	bool Frame(float);
 
 private:
-	bool Render();
+	bool Render(float);
 
 private:
 
@@ -36,6 +40,9 @@ private:
 	ColorShader* m_ColorShader;
 	Quad* m_Quad;
 	Furo* m_furo;
+	TextureShader* m_TextureShader;
+
+	bool action = false;
 };
 
 #endif

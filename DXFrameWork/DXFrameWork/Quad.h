@@ -10,11 +10,13 @@ public:
 	Quad(const Quad&);
 	~Quad();
 
-	virtual bool Initialize(ID3D11Device*);
+	virtual HRESULT Initialize(ID3D11Device*, WCHAR*);
 	virtual void Shutdown();
 	virtual void Render(ID3D11DeviceContext*);
 
 	void UpdateTexture(float*);
+
+	int numTris;
 };
 
 #endif

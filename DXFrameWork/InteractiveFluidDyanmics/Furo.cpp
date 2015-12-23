@@ -26,12 +26,12 @@ void Furo::Initialize(FluidField _type, int size, float dt)
 	}
 }
 
-void Furo::Run()
+void Furo::Run(float dt)
 {
 	switch (m_simulationType)
 	{
 	case TwoDimensional:
-		m_textureFluid->Update();
+		m_textureFluid->Update(dt);
 		break;
 	case ThreeDimensional:
 		break;

@@ -32,6 +32,10 @@ public:
 	void GetOrthoMatrix(XMMATRIX&);
 
 	void GetVideoCardInfo(char*, int&);
+	void TurnOnAlphaBlending();
+	void TurnOffAlphaBlending();
+
+
 
 private:
 	bool m_vsync_enabled;
@@ -49,5 +53,8 @@ private:
 	XMMATRIX m_projectionMatrix;
 	XMMATRIX m_worldMatrix;
 	XMMATRIX m_orthoMatrix;
+
+	ID3D11BlendState* m_alphaEnableBlendingState;
+	ID3D11BlendState* m_alphaDisableBlendingState;
 };
 #endif // !_D3D_H_

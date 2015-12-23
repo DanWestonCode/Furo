@@ -4,11 +4,12 @@
 /***************************************/
 #include "System.h"
 
+#include <iostream>
 System::System()
 {
 	//init pointers
-	m_Input = 0;
-	m_Graphics = 0;
+	m_Graphics = nullptr;
+	m_Time = nullptr;
 }
 System::System(const System& other)
 {
@@ -27,15 +28,16 @@ bool System::Initialize()
 	// Initialize the windows api.
 	InitializeWindows(screenWidth, screenHeight);
 
-	// Create the input object.  This object will be used to handle reading the keyboard input from the user.
-	m_Input = new Input;
-	if (!m_Input)
+	//create new game timer
+	m_Time = new Time;
+	if (!m_Time)
 	{
 		return false;
 	}
 
+
 	// Initialize the input object.
-	m_Input->Initialize();
+	InputManager::Instance()->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
 
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
 	m_Graphics = new Graphics;
@@ -80,8 +82,12 @@ void System::Run()
 		}
 		else
 		{
-			// Otherwise do the frame processing.
+			
+			//std::cout << m_Time->DeltaTime() << "\n";
 			result = Frame();
+			// Otherwise do the frame processing.
+			//Update time
+			m_Time->Tick();
 			if (!result)
 			{
 				done = true;
@@ -99,14 +105,21 @@ bool System::Frame()
 {
 	bool result;
 
+	// Do the input frame processing.
+	result = InputManager::Instance()->Frame();
+	if (!result)
+	{
+		return false;
+	}
+
 	// Check if the user pressed escape and wants to exit the application.
-	if (m_Input->IsKeyDown(VK_ESCAPE))
+	if (InputManager::Instance()->IsEscapePressed())
 	{
 		return false;
 	}
 
 	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame();
+	result = m_Graphics->Frame(m_Time->DeltaTime());
 	if (!result)
 	{
 		return false;
@@ -118,30 +131,7 @@ bool System::Frame()
 //Where windows system messages are directed
 LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
-	switch (umsg)
-	{
-		// Check if a key has been pressed on the keyboard.
-	case WM_KEYDOWN:
-	{
-		// If a key is pressed send it to the input object so it can record that state.
-		m_Input->KeyDown((unsigned int)wparam);
-		return 0;
-	}
-
-	// Check if a key has been released on the keyboard.
-	case WM_KEYUP:
-	{
-		// If a key is released then send it to the input object so it can unset the state for that key.
-		m_Input->KeyUp((unsigned int)wparam);
-		return 0;
-	}
-
-	// Any other messages send to the default message handler as our application won't make use of them.
-	default:
-	{
-		return DefWindowProc(hwnd, umsg, wparam, lparam);
-	}
-	}
+	return DefWindowProc(hwnd, umsg, wparam, lparam);
 }
 
 //Create WIN32 Window holding DX 
@@ -232,7 +222,17 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 	// Hide the mouse cursor.
 	ShowCursor(true);
 
-	return;
+	//REMEMBER YOU HAVE ADDED PREPROCESSOR TO 
+	//IGNORE DEPRECATION OF freopen
+	//DEBUG CONSOLE WINDOW
+	if (AllocConsole())
+	{
+		freopen("CONOUT$", "w", stdout);
+		//Might be required? Might not work. Who knows.
+		freopen("CONOUY$", "w", stderr);
+		SetConsoleTitle(L"Debug Console");
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
+	}
 }
 
 //where windows messages are sent to
@@ -295,14 +295,15 @@ void System::Shutdown()
 	{
 		m_Graphics->Shutdown();
 		delete m_Graphics;
-		m_Graphics = 0;
+		m_Graphics = nullptr;
 	}
 
 	// Release the input object.
-	if (m_Input)
+	InputManager::Instance()->Shutdown();
+	if (m_Time)
 	{
-		delete m_Input;
-		m_Input = 0;
+		delete m_Time;
+		m_Time = nullptr;
 	}
 
 	// Shutdown the window.

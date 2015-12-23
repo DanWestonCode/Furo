@@ -11,11 +11,18 @@
 
 #include <windows.h>
 #include "Graphics.h"
-#include "Input.h"
+#include "InputManager.h"
+#include "Time.h"
 
 class System
 {
 public :
+	struct SMALL_RECT {
+		SHORT Left;
+		SHORT Top;
+		SHORT Right;
+		SHORT Bottom;
+	};
 	System();
 	System(const System&);
 	~System();
@@ -37,8 +44,8 @@ private:
 	HINSTANCE m_hinstance;
 	HWND m_hwnd;
 
-	Input* m_Input;
 	Graphics* m_Graphics;
+	Time* m_Time;
 };
 static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 

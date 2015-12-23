@@ -51,6 +51,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXFrameWork\Debug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -74,24 +75,31 @@
     <None Include="color.ps" />
     <None Include="color.vs" />
     <None Include="packages.config" />
+    <None Include="texture.ps" />
+    <None Include="texture.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ColorShader.h" />
     <ClInclude Include="D3D.h" />
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="TextureLoader.h" />
+    <ClInclude Include="TextureShader.h" />
+    <ClInclude Include="Time.h" />
     <ClInclude Include="Graphics.h" />
-    <ClInclude Include="Input.h" />
     <ClInclude Include="Quad.h" />
     <ClInclude Include="VertexModel.h" />
-    <ClInclude Include="pch.h" />
     <ClInclude Include="System.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ColorShader.cpp" />
     <ClCompile Include="D3D.cpp" />
+    <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="TextureLoader.cpp" />
+    <ClCompile Include="TextureShader.cpp" />
+    <ClCompile Include="Time.cpp" />
     <ClCompile Include="Graphics.cpp" />
-    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Quad.cpp" />
     <ClCompile Include="VertexModel.cpp" />
     <ClCompile Include="System.cpp" />
@@ -101,6 +109,16 @@
     <ProjectReference Include="..\InteractiveFluidDyanmics\InteractiveFluidDyanmics.vcxproj">
       <Project>{1db8c053-3bc0-4878-81da-64aeeaea63b5}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="color.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="texture.fx">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

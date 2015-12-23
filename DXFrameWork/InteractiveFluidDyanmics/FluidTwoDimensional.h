@@ -13,7 +13,12 @@
 class FluidTwoDimensional : public Fluid
 {
 public:
-	void Update();
+	void Update(float);
+	virtual void Clear();
+
+
+	bool _switch = false;
+	int counter = 0;
 };
 
 

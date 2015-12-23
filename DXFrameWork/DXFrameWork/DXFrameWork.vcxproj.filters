@@ -16,9 +16,6 @@
     <Filter Include="Source Files\Engine">
       <UniqueIdentifier>{6313ea56-3182-4370-afaa-7814cb38849a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\DXUT">
-      <UniqueIdentifier>{b2d79096-4ab9-446c-8595-b276d2e41eac}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Engine">
       <UniqueIdentifier>{d564108e-7e55-43f2-9743-d7b948090d56}</UniqueIdentifier>
     </Filter>
@@ -52,32 +49,50 @@
     <Filter Include="Header Files\Engine\Shaders">
       <UniqueIdentifier>{157b7497-4376-4f92-a250-563135a7eb2b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine\Rendering">
+      <UniqueIdentifier>{d3cf3d59-347b-491e-965e-25b9801d8a4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\System">
+      <UniqueIdentifier>{12465a2b-42e0-4379-a42d-bbf4025c2ce9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\colour">
+      <UniqueIdentifier>{779df0df-88b6-4013-9b1e-127e13006d89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\texture">
+      <UniqueIdentifier>{1f443b36-8bed-4450-a187-c8cbc7c00b07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Rendering">
+      <UniqueIdentifier>{769b31a2-6a15-4b46-87f5-3cd38f7eb2ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\System">
+      <UniqueIdentifier>{159774e4-674f-46eb-a6a3-973e71dac5e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Main">
+      <UniqueIdentifier>{7f9fe364-1899-456f-af05-4345daaa703d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="color.vs">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="color.ps">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\colour</Filter>
+    </None>
+    <None Include="color.vs">
+      <Filter>Shaders\colour</Filter>
+    </None>
+    <None Include="texture.vs">
+      <Filter>Shaders\texture</Filter>
+    </None>
+    <None Include="texture.ps">
+      <Filter>Shaders\texture</Filter>
+    </None>
+    <None Include="color.fx">
+      <Filter>Shaders\colour</Filter>
+    </None>
+    <None Include="texture.fx">
+      <Filter>Shaders\texture</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
-      <Filter>Header Files\DXUT</Filter>
-    </ClInclude>
-    <ClInclude Include="System.h">
-      <Filter>Header Files\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Header Files\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics.h">
-      <Filter>Header Files\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D.h">
-      <Filter>Header Files\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="VertexModel.h">
       <Filter>Header Files\Engine\Objects\Vertex Objects</Filter>
     </ClInclude>
@@ -90,20 +105,29 @@
     <ClInclude Include="Quad.h">
       <Filter>Header Files\Engine\Objects\Vertex Objects</Filter>
     </ClInclude>
+    <ClInclude Include="D3D.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>Header Files\Engine\System</Filter>
+    </ClInclude>
+    <ClInclude Include="System.h">
+      <Filter>Header Files\Engine\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureShader.h">
+      <Filter>Header Files\Engine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureLoader.h">
+      <Filter>Header Files\Engine\System</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Header Files\Engine\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="System.cpp">
-      <Filter>Source Files\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>Source Files\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>Source Files\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D.cpp">
-      <Filter>Source Files\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="WinMain.cpp">
       <Filter>Source Files\Engine\Main</Filter>
     </ClCompile>
@@ -118,6 +142,27 @@
     </ClCompile>
     <ClCompile Include="Quad.cpp">
       <Filter>Source Files\Engine\Objects\Vertex Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Source Files\Engine\System</Filter>
+    </ClCompile>
+    <ClCompile Include="System.cpp">
+      <Filter>Source Files\Engine\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureShader.cpp">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureLoader.cpp">
+      <Filter>Source Files\Engine\System</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Source Files\Engine\System</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

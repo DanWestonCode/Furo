@@ -14,6 +14,8 @@ public:
 	void Project(int, float*, float*, float*, float*);
 	void SetBnds(int, int, float*);
 	void AddSource(int, float*, float*, float);
+
+	void Swap(float*_x, float* _y);
 };
 
 

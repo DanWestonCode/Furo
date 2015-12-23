@@ -1,5 +1,6 @@
 #include "FluidSolver.h"
 #include "FluidHelper.h"
+#include <algorithm>    
 
 FluidSolver::FluidSolver()
 {
@@ -13,15 +14,16 @@ FluidSolver::~FluidSolver()
 
 void FluidSolver::VelocityStep(int gridSize, float* velocityX, float* prevVelX, float* velocityY, float* prevVelY, float visc, float dt)
 {
+
 	AddSource(gridSize, velocityX, prevVelX, dt);
 	AddSource(gridSize, velocityY, prevVelY, dt);
-	FluidHelper::Swap(prevVelX, velocityX);
+	std::swap(prevVelX, velocityX);
 	Diffuse(gridSize, 1, velocityX, prevVelX, visc, dt);
-	FluidHelper::Swap(prevVelY, velocityY);
+	std::swap(prevVelY, velocityY);
 	Diffuse(gridSize, 2, velocityY, prevVelY, visc, dt);
 	Project(gridSize, velocityX, velocityY, prevVelX, prevVelY);
-	FluidHelper::Swap(prevVelX, velocityX);
-	FluidHelper::Swap(prevVelY, velocityY);
+	std::swap(prevVelX, velocityX);
+	std::swap(prevVelY, velocityY);
 	Advect(gridSize, 1, velocityX, prevVelX, prevVelX, prevVelY, dt);
 	Advect(gridSize, 2, velocityY, prevVelY, prevVelX, prevVelY, gridSize);
 	Project(gridSize, velocityX, velocityY, prevVelX, prevVelY);
@@ -31,9 +33,9 @@ void FluidSolver::DensityStep(int gridSize, float* density, float* prevDensity, 
 {
 	//density
 	AddSource(gridSize, density, prevDensity, dt);
-	FluidHelper::Swap(prevDensity, density);
+	std::swap(prevDensity, density);
 	Diffuse(gridSize, 0, density, prevDensity, diffusion, dt);
-	FluidHelper::Swap(prevDensity, density);
+	std::swap(prevDensity, density);
 	Advect(gridSize, 0, density, prevDensity, velocityX, velocityY, dt);
 
 }
@@ -144,6 +146,7 @@ void FluidSolver::AddSource(int gridSize, float* currentSource, float* prevSourc
 	int i, size = (gridSize + 2) * (gridSize + 2);
 	for (i = 0; i < size; i++)
 	{
+		float x = prevSource[i];
 		currentSource[i] += dt * prevSource[i];
 	}
 }
@@ -163,6 +166,7 @@ void FluidSolver::Diffuse(int gridSize, int b, float* dens, float* prevDens, flo
 					(prevDens[FluidHelper::GetIndex(gridSize, x, y)] + diffusionRate * (dens[FluidHelper::GetIndex(gridSize, x - 1, y)] +
 					dens[FluidHelper::GetIndex(gridSize, x + 1, y)] + dens[FluidHelper::GetIndex(gridSize, x, y - 1)] +
 					dens[FluidHelper::GetIndex(gridSize, x, y + 1)])) / (1 + 4 * diffusionRate);
+
 			}
 		}
 	}

@@ -46,14 +46,16 @@ void Fluid::Initialize(int _size, float _dt)
 	m_density = new float[size];
 	m_prevDensity = new float[size];
 
-	std::memset(m_velocityX, 0, sizeof(float)*_size*_size);
-	std::memset(m_velocityY, 0, sizeof(float)*_size*_size);
-	std::memset(m_prevVelX, 0, sizeof(float)*_size*_size);
-	std::memset(m_prevVelY, 0, sizeof(float)*_size*_size);
-	std::memset(m_density, 0, sizeof(float)*_size*_size);
-	std::memset(m_prevDensity, 0, sizeof(float)*_size*_size);
+	std::memset(m_velocityX, 0, sizeof(float)*size);
+	std::memset(m_velocityY, 0, sizeof(float)*size);
+	std::memset(m_prevVelX, 0, sizeof(float)*size);
+	std::memset(m_prevVelY, 0, sizeof(float)*size);
+	std::memset(m_density, 0, sizeof(float)*size);
+	std::memset(m_prevDensity, 0, sizeof(float)*size);
 
 	m_fluidSolver = new FluidSolver;
+
+	
 }
 
 //initialize fluid override - set up all vars w/custom 
@@ -113,4 +115,9 @@ void Fluid::Shutdown()
 int Fluid::GetIndex(int x, int y)
 {
 	return (x * (m_gridSize + 2)) + y;
+}
+
+void Fluid::Clear()
+{
+
 }

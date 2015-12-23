@@ -20,6 +20,8 @@ public:
 	void Initialize(int,float);
 	void Initialize(int, float, float, float);
 	virtual void Shutdown();
+	virtual void Clear();
+
 
 protected:
 	int GetIndex(int x, int y);
@@ -40,10 +42,12 @@ public:
 	void SetDt(float d){ m_dt = d; }
 
 	float* GetDensity(){ return m_density; }
-
-
+	void SetDensity(int x, int y, float val){ m_prevDensity[x * (m_gridSize + 2) + y] = val; }
+	void SetVelX(int x, int y, float val){ m_prevVelX[x * (m_gridSize + 2) + y] = val; }
+	void SetVelY(int x, int y, float val){ m_prevVelY[x * (m_gridSize + 2) + y] = val; }
 //Variables
 protected:
+	
 	int m_gridSize;
 	float m_diffusion, m_visc, m_dt;
 

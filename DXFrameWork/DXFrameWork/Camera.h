@@ -1,11 +1,9 @@
 #ifndef _CAMERA_H_
 #define _CAMERA_H_
 
+#include "Object.h"
 
-#include <DirectXMath.h>
-using namespace DirectX;
-
-class Camera
+class Camera : Object
 {
 public:
 	Camera();
@@ -20,6 +18,9 @@ public:
 
 	void Render();
 	void GetViewMatrix(XMMATRIX&);
+
+	//inherited functions
+	virtual void Update(float);
 
 private:
 	float m_positionX, m_positionY, m_positionZ;

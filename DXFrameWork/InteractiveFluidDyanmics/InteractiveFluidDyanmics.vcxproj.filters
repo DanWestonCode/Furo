@@ -57,6 +57,9 @@
     <ClInclude Include="FluidTwoDimensional.h">
       <Filter>Header Files\Fluids\2D</Filter>
     </ClInclude>
+    <ClInclude Include="FluidThreeDimensional.h">
+      <Filter>Header Files\Fluids\3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Furo.cpp">
@@ -65,14 +68,17 @@
     <ClCompile Include="fluid.cpp">
       <Filter>Source Files\Fluids</Filter>
     </ClCompile>
-    <ClCompile Include="FluidSolver.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FluidHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FluidTwoDimensional.cpp">
       <Filter>Source Files\Fluids\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="FluidSolver.cpp">
+      <Filter>Source Files\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="FluidThreeDimensional.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

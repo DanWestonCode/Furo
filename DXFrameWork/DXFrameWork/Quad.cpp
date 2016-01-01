@@ -3,8 +3,9 @@
 
 Quad::Quad()
 {
-	m_VertexBuffer = 0;
-	m_IndexBuffer = 0;
+	m_VertexBuffer = nullptr;
+	m_IndexBuffer = nullptr;
+	m_TextureShader = nullptr;
 }
 
 Quad::Quad(const Quad& other)
@@ -16,13 +17,23 @@ Quad::~Quad()
 
 }
 
-HRESULT Quad::Initialize(ID3D11Device* device, WCHAR* texture)
+HRESULT Quad::Initialize(ID3D11Device* device, WCHAR* texture, HWND hwnd)
 {
-	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
-	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
 	unsigned long* indices;
-	
+
+	//Set up shader
+
+	//Create the texture shader object.
+	m_TextureShader = new TextureShader;
+	// Initialize the texture shader object.
+	result = m_TextureShader->Initialize(device, hwnd);
+	if (FAILED(result))
+	{
+		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
+		return result;
+	}
+
 	numTris = 100;
 	m_VertexCount = 6 * (numTris - 1) * (numTris - 1);
 	// Set the number of indices in the index array.
@@ -30,10 +41,6 @@ HRESULT Quad::Initialize(ID3D11Device* device, WCHAR* texture)
 
 	// Create the vertex array.
 	vertices = new VertexType[m_VertexCount];
-	if (!vertices)
-	{
-		return false;
-	}
 
 	// Create the index array.
 	indices = new unsigned long[m_IndexCount];
@@ -90,9 +97,9 @@ HRESULT Quad::Initialize(ID3D11Device* device, WCHAR* texture)
 	
 	// Load the texture for this model.
 	result = VertexModel::LoadTexture(device, texture);
-	if (result != S_OK)
+	if (FAILED(result))
 	{
-		return S_FALSE;
+		return result;
 	}
 
 	VertexModel::Initialize(device, texture);
@@ -100,36 +107,35 @@ HRESULT Quad::Initialize(ID3D11Device* device, WCHAR* texture)
 	return S_OK;
 }
 
-void Quad::Render(ID3D11DeviceContext* deviceContext)
+void Quad::Render(ID3D11DeviceContext* deviceContext, XMMATRIX* worldMatrix, XMMATRIX* viewMatrix, XMMATRIX* projectionMatrix)
 {
 	HRESULT hr;
 	VertexType* verticesPtr;
 	D3D11_MAPPED_SUBRESOURCE resource;
+
 	hr = deviceContext->Map(m_VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	verticesPtr = (VertexType*)resource.pData;
 	memcpy(verticesPtr, (void*)vertices, (sizeof(VertexType) * m_VertexCount));
 	deviceContext->Unmap(m_VertexBuffer, 0);
 
 	VertexModel::Render(deviceContext);
+
+
+	// Render the model using the texture shader.
+	m_TextureShader->Render(deviceContext, GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, GetTexture(), 1.0f);
 }
 
 void Quad::Shutdown()
 {
-	// Release the index buffer.
-	if (m_IndexBuffer)
+	ReleaseTexture();
+	// Release the texture shader object.
+	if (m_TextureShader)
 	{
-		m_IndexBuffer->Release();
-		m_IndexBuffer = 0;
+		m_TextureShader->Shutdown();
+		delete m_TextureShader;
+		m_TextureShader = 0;
 	}
-
-	// Release the vertex buffer.
-	if (m_VertexBuffer)
-	{
-		m_VertexBuffer->Release();
-		m_VertexBuffer = 0;
-	}
-
-	return;
+	VertexModel::Shutdown();
 }
 
 void Quad::UpdateTexture(float* dens)
@@ -141,9 +147,9 @@ void Quad::UpdateTexture(float* dens)
 		for (int j = 0; j < (numTris - 1); j++)
 		{
 			float x = dens[FluidHelper::GetIndex(numTris, i, j)];
-			x *= 255;
+			//x *= 255;
 
-			Color colour = Color(1.0f, x, x, 1.0f);
+			Color colour = Color(x, x, x, x);
 
 			vertices[vert].color = colour;
 			vert++;
@@ -159,4 +165,11 @@ void Quad::UpdateTexture(float* dens)
 			vert++;
 		}
 	}
+}
+
+void Quad::Update(float dt)
+{
+	if (InputManager::Instance()->IsKeyDown(DIK_A))
+		m_pos.x += vel*dt;
+	VertexModel::Update(dt);
 }

@@ -2,13 +2,13 @@
 #define _MODEL_H_
 
 #include "TextureLoader.h"
+#include "Object.h"
 #include <d3d11.h>
-#include <SimpleMath.h>
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
-class VertexModel
+class VertexModel : public Object
 {
 protected:
 	struct VertexType
@@ -28,16 +28,20 @@ public:
 	VertexModel(const VertexModel&);
 	~VertexModel();
 
-	virtual HRESULT Initialize(ID3D11Device*, WCHAR*);
+	//inherited functions
+	virtual HRESULT Initialize(ID3D11Device*, WCHAR*){ return S_OK; };
+	virtual void Update(float dt){ Object::Update(dt); };
 	virtual void Shutdown();
+
 	virtual void Render(ID3D11DeviceContext*);
+
+	//getters/setters
 	ID3D11ShaderResourceView* GetTexture();
 	int GetIndexCount();
+
 private:
 	void RenderBuffers(ID3D11DeviceContext*);
-
-	
-	
+		
 protected:
 	//Build index and vertex buffers
 	HRESULT BuildDynamicVB(ID3D11Device*, int, void*);

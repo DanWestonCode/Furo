@@ -7,18 +7,9 @@ VertexModel::VertexModel()
 	m_Texture = nullptr;
 }
 
-VertexModel::VertexModel(const VertexModel& other)
-{
-}
+VertexModel::VertexModel(const VertexModel& other){}
 
-VertexModel::~VertexModel()
-{
-}
-
-HRESULT VertexModel::Initialize(ID3D11Device* device, WCHAR* texture)
-{
-	return true;
-}
+VertexModel::~VertexModel(){}
 
 ID3D11ShaderResourceView* VertexModel::GetTexture()
 {
@@ -27,6 +18,19 @@ ID3D11ShaderResourceView* VertexModel::GetTexture()
 
 void VertexModel::Shutdown()
 {
+	// Release the index buffer.
+	if (m_IndexBuffer)
+	{
+		m_IndexBuffer->Release();
+		m_IndexBuffer = 0;
+	}
+
+	// Release the vertex buffer.
+	if (m_VertexBuffer)
+	{
+		m_VertexBuffer->Release();
+		m_VertexBuffer = 0;
+	}
 	return;
 }
 

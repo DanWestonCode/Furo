@@ -103,3 +103,19 @@ void Camera::GetViewMatrix(XMMATRIX& viewMatrix)
 	viewMatrix = m_viewMatrix;
 	return;
 }
+
+void Camera::Update(float dt)
+{
+	if (InputManager::Instance()->IsKeyDown(DIK_UP))
+		m_positionZ += vel*dt;
+	if (InputManager::Instance()->IsKeyDown(DIK_DOWN))
+		m_positionZ += -vel*dt;
+	if (InputManager::Instance()->IsKeyDown(DIK_LEFT))
+		m_positionX += -vel*dt;
+	if (InputManager::Instance()->IsKeyDown(DIK_RIGHT))
+		m_positionX += vel*dt;
+	if (InputManager::Instance()->IsKeyDown(DIK_LSHIFT))
+		m_positionY += vel*dt;
+	if (InputManager::Instance()->IsKeyDown(DIK_TAB))
+		m_positionY += -vel*dt;
+}

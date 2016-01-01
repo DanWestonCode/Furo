@@ -17,7 +17,7 @@ void Furo::Initialize(FluidField _type, int size, float dt)
 	{
 	case TwoDimensional:
 		m_textureFluid = new FluidTwoDimensional;
-		m_textureFluid->Initialize(size, dt);
+		m_textureFluid->Initialize(size);
 		break;
 	case ThreeDimensional:
 		break;

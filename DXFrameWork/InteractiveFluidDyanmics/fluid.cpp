@@ -28,43 +28,8 @@ Fluid::~Fluid()
 }
 
 //initialize fluid - set up all vars w/default 
-void Fluid::Initialize(int _size, float _dt)
+void Fluid::Initialize(int _size)
 {
-	//set up fluid props
-	m_gridSize = _size;
-	m_dt = _dt;
-	m_diffusion = 0.0f;
-	m_visc = 0.0f;
-
-	int size = (_size + 2) * (_size + 2);
-
-	//set up fluid structures
-	m_velocityX = new float[size];
-	m_velocityY = new float[size];
-	m_prevVelX = new float[size];
-	m_prevVelY = new float[size];
-	m_density = new float[size];
-	m_prevDensity = new float[size];
-
-	std::memset(m_velocityX, 0, sizeof(float)*size);
-	std::memset(m_velocityY, 0, sizeof(float)*size);
-	std::memset(m_prevVelX, 0, sizeof(float)*size);
-	std::memset(m_prevVelY, 0, sizeof(float)*size);
-	std::memset(m_density, 0, sizeof(float)*size);
-	std::memset(m_prevDensity, 0, sizeof(float)*size);
-
-	m_fluidSolver = new FluidSolver;
-
-	
-}
-
-//initialize fluid override - set up all vars w/custom 
-void Fluid::Initialize(int _size, float _dt, float _diff, float _visc)
-{
-	m_gridSize = _size;
-	m_dt = _dt;
-	m_diffusion = _diff;
-	m_visc = _visc;
 }
 
 //Clean up all initialized pointers - call when game ends
@@ -110,11 +75,6 @@ void Fluid::Shutdown()
 		delete m_fluidSolver;
 		m_fluidSolver = 0;
 	}
-}
-
-int Fluid::GetIndex(int x, int y)
-{
-	return (x * (m_gridSize + 2)) + y;
 }
 
 void Fluid::Clear()

@@ -1,4 +1,7 @@
+//class based on Rastertek tutorial
+
 #include "InputManager.h"
+
 InputManager *InputManager::m_InputManager = nullptr;
 
 InputManager::InputManager()
@@ -209,29 +212,24 @@ void InputManager::ProcessInput()
 	return;
 }
 
-bool InputManager::IsEscapePressed()
+bool InputManager::IsKeyDown(UCHAR key)
 {
-	
-	// Do a bitwise and on the keyboard state to check if the escape key is currently being pressed.
-	if (m_keyboardState[DIK_ESCAPE] & 0x80)
+	if (m_keyboardState[key] & 0x80 && m_prevKeyboardState[key] & 0x80)
 	{
 		return true;
 	}
-
 	return false;
 }
 
-bool InputManager::IsWPressed()
+bool InputManager::IsKeyPressed(UCHAR key)
 {
-
-	// Do a bitwise and on the keyboard state to check if the escape key is currently being pressed.
-	if (m_keyboardState[DIK_W] & 0x80)
+	if (m_keyboardState[key] & 0x80 && !(m_prevKeyboardState[key] & 0x80))
 	{
 		return true;
 	}
-
 	return false;
 }
+
 
 void InputManager::GetMouseLocation(int& mouseX, int& mouseY)
 {

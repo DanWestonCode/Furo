@@ -113,7 +113,7 @@ bool System::Frame()
 	}
 
 	// Check if the user pressed escape and wants to exit the application.
-	if (InputManager::Instance()->IsEscapePressed())
+	if (InputManager::Instance()->IsKeyPressed(DIK_ESCAPE))
 	{
 		return false;
 	}
@@ -220,7 +220,7 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 	SetFocus(m_hwnd);
 
 	// Hide the mouse cursor.
-	ShowCursor(true);
+	ShowCursor(false);
 
 	//REMEMBER YOU HAVE ADDED PREPROCESSOR TO 
 	//IGNORE DEPRECATION OF freopen
@@ -315,3 +315,4 @@ void System::Shutdown()
 System::~System()
 {
 }
+

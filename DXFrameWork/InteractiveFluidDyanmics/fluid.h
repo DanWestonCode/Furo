@@ -17,15 +17,9 @@ public:
 	Fluid();
 	~Fluid();
 
-	void Initialize(int,float);
-	void Initialize(int, float, float, float);
+	virtual void Initialize(int);
 	virtual void Shutdown();
 	virtual void Clear();
-
-
-protected:
-	int GetIndex(int x, int y);
-	void Swap(float* x, float* y);
 
 //Getters/Setters
 public:
@@ -46,8 +40,7 @@ public:
 	void SetVelX(int x, int y, float val){ m_prevVelX[x * (m_gridSize + 2) + y] = val; }
 	void SetVelY(int x, int y, float val){ m_prevVelY[x * (m_gridSize + 2) + y] = val; }
 //Variables
-protected:
-	
+protected:	
 	int m_gridSize;
 	float m_diffusion, m_visc, m_dt;
 

@@ -35,7 +35,8 @@ public:
 	void TurnOnAlphaBlending();
 	void TurnOffAlphaBlending();
 
-
+	void TurnZBufferOn();
+	void TurnZBufferOff();
 
 private:
 	bool m_vsync_enabled;
@@ -56,5 +57,7 @@ private:
 
 	ID3D11BlendState* m_alphaEnableBlendingState;
 	ID3D11BlendState* m_alphaDisableBlendingState;
+
+	ID3D11DepthStencilState* m_depthDisabledStencilState;
 };
 #endif // !_D3D_H_

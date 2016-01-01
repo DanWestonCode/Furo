@@ -79,9 +79,11 @@
     <None Include="texture.vs" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ColorShader.h" />
     <ClInclude Include="D3D.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="TextureLoader.h" />
     <ClInclude Include="TextureShader.h" />
@@ -92,9 +94,11 @@
     <ClInclude Include="System.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ColorShader.cpp" />
     <ClCompile Include="D3D.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="TextureLoader.cpp" />
     <ClCompile Include="TextureShader.cpp" />

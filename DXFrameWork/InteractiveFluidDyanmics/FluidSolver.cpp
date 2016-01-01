@@ -1,6 +1,7 @@
 #include "FluidSolver.h"
 #include "FluidHelper.h"
 #include <algorithm>    
+#define GetXY(N,i,j) ((i)+(N + 2)*(j))
 
 FluidSolver::FluidSolver()
 {
@@ -50,8 +51,8 @@ void FluidSolver::Advect(int gridSize, int b, float* currentField, float* prevFi
 	{
 		for (j = 1; j <= gridSize; j++)
 		{
-			x = i - dt0*xVel[FluidHelper::GetIndex(gridSize, i, j)];
-			y = j - dt0*yVel[FluidHelper::GetIndex(gridSize, i, j)];
+			x = i - dt0*xVel[GetXY(gridSize, i, j)];
+			y = j - dt0*yVel[GetXY(gridSize, i, j)];
 
 			if (x < 0.5)
 			{
@@ -78,8 +79,9 @@ void FluidSolver::Advect(int gridSize, int b, float* currentField, float* prevFi
 			t1 = y - j0;
 			t0 = 1 - t1;
 
-			currentField[FluidHelper::GetIndex(gridSize, i, j)] = s0 * (t0 * prevField[FluidHelper::GetIndex(gridSize, i0, j0)] + t1 * prevField[FluidHelper::GetIndex(gridSize, i0, j1)]) +
-				s1*(t0*prevField[FluidHelper::GetIndex(gridSize, i1, j0)] + t1*prevField[FluidHelper::GetIndex(gridSize, i1, j1)]);
+			currentField[GetXY(gridSize, i, j)] = s0 * (t0 * prevField[GetXY(gridSize, i0, j0)] + t1 * prevField[GetXY(gridSize, i0, j1)]) +
+				s1*(t0*prevField[GetXY(gridSize, i1, j0)] + t1*prevField[GetXY(gridSize, i1, j1)]);
+			
 		}
 	}
 	SetBnds(gridSize, b, currentField);
@@ -94,9 +96,9 @@ void FluidSolver::Project(int gridSize, float* xVel, float* yVel, float* xVelPre
 	{
 		for (j = 1; j <= gridSize; j++)
 		{
-			yVelPrev[FluidHelper::GetIndex(gridSize, i, j)] = -0.5f * h * (xVel[FluidHelper::GetIndex(gridSize, i + 1, j)] - xVel[FluidHelper::GetIndex(gridSize, i - 1, j)] +
-				yVel[FluidHelper::GetIndex(gridSize, i, j + 1)] - yVel[FluidHelper::GetIndex(gridSize, i, j - 1)]);
-			xVelPrev[FluidHelper::GetIndex(gridSize, i, j)] = 0;
+			yVelPrev[GetXY(gridSize, i, j)] = -0.5f * h * (xVel[GetXY(gridSize, i + 1, j)] - xVel[GetXY(gridSize, i - 1, j)] +
+				yVel[GetXY(gridSize, i, j + 1)] - yVel[GetXY(gridSize, i, j - 1)]);
+			xVelPrev[GetXY(gridSize, i, j)] = 0;
 		}
 	}
 	SetBnds(gridSize, 0, yVelPrev); SetBnds(gridSize, 0, xVelPrev);
@@ -106,8 +108,8 @@ void FluidSolver::Project(int gridSize, float* xVel, float* yVel, float* xVelPre
 		{
 			for (j = 1; j <= gridSize; j++)
 			{
-				xVelPrev[FluidHelper::GetIndex(gridSize, i, j)] = (yVelPrev[FluidHelper::GetIndex(gridSize, i, j)] + xVelPrev[FluidHelper::GetIndex(gridSize, i - 1, j)] + xVelPrev[FluidHelper::GetIndex(gridSize, i + 1, j)] +
-					xVelPrev[FluidHelper::GetIndex(gridSize, i, j - 1)] + xVelPrev[FluidHelper::GetIndex(gridSize, i, j + 1)]) / 4;
+				xVelPrev[GetXY(gridSize, i, j)] = (yVelPrev[GetXY(gridSize, i, j)] + xVelPrev[GetXY(gridSize, i - 1, j)] + xVelPrev[GetXY(gridSize, i + 1, j)] +
+					xVelPrev[GetXY(gridSize, i, j - 1)] + xVelPrev[GetXY(gridSize, i, j + 1)]) / 4;
 			}
 		}
 		SetBnds(gridSize, 0, xVelPrev);
@@ -116,8 +118,8 @@ void FluidSolver::Project(int gridSize, float* xVel, float* yVel, float* xVelPre
 	{
 		for (j = 1; j <= gridSize; j++)
 		{
-			xVel[FluidHelper::GetIndex(gridSize, i, j)] -= 0.5f * (xVelPrev[FluidHelper::GetIndex(gridSize, i + 1, j)] - xVelPrev[FluidHelper::GetIndex(gridSize, i - 1, j)]) / h;
-			yVel[FluidHelper::GetIndex(gridSize, i, j)] -= 0.5f * (xVelPrev[FluidHelper::GetIndex(gridSize, i, j + 1)] - xVelPrev[FluidHelper::GetIndex(gridSize, i, j - 1)]) / h;
+			xVel[GetXY(gridSize, i, j)] -= 0.5f * (xVelPrev[GetXY(gridSize, i + 1, j)] - xVelPrev[GetXY(gridSize, i - 1, j)]) / h;
+			yVel[GetXY(gridSize, i, j)] -= 0.5f * (xVelPrev[GetXY(gridSize, i, j + 1)] - xVelPrev[GetXY(gridSize, i, j - 1)]) / h;
 		}
 	}
 	SetBnds(gridSize, 1, xVel); SetBnds(gridSize, 2, yVel);
@@ -129,16 +131,16 @@ void FluidSolver::SetBnds(int gridSize, int b, float* field)
 	int i;
 	for (i = 1; i <= gridSize; i++)
 	{
-		field[FluidHelper::GetIndex(gridSize, 0, i)] = b == 1 ? -field[FluidHelper::GetIndex(gridSize, 1, i)] : field[FluidHelper::GetIndex(gridSize, 1, i)];
-		field[FluidHelper::GetIndex(gridSize, gridSize + 1, i)] = b == 1 ? -field[FluidHelper::GetIndex(gridSize, gridSize, i)] : field[FluidHelper::GetIndex(gridSize, gridSize, i)];
-		field[FluidHelper::GetIndex(gridSize, i, 0)] = b == 2 ? -field[FluidHelper::GetIndex(gridSize, i, 1)] : field[FluidHelper::GetIndex(gridSize, i, 1)];
-		field[FluidHelper::GetIndex(gridSize, i, gridSize + 1)] = b == 2 ? -field[FluidHelper::GetIndex(gridSize, i, gridSize)] : field[FluidHelper::GetIndex(gridSize, i, gridSize)];
+		field[GetXY(gridSize, 0, i)] = b == 1 ? -field[GetXY(gridSize, 1, i)] : field[GetXY(gridSize, 1, i)];
+		field[GetXY(gridSize, gridSize + 1, i)] = b == 1 ? -field[GetXY(gridSize, gridSize, i)] : field[GetXY(gridSize, gridSize, i)];
+		field[GetXY(gridSize, i, 0)] = b == 2 ? -field[GetXY(gridSize, i, 1)] : field[GetXY(gridSize, i, 1)];
+		field[GetXY(gridSize, i, gridSize + 1)] = b == 2 ? -field[GetXY(gridSize, i, gridSize)] : field[GetXY(gridSize, i, gridSize)];
 	}
 
-	field[FluidHelper::GetIndex(gridSize, 0, 0)] = 0.5f*(field[FluidHelper::GetIndex(gridSize, 1, 0)] + field[FluidHelper::GetIndex(gridSize, 0, 1)]);
-	field[FluidHelper::GetIndex(gridSize, 0, gridSize + 1)] = 0.5f*(field[FluidHelper::GetIndex(gridSize, 1, gridSize + 1)] + field[FluidHelper::GetIndex(gridSize, 0, gridSize)]);
-	field[FluidHelper::GetIndex(gridSize, gridSize + 1, 0)] = 0.5f*(field[FluidHelper::GetIndex(gridSize, gridSize, 0)] + field[FluidHelper::GetIndex(gridSize, gridSize + 1, 1)]);
-	field[FluidHelper::GetIndex(gridSize, gridSize + 1, gridSize + 1)] = 0.5f*(field[FluidHelper::GetIndex(gridSize, gridSize, gridSize + 1)] + field[FluidHelper::GetIndex(gridSize, gridSize + 1, gridSize)]);
+	field[GetXY(gridSize, 0, 0)] = 0.5f*(field[GetXY(gridSize, 1, 0)] + field[GetXY(gridSize, 0, 1)]);
+	field[GetXY(gridSize, 0, gridSize + 1)] = 0.5f*(field[GetXY(gridSize, 1, gridSize + 1)] + field[GetXY(gridSize, 0, gridSize)]);
+	field[GetXY(gridSize, gridSize + 1, 0)] = 0.5f*(field[GetXY(gridSize, gridSize, 0)] + field[GetXY(gridSize, gridSize + 1, 1)]);
+	field[GetXY(gridSize, gridSize + 1, gridSize + 1)] = 0.5f*(field[GetXY(gridSize, gridSize, gridSize + 1)] + field[GetXY(gridSize, gridSize + 1, gridSize)]);
 }
 
 void FluidSolver::AddSource(int gridSize, float* currentSource, float* prevSource, float dt)
@@ -162,10 +164,10 @@ void FluidSolver::Diffuse(int gridSize, int b, float* dens, float* prevDens, flo
 		{
 			for (y = 1; y <= gridSize; y++)
 			{
-				dens[FluidHelper::GetIndex(gridSize, x, y)] =
-					(prevDens[FluidHelper::GetIndex(gridSize, x, y)] + diffusionRate * (dens[FluidHelper::GetIndex(gridSize, x - 1, y)] +
-					dens[FluidHelper::GetIndex(gridSize, x + 1, y)] + dens[FluidHelper::GetIndex(gridSize, x, y - 1)] +
-					dens[FluidHelper::GetIndex(gridSize, x, y + 1)])) / (1 + 4 * diffusionRate);
+				dens[GetXY(gridSize, x, y)] =
+					(prevDens[GetXY(gridSize, x, y)] + diffusionRate * (dens[GetXY(gridSize, x - 1, y)] +
+					dens[GetXY(gridSize, x + 1, y)] + dens[GetXY(gridSize, x, y - 1)] +
+					dens[GetXY(gridSize, x, y + 1)])) / (1 + 4 * diffusionRate);
 
 			}
 		}

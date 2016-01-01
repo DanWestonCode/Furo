@@ -6,21 +6,15 @@
 /*                                                           */
 /* Created by Daniel Weston 19/12/2015                       */
 /*************************************************************/
-#ifndef TextureFluid_h__
-#define TextureFluid_h__
+#ifndef FluidTwoDimensional_h__
+#define FluidTwoDimensional_h__
 #include "fluid.h"
 
 class FluidTwoDimensional : public Fluid
 {
 public:
 	void Update(float);
+	virtual void Initialize(int);
 	virtual void Clear();
-
-
-	bool _switch = false;
-	int counter = 0;
 };
-
-
-
 #endif // TextureFluid_h__

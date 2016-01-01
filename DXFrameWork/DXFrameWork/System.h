@@ -31,6 +31,7 @@ public :
 	void Shutdown();
 	void Run();
 
+
 	//handles windows messages sent to app
 	LRESULT CALLBACK MessageHandler(HWND, UINT, WPARAM, LPARAM);
 

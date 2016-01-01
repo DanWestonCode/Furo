@@ -1,4 +1,3 @@
-
 #ifndef _GRAPHICS_H_
 #define _GRAPHICS_H_
 
@@ -6,11 +5,10 @@
 #include "D3D.h"
 
 #include "camera.h"
-#include "colorshader.h"
-#include "textureshader.h"
 #include "Quad.h"
+#include "Bitmap.h"
 #include "InputManager.h"
-
+#include "TextureShader.h"
 
 #include "Furo.h"
 
@@ -37,10 +35,11 @@ private:
 
 	D3D* m_D3D;
 	Camera* m_Camera;
-	ColorShader* m_ColorShader;
 	Quad* m_Quad;
 	Furo* m_furo;
+	Bitmap* m_Bitmap;
 	TextureShader* m_TextureShader;
+	TextureShader* m_TextureShader2;
 
 	bool action = false;
 };

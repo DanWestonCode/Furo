@@ -81,6 +81,8 @@ bool TextureShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsF
 		&vertexShaderBuffer, &errorMessage);
 	if (FAILED(result))
 	{
+		
+
 		// If the shader failed to compile it should have writen something to the error message.
 		if (errorMessage)
 		{

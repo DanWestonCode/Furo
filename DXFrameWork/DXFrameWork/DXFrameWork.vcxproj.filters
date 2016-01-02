@@ -31,17 +31,11 @@
     <Filter Include="Source Files\Engine\Main">
       <UniqueIdentifier>{b16334cd-81af-4cda-b65d-adb56edab2ad}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Objects\Vertex Objects">
-      <UniqueIdentifier>{f317f77d-c5b2-4378-9c61-8e2ebc8de16d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Engine\Objects\Camera">
       <UniqueIdentifier>{f6321d2c-d0cf-4e21-9633-086e64aa565e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Engine\Shaders">
       <UniqueIdentifier>{8e0b80c9-b42e-4ca0-b273-d75dbf170a8d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\Objects\Vertex Objects">
-      <UniqueIdentifier>{e79f9d96-e16f-4fd2-85e8-0aa727956427}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Engine\Objects\Camera">
       <UniqueIdentifier>{8b98caf0-6f55-4413-bbe8-99996b20bad7}</UniqueIdentifier>
@@ -51,9 +45,6 @@
     </Filter>
     <Filter Include="Source Files\Engine\Rendering">
       <UniqueIdentifier>{d3cf3d59-347b-491e-965e-25b9801d8a4f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\System">
-      <UniqueIdentifier>{12465a2b-42e0-4379-a42d-bbf4025c2ce9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shaders\colour">
       <UniqueIdentifier>{779df0df-88b6-4013-9b1e-127e13006d89}</UniqueIdentifier>
@@ -69,6 +60,30 @@
     </Filter>
     <Filter Include="Header Files\Engine\Main">
       <UniqueIdentifier>{7f9fe364-1899-456f-af05-4345daaa703d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\SystemUtilities">
+      <UniqueIdentifier>{12465a2b-42e0-4379-a42d-bbf4025c2ce9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Objects\Objects3D">
+      <UniqueIdentifier>{a2ed46a3-8ce0-43a9-bd8a-ebd3cc8e67ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Objects\Objects3D\Vertex Objects">
+      <UniqueIdentifier>{f317f77d-c5b2-4378-9c61-8e2ebc8de16d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Objects\Objects2D">
+      <UniqueIdentifier>{8ecd378e-3655-4b5c-a657-7a5a2d4a6f50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Objects\Object3D">
+      <UniqueIdentifier>{d34bdd98-c057-422e-9515-09cd3271c201}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Objects\Object3D\Vertex Objects">
+      <UniqueIdentifier>{e79f9d96-e16f-4fd2-85e8-0aa727956427}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Objects\Object2D">
+      <UniqueIdentifier>{2350a260-758d-40a2-bc92-6e6221b1b42a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Rendering\RenderTexture">
+      <UniqueIdentifier>{fe0d8fee-3ddb-4edd-a52a-8c225c5a8937}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -94,7 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VertexModel.h">
-      <Filter>Header Files\Engine\Objects\Vertex Objects</Filter>
+      <Filter>Header Files\Engine\Objects\Object3D\Vertex Objects</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Engine\Objects\Camera</Filter>
@@ -103,7 +118,7 @@
       <Filter>Header Files\Engine\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="Quad.h">
-      <Filter>Header Files\Engine\Objects\Vertex Objects</Filter>
+      <Filter>Header Files\Engine\Objects\Object3D\Vertex Objects</Filter>
     </ClInclude>
     <ClInclude Include="D3D.h">
       <Filter>Header Files\Engine\Rendering</Filter>
@@ -126,11 +141,17 @@
     <ClInclude Include="InputManager.h">
       <Filter>Header Files\Engine\System</Filter>
     </ClInclude>
-    <ClInclude Include="Bitmap.h">
-      <Filter>Header Files\Engine\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="Object.h">
-      <Filter>Header Files\Engine\Objects</Filter>
+      <Filter>Header Files\Engine\Objects\Object3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Bitmap.h">
+      <Filter>Header Files\Engine\Objects\Object2D</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTexture.h">
+      <Filter>Header Files\Engine\Rendering\RenderTexture</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugWindow.h">
+      <Filter>Header Files\Engine\Rendering\RenderTexture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -138,7 +159,7 @@
       <Filter>Source Files\Engine\Main</Filter>
     </ClCompile>
     <ClCompile Include="VertexModel.cpp">
-      <Filter>Source Files\Engine\Objects\Vertex Objects</Filter>
+      <Filter>Source Files\Engine\Objects\Objects3D\Vertex Objects</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Engine\Objects\Camera</Filter>
@@ -147,7 +168,7 @@
       <Filter>Source Files\Engine\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="Quad.cpp">
-      <Filter>Source Files\Engine\Objects\Vertex Objects</Filter>
+      <Filter>Source Files\Engine\Objects\Objects3D\Vertex Objects</Filter>
     </ClCompile>
     <ClCompile Include="D3D.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
@@ -156,7 +177,7 @@
       <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Time.cpp">
-      <Filter>Source Files\Engine\System</Filter>
+      <Filter>Source Files\Engine\SystemUtilities</Filter>
     </ClCompile>
     <ClCompile Include="System.cpp">
       <Filter>Source Files\Engine\Main</Filter>
@@ -165,15 +186,21 @@
       <Filter>Source Files\Engine\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="TextureLoader.cpp">
-      <Filter>Source Files\Engine\System</Filter>
+      <Filter>Source Files\Engine\SystemUtilities</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
-      <Filter>Source Files\Engine\System</Filter>
+      <Filter>Source Files\Engine\SystemUtilities</Filter>
     </ClCompile>
-    <ClCompile Include="Bitmap.cpp">
+    <ClCompile Include="RenderTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
+      <Filter>Source Files\Engine\Objects\Objects3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Bitmap.cpp">
+      <Filter>Source Files\Engine\Objects\Objects2D</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

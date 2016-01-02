@@ -2,14 +2,16 @@
 #define _GRAPHICS_H_
 
 #include <windows.h>
-#include "D3D.h"
+#include <list>
 
+#include "D3D.h"
 #include "camera.h"
 #include "Quad.h"
 #include "Bitmap.h"
 #include "InputManager.h"
 #include "TextureShader.h"
-
+#include "RenderTexture.h"
+#include "DebugWindow.h"
 #include "Furo.h"
 
 const bool FULL_SCREEN = false;
@@ -30,16 +32,22 @@ public:
 
 private:
 	bool Render(float);
+	bool RenderToTexture(float);
+	bool RenderScene(float);
 
 private:
+	list<Object*> m_Objects;
 
 	D3D* m_D3D;
 	Camera* m_Camera;
 	Quad* m_Quad;
 	Furo* m_furo;
-	Bitmap* m_Bitmap;
+	Bitmap* m_MousePointer;
 	TextureShader* m_TextureShader;
 	TextureShader* m_TextureShader2;
+	RenderTexture* m_RenderTexture;
+	DebugWindow* m_DebugWindow;
+
 
 	bool action = false;
 };

@@ -6,6 +6,8 @@ Quad::Quad()
 	m_VertexBuffer = nullptr;
 	m_IndexBuffer = nullptr;
 	m_TextureShader = nullptr;
+
+	
 }
 
 Quad::Quad(const Quad& other)
@@ -122,7 +124,7 @@ void Quad::Render(ID3D11DeviceContext* deviceContext, XMMATRIX* worldMatrix, XMM
 
 
 	// Render the model using the texture shader.
-	m_TextureShader->Render(deviceContext, GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, GetTexture(), 1.0f);
+	m_TextureShader->Render(deviceContext, GetIndexCount(), &m_worldMatrix, viewMatrix, projectionMatrix, GetTexture(), 1.0f);
 }
 
 void Quad::Shutdown()
@@ -170,6 +172,7 @@ void Quad::UpdateTexture(float* dens)
 void Quad::Update(float dt)
 {
 	if (InputManager::Instance()->IsKeyDown(DIK_A))
-		m_pos.x += vel*dt;
+		m_rot.y += vel*dt;
+
 	VertexModel::Update(dt);
 }

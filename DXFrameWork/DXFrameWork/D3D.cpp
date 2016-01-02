@@ -24,6 +24,23 @@ D3D::~D3D()
 {
 }
 
+
+ID3D11DepthStencilView* D3D::GetDepthStencilView()
+{
+	return m_depthStencilView;
+}
+
+
+
+void D3D::SetBackBufferRenderTarget()
+{
+	// Bind the render target view and depth stencil buffer to the output render pipeline.
+	m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
+
+	return;
+}
+
+
 /*********************************/
 /* vsync refresh rate of monitor */
 /* HWND handle to window         */

@@ -51,7 +51,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXFrameWork\Debug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -83,8 +83,10 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ColorShader.h" />
     <ClInclude Include="D3D.h" />
+    <ClInclude Include="DebugWindow.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="RenderTexture.h" />
     <ClInclude Include="TextureLoader.h" />
     <ClInclude Include="TextureShader.h" />
     <ClInclude Include="Time.h" />
@@ -98,8 +100,10 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ColorShader.cpp" />
     <ClCompile Include="D3D.cpp" />
+    <ClCompile Include="DebugWindow.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="RenderTexture.cpp" />
     <ClCompile Include="TextureLoader.cpp" />
     <ClCompile Include="TextureShader.cpp" />
     <ClCompile Include="Time.cpp" />

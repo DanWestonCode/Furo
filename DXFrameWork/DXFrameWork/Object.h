@@ -12,6 +12,7 @@
 #include "InputManager.h"
 #include <d3d11.h>
 #include <SimpleMath.h>
+
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 class Object
@@ -21,12 +22,14 @@ public:
 	~Object();
 
 	virtual HRESULT Initialise(){ return S_OK; };
+	virtual void Render(ID3D11DeviceContext*, XMMATRIX*, XMMATRIX*, XMMATRIX* ){};
 	virtual void Shutdown(){};
 	virtual void Update(float);
 
 protected:
 	Vector3 m_pos, m_rot, m_scale;
 	float vel;
-	Matrix m_worldMatrix, m_rotationMatrix;
+	XMMATRIX m_worldMatrix;
+	Matrix m_rotationMatrix;
 };
 #endif // GameObject_h__

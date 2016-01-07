@@ -1,3 +1,9 @@
+/*******************************************************************/
+/* The D3D class encapsulates the set up stages for creating a     */
+/* DirectX Device. This class is based from RasterTek tutorials    */
+/*                                                                 */
+/* Created by Daniel Weston 21/12/2015                             */
+/*******************************************************************/
 #include "D3D.h"
 
 D3D::D3D()	
@@ -23,6 +29,22 @@ D3D::D3D(const D3D& other)
 D3D::~D3D()
 {
 }
+
+
+//Fix for 'warning C4316: object allocated on the heap may not be aligned 16'
+//This kept giving me access violation errors using XMMatrix calculations
+void* D3D::operator new(size_t memorySize)
+{
+	return _aligned_malloc(memorySize, 16);
+
+}
+
+void D3D::operator delete(void* memoryBlockPtr)
+{
+	_aligned_free(memoryBlockPtr);
+	return;
+}
+
 
 
 ID3D11DepthStencilView* D3D::GetDepthStencilView()
@@ -62,7 +84,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-	D3D11_RASTERIZER_DESC rasterDesc;
+	D3D11_RASTERIZER_DESC rasterDesc, rasterDescFrontFace;
 	D3D11_VIEWPORT viewport;
 	float fieldOfView, screenAspect;
 	
@@ -334,6 +356,25 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 
 	// Create the rasterizer state from the description we just filled out.
 	result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterState);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	//set up front face culling raster state
+	rasterDescFrontFace.AntialiasedLineEnable = false;
+	rasterDescFrontFace.CullMode = D3D11_CULL_FRONT;
+	rasterDescFrontFace.DepthBias = 0;
+	rasterDescFrontFace.DepthBiasClamp = 0.0f;
+	rasterDescFrontFace.DepthClipEnable = true;
+	rasterDescFrontFace.FillMode = D3D11_FILL_SOLID;
+	rasterDescFrontFace.FrontCounterClockwise = false;
+	rasterDescFrontFace.MultisampleEnable = false;
+	rasterDescFrontFace.ScissorEnable = false;
+	rasterDescFrontFace.SlopeScaledDepthBias = 0.0f;
+
+	// Create the rasterizer state from the description we just filled out.
+	result = m_device->CreateRasterizerState(&rasterDescFrontFace, &m_rasterStateFrontFaceCull);
 	if (FAILED(result))
 	{
 		return false;

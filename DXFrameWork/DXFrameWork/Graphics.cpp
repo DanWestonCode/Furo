@@ -15,9 +15,9 @@ Graphics::Graphics()
 	m_D3D = nullptr;
 	m_Camera = nullptr;
 	m_Quad = nullptr;
+	m_Cube = nullptr;
 	m_furo = nullptr;
 	m_MousePointer = nullptr;
-	m_TextureShader = nullptr;
 }
 
 Graphics::Graphics(const Graphics& other)
@@ -28,15 +28,15 @@ Graphics::~Graphics()
 {
 }
 
-bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
+HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
-	bool result;
+	HRESULT result = S_OK;
 
 	// Create the Direct3D object.
 	m_D3D = new D3D;
 	if (!m_D3D)
 	{
-		return false;
+		return S_FALSE;
 	}
 
 	// Initialize the Direct3D object.
@@ -44,100 +44,91 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
-		return false;
+		return S_FALSE;
 	}
 
 	// Create the camera object.
 	m_Camera = new Camera;
 	if (!m_Camera)
 	{
-		return false;
+		return S_FALSE;
 	}
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(0.0f, 0.0f, -250.0f);
+	m_Camera->SetPosition(0.0f, 0.0f, -150.0f);
 
+	////create new quad
 	m_Quad = new Quad;
 	if (!m_Quad)
 	{
-		return false;
+		return S_FALSE;
 	}
 	m_Quad->Initialize(m_D3D->GetDevice(), L"../DXFrameWork/data/scifi_ground_01.dds", hwnd);
+	//add to list of objects
+	//m_Objects.push_back(m_Quad);
 
-	m_Objects.push_back(m_Quad);
 
-	m_furo = new Furo;
-	if (!m_furo)
+	//create new cube
+	m_Cube = new Cube;
+	if (!m_Cube)
 	{
-		return false;
+		return S_FALSE;
 	}
+	m_Cube->Initialize(m_D3D->GetDevice(), hwnd);
+	//add to list of objects
+	m_Objects.push_back(m_Cube);
 
 	// Create the bitmap object.
 	m_MousePointer = new Bitmap;
 	if (!m_MousePointer)
 	{
-		return false;
+		return S_FALSE;
 	}
 	// Initialize the bitmap object.
 	m_MousePointer->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, L"../DXFrameWork/data/scifi_wall_01.dds", 10, 10, hwnd);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the bitmap object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	m_TextureShader = new TextureShader;
-	// Initialize the texture shader object.
-	result = m_TextureShader->Initialize(m_D3D->GetDevice(), hwnd);
-	if (FAILED(result))
-	{
-		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
-		return result;
-	}
 
 	// Create the render to texture object.
 	m_RenderTexture = new RenderTexture;
 	if (!m_RenderTexture)
 	{
-		return false;
+		return S_FALSE;
 	}
 
 	// Initialize the render to texture object.
 	result = m_RenderTexture->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight);
 	if (!result)
 	{
-		return false;
+		return S_FALSE;
 	}
 
 	// Create the debug window object.
 	m_DebugWindow = new DebugWindow;
 	if (!m_DebugWindow)
 	{
-		return false;
+		return S_FALSE;
 	}
 
 	// Initialize the debug window object.
-	result = m_DebugWindow->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, 100, 100);
+	result = m_DebugWindow->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, 100, 100, hwnd);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the debug window object.", L"Error", MB_OK);
-		return false;
+		return S_FALSE;
 	}
 
-	
+	//Initialize fluid sim
+	m_furo = new Furo;
+	if (!m_furo)
+	{
+		return S_FALSE;
+	}
 	m_furo->Initialize(Furo::FluidField::TwoDimensional, 100, 0.1f);
 	
-	return true;
+	return S_OK;
 }
 
 void Graphics::Shutdown()
 {
-	if (m_TextureShader)
-	{
-		m_TextureShader->Shutdown();
-		delete m_TextureShader;
-		m_TextureShader = 0;
-	}
 	if (m_D3D)
 	{
 		m_D3D->Shutdown();
@@ -149,6 +140,12 @@ void Graphics::Shutdown()
 		m_Quad->Shutdown();
 		delete m_Quad;
 		m_Quad = 0;
+	}
+	if (m_Cube)
+	{
+		m_Cube->Shutdown();
+		delete m_Cube;
+		m_Cube = 0;
 	}
 	// Release the camera object.
 	if (m_Camera)
@@ -190,6 +187,14 @@ bool Graphics::Frame(float dt)
 {
 	bool result;
 
+	// Get the world, view,n  and ortho matrices from the camera and d3d objects.
+	/*m_D3D->GetWorldMatrix(m_DD->worldMatrix);
+	m_Camera->GetViewMatrix(m_DD->viewMatrix);
+	m_D3D->GetOrthoMatrix(m_DD->orthoMatrix);
+	m_D3D->GetProjectionMatrix(m_DD->projectionMatrix);
+	*/
+	//update any objects
+	Update(dt);
 	// Render the graphics scene.
 	result = Render(dt);
 	if (!result)
@@ -200,38 +205,55 @@ bool Graphics::Frame(float dt)
 	return true;
 }
 
-bool Graphics::Render(float dt)
+void Graphics::Update(float dt)
 {
-	XMMATRIX worldMatrix, viewMatrix, orthoMatrix;
-	int x, y;
-	InputManager::Instance()->GetMouseLocation(x, y);
-	bool result;
-
 	m_Camera->Update(dt);
 	m_Quad->Update(dt);
+	m_Cube->Update(dt);
 	m_furo->Run(dt);
 
 	m_furo->GetFluid()->Clear();
 	if (InputManager::Instance()->IsKeyDown(DIK_Q))
 	{
-		for (int i = 25; i < 50; i++)
+		for (int i = 0; i < 100; i++)
 		{
 			m_furo->GetFluid()->SetDensity(i, 1, 1.0f);
+			
 		}
 	}
 	if (InputManager::Instance()->IsKeyDown(DIK_E))
 	{
-		for (int i = 25; i < 50; i++)
+		for (int i = 0; i < 100; i++)
 		{
 
 			m_furo->GetFluid()->SetVelX(i, 1, 100.0f);
 			m_furo->GetFluid()->SetVelY(i, 1, 100.0f);
-			m_furo->GetFluid()->SetVelX(i, 2, 100.0f);
+			m_furo->GetFluid()->SetVelX(i, 1, 100.0f);
 			m_furo->GetFluid()->SetVelY(i, 1, 100.0f);
+			m_furo->GetFluid()->SetVelX(i, 2, 100.0f);
+			m_furo->GetFluid()->SetVelY(i, 2, 100.0f);
+			m_furo->GetFluid()->SetVelX(i, 2, 100.0f);
+			m_furo->GetFluid()->SetVelY(i, 2, 100.0f);
+
+			m_furo->GetFluid()->SetVelX(i, 3, 100.0f);
+			m_furo->GetFluid()->SetVelY(i, 3, 100.0f);
+			m_furo->GetFluid()->SetVelX(i, 3, 100.0f);
+			m_furo->GetFluid()->SetVelY(i, 3, 100.0f);
 		}
 
-	}	
+	}
 
+}
+
+bool Graphics::Render(float dt)
+{
+	//Update the matrices
+	XMMATRIX worldMatrix, viewMatrix, orthoMatrix, projectionMatrix;
+
+	int x, y;
+	InputManager::Instance()->GetMouseLocation(x, y);
+	bool result;
+	
 	// Render the entire scene to the texture first.
 	result = RenderToTexture(dt);
 	if (!result)
@@ -258,13 +280,11 @@ bool Graphics::Render(float dt)
 	m_D3D->GetOrthoMatrix(orthoMatrix);
 
 	// Put the debug window vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	m_DebugWindow->Render(m_D3D->GetDeviceContext(), 50, 50);
-	// Render the debug window using the texture shader.
-	m_TextureShader->Render(m_D3D->GetDeviceContext(), m_DebugWindow->GetIndexCount(), &worldMatrix, &viewMatrix,
-		&orthoMatrix, m_RenderTexture->GetShaderResourceView(), 1.0f);
+	m_DebugWindow->Render(m_D3D->GetDeviceContext(), 50, 50, &worldMatrix, &viewMatrix,
+		&orthoMatrix, m_RenderTexture->GetShaderResourceView());
+
 	
 	m_MousePointer->Render(m_D3D->GetDeviceContext(), x, y, &worldMatrix, &viewMatrix, &orthoMatrix);
-	m_TextureShader->Render(m_D3D->GetDeviceContext(), m_MousePointer->GetIndexCount(), &worldMatrix, &viewMatrix, &orthoMatrix, m_MousePointer->GetTexture(), 1.0f);	
 
 	// Turn the Z buffer back on now that all 2D rendering has completed.
 	m_D3D->TurnZBufferOn();
@@ -318,7 +338,7 @@ bool Graphics::RenderToTexture(float dt)
 bool Graphics::RenderScene(float dt)
 {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, orthoMatrix;
-	bool result;
+	bool result = true;
 
 	// Generate the view matrix based on the camera's position.
 	m_Camera->Render();
@@ -330,7 +350,7 @@ bool Graphics::RenderScene(float dt)
 	m_D3D->GetOrthoMatrix(orthoMatrix);
 	
 
-	m_Quad->UpdateTexture(m_furo->GetFluid()->GetDensity());
+	//m_Quad->UpdateTexture(m_furo->GetFluid()->GetDensity());
 
 	//Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	for (list<Object *>::iterator it = m_Objects.begin(); it != m_Objects.end(); it++)

@@ -3,7 +3,7 @@
 
 #include "Object.h"
 
-class Camera : Object
+__declspec(align(16)) class Camera : public Object
 {
 public:
 	Camera();

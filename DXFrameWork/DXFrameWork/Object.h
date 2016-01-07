@@ -15,11 +15,17 @@
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
-class Object
+
+//Fix for 'warning C4316: object allocated on the heap may not be aligned 16'
+__declspec(align(16)) class Object
+
 {
 public:
 	Object();
 	~Object();
+
+	void* operator new(size_t);
+	void operator delete(void*);
 
 	virtual HRESULT Initialise(){ return S_OK; };
 	virtual void Render(ID3D11DeviceContext*, XMMATRIX*, XMMATRIX*, XMMATRIX* ){};
@@ -30,6 +36,6 @@ protected:
 	Vector3 m_pos, m_rot, m_scale;
 	float vel;
 	XMMATRIX m_worldMatrix;
-	Matrix m_rotationMatrix;
+	XMMATRIX m_rotationMatrix;
 };
 #endif // GameObject_h__

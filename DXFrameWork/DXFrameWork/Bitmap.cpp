@@ -17,14 +17,14 @@ HRESULT Bitmap::Initialize(ID3D11Device* _device, int _screenWidth, int _screenH
 
 	//Set up shader
 	// Create the texture shader object.
-	//m_TextureShader = new TextureShader;
+	m_TextureShader = new TextureShader;
 	// Initialize the texture shader object.
-	//result = m_TextureShader->Initialize(_device, hwnd);
-	//if (FAILED(result))
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
-	//	return result;
-	//}
+	result = m_TextureShader->Initialize(_device, hwnd);
+	if (FAILED(result))
+	{
+		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
+		return result;
+	}
 
 	// Store the screen size.
 	m_screenWidth = _screenWidth;
@@ -68,10 +68,25 @@ void Bitmap::Render(ID3D11DeviceContext* deviceContext, int positionX, int posit
 {
 	// Re-build the dynamic vertex buffer for rendering to possibly a different location on the screen.
 	UpdateBuffers(deviceContext, positionX, positionY);
-	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	VertexModel::Render(deviceContext);
 
-	//m_TextureShader->Render(deviceContext, GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, GetTexture(), 1.0f);
+	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	unsigned int stride;
+	unsigned int offset;
+
+	// Set vertex buffer stride and offset.
+	stride = sizeof(TextureVL);
+	offset = 0;
+
+	// Set the vertex buffer to active in the input assembler so it can be rendered.
+	deviceContext->IASetVertexBuffers(0, 1, &m_VertexBuffer, &stride, &offset);
+
+	// Set the index buffer to active in the input assembler so it can be rendered.
+	deviceContext->IASetIndexBuffer(m_IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	m_TextureShader->Render(deviceContext, GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, GetTexture(), 1.0f);
 }
 
 void Bitmap::InititalizeBuffers(ID3D11Device* _device)
@@ -90,7 +105,7 @@ void Bitmap::InititalizeBuffers(ID3D11Device* _device)
 	m_IndexCount = m_VertexCount;
 
 	// Create the vertex array.
-	vertices = new VertexType[m_VertexCount];
+	m_VerticesTextureVL = new TextureVL[m_VertexCount];
 
 	// Create the index array.
 	indices = new unsigned long[m_IndexCount];
@@ -101,13 +116,13 @@ void Bitmap::InititalizeBuffers(ID3D11Device* _device)
 		indices[i] = i;
 	}
 	// Initialize vertex array to zeros at first.
-	memset(vertices, 0, (sizeof(VertexType) * m_VertexCount));
+	memset(m_VerticesTextureVL, 0, (sizeof(TextureVL) * m_VertexCount));
 
-	BuildDynamicVB(_device, m_VertexCount, vertices);
+	BuildDynamicVB(_device, m_VertexCount, m_VerticesTextureVL);
 	BuildIndexBuffer(_device, indices);
 
-	delete[] vertices;
-	vertices = 0;
+	/*delete[] m_VerticesTextureVL;
+	m_VerticesTextureVL = 0;*/
 
 	delete[] indices;
 	indices = 0;
@@ -117,7 +132,7 @@ bool Bitmap::UpdateBuffers(ID3D11DeviceContext* deviceContext, int positionX, in
 {
 	float left, right, top, bottom;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	VertexType* verticesPtr;
+	TextureVL* verticesPtr;
 	HRESULT result;
 
 	// If the position we are rendering this bitmap to has not changed then don't update the vertex buffer since it
@@ -144,38 +159,38 @@ bool Bitmap::UpdateBuffers(ID3D11DeviceContext* deviceContext, int positionX, in
 	bottom = top - (float)m_bitmapHeight;
 
 	// Create the vertex array.
-	vertices = new VertexType[m_VertexCount];
-	if (!vertices)
+	m_VerticesTextureVL = new TextureVL[m_VertexCount];
+	if (!m_VerticesTextureVL)
 	{
 		return false;
 	}
 
 	// Load the vertex array with data.
 	// First triangle.
-	vertices[0].position = Vector3(left, top, 0.0f);  // Top left.
+	m_VerticesTextureVL[0].position = Vector3(left, top, 0.0f);  // Top left.
 	//vertices[0].texture = Vector2(0.0f, 0.0f);
-	vertices[0].color = Color(1.0f, 0.0f,0.0f,1.0f);
+	m_VerticesTextureVL[0].color = Color(1.0f, 0.0f, 0.0f, 1.0f);
 
-	vertices[1].position = Vector3(right, bottom, 0.0f);  // Bottom right.
+	m_VerticesTextureVL[1].position = Vector3(right, bottom, 0.0f);  // Bottom right.
 	//vertices[1].texture = Vector2(1.0f, 1.0f);
-	vertices[1].color = Color(1.0f, 0.0f, 0.0f, 1.0f);
+	m_VerticesTextureVL[1].color = Color(1.0f, 0.0f, 0.0f, 1.0f);
 
-	vertices[2].position = Vector3(left, bottom, 0.0f);  // Bottom left.
+	m_VerticesTextureVL[2].position = Vector3(left, bottom, 0.0f);  // Bottom left.
 	//vertices[2].texture = Vector2(0.0f, 1.0f);
-	vertices[2].color = Color(1.0f, 0.0f, 0.0f, 1.0f);
+	m_VerticesTextureVL[2].color = Color(1.0f, 0.0f, 0.0f, 1.0f);
 
 	// Second triangle.
-	vertices[3].position = Vector3(left, top, 0.0f);  // Top left.
+	m_VerticesTextureVL[3].position = Vector3(left, top, 0.0f);  // Top left.
 	//vertices[3].texture = Vector2(0.0f, 0.0f);
-	vertices[3].color = Color(1.0f, 0.0f, 0.0f, 1.0f);
+	m_VerticesTextureVL[3].color = Color(1.0f, 0.0f, 0.0f, 1.0f);
 
-	vertices[4].position = Vector3(right, top, 0.0f);  // Top right.
+	m_VerticesTextureVL[4].position = Vector3(right, top, 0.0f);  // Top right.
 	//vertices[4].texture = Vector2(1.0f, 0.0f);
-	vertices[4].color = Color(1.0f, 0.0f, 0.0f, 1.0f);
+	m_VerticesTextureVL[4].color = Color(1.0f, 0.0f, 0.0f, 1.0f);
 
-	vertices[5].position = Vector3(right, bottom, 0.0f);  // Bottom right.
+	m_VerticesTextureVL[5].position = Vector3(right, bottom, 0.0f);  // Bottom right.
 	//vertices[5].texture = Vector2(1.0f, 1.0f);
-	vertices[5].color = Color(1.0f, 0.0f, 0.0f, 1.0f);
+	m_VerticesTextureVL[5].color = Color(1.0f, 0.0f, 0.0f, 1.0f);
 
 	// Lock the vertex buffer so it can be written to.
 	result = deviceContext->Map(m_VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -185,10 +200,10 @@ bool Bitmap::UpdateBuffers(ID3D11DeviceContext* deviceContext, int positionX, in
 	}
 
 	// Get a pointer to the data in the vertex buffer.
-	verticesPtr = (VertexType*)mappedResource.pData;
+	verticesPtr = (TextureVL*)mappedResource.pData;
 
 	// Copy the data into the vertex buffer.
-	memcpy(verticesPtr, (void*)vertices, (sizeof(VertexType) * m_VertexCount));
+	memcpy(verticesPtr, (void*)m_VerticesTextureVL, (sizeof(TextureVL) * m_VertexCount));
 
 	// Unlock the vertex buffer.
 	deviceContext->Unmap(m_VertexBuffer, 0);

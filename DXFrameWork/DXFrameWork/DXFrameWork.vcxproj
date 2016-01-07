@@ -52,6 +52,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXFrameWork\Debug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -82,8 +83,10 @@
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ColorShader.h" />
+    <ClInclude Include="Cube.h" />
     <ClInclude Include="D3D.h" />
     <ClInclude Include="DebugWindow.h" />
+    <ClInclude Include="DrawData.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="RenderTexture.h" />
@@ -99,6 +102,7 @@
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ColorShader.cpp" />
+    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="D3D.cpp" />
     <ClCompile Include="DebugWindow.cpp" />
     <ClCompile Include="Object.cpp" />
@@ -120,6 +124,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="color.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TextureDynamic.fx">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

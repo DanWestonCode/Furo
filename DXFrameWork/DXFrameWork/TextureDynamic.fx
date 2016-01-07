@@ -42,7 +42,7 @@ SamplerState SampleType : register(s0);
 PixelInputType TextureVertexShader(VertexInputType input)
 {
 	PixelInputType output;
-
+	
 	// Change the position vector to be 4 units for proper matrix calculations.
 	input.position.w = 1.0f;
 
@@ -65,7 +65,8 @@ PixelInputType TextureVertexShader(VertexInputType input)
 float4 TexturePixelShader(PixelInputType input) : SV_TARGET
 {
 	float4 textureColor;
-	textureColor = input.color + shaderTexture.Sample(SampleType, input.tex);
 
+	textureColor = input.color*shaderTexture.Sample(SampleType, input.tex);
+	textureColor.a = input.color.a;
 	return textureColor;
 }

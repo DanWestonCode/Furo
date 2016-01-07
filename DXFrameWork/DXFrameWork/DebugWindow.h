@@ -13,11 +13,11 @@ public:
 	DebugWindow(const DebugWindow&);
 	~DebugWindow();
 
-	virtual HRESULT Initialize(ID3D11Device*, int, int, int, int);
+	virtual HRESULT Initialize(ID3D11Device*, int, int, int, int, HWND);
 	virtual void Shutdown();
-	virtual void Render(ID3D11DeviceContext*, int, int);
+	virtual void Render(ID3D11DeviceContext*, int, int, XMMATRIX*, XMMATRIX*, XMMATRIX*, ID3D11ShaderResourceView*);
 
-	void InitializeBuffers(ID3D11Device*);
+	void InitializeBuffers(ID3D11Device*, HWND);
 	bool UpdateBuffers(ID3D11DeviceContext*, int, int);
 
 private:

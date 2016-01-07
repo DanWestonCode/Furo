@@ -75,7 +75,7 @@ void Camera::Render()
 	lookAt.z = 1.0f;
 
 	// Load it into a XMVECTOR structure.
-	lookAtVector = XMLoadFloat3(&lookAt);
+	lookAtVector = XMLoadFloat3(&lookAt);	
 
 	// Set the yaw (Y axis), pitch (X axis), and roll (Z axis) rotations in radians.
 	pitch = m_rotationX * 0.0174532925f;

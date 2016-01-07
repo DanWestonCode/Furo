@@ -15,7 +15,7 @@
 #include "VertexModel.h"
 #include "textureshader.h"
 
-class Bitmap: public VertexModel
+__declspec(align(16)) class Bitmap : public VertexModel
 {
 public:
 	Bitmap();

@@ -103,6 +103,9 @@
     <None Include="color.fx">
       <Filter>Shaders\colour</Filter>
     </None>
+    <None Include="TextureDynamic.fx">
+      <Filter>Shaders\texture</Filter>
+    </None>
     <None Include="texture.fx">
       <Filter>Shaders\texture</Filter>
     </None>
@@ -153,6 +156,12 @@
     <ClInclude Include="DebugWindow.h">
       <Filter>Header Files\Engine\Rendering\RenderTexture</Filter>
     </ClInclude>
+    <ClInclude Include="DrawData.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Cube.h">
+      <Filter>Header Files\Engine\Objects\Object3D\Vertex Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -201,6 +210,9 @@
       <Filter>Source Files\Engine\Objects\Objects2D</Filter>
     </ClCompile>
     <ClCompile Include="DebugWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

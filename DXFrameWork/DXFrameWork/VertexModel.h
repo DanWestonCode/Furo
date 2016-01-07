@@ -1,28 +1,35 @@
 #ifndef _MODEL_H_
 #define _MODEL_H_
 
-#include "TextureLoader.h"
-#include "Object.h"
 #include <d3d11.h>
+
+#include "TextureLoader.h"
+#include "textureshader.h"
+#include "ColorShader.h"
+#include "Object.h"
+
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
-class VertexModel : public Object
+//Fix for 'warning C4316: object allocated on the heap may not be aligned 16'
+__declspec(align(16)) class VertexModel : public Object
 {
 protected:
-	struct VertexType
+	//vertex buffer layout for texture shader
+	struct TextureVL
 	{
 		Vector3 position;
 		Color color;
 		Vector2 texture;
 	};
-
-	enum VertexBufferType
+	//vertex buffer layout for color shader
+	struct ColorVL
 	{
-		_static,
-		_dynamic
+		Vector3 position;
+		Color color;
 	};
+
 public:
 	VertexModel();
 	VertexModel(const VertexModel&);
@@ -45,11 +52,19 @@ private:
 protected:
 	//Build index and vertex buffers
 	HRESULT BuildDynamicVB(ID3D11Device*, int, void*);
+	HRESULT BuildImmuatbleVB(ID3D11Device*, int, void*);
 	HRESULT BuildStaticVB(ID3D11Device*, int, void*);
 	HRESULT BuildIndexBuffer(ID3D11Device*, void*);
+	HRESULT BuildImmuatbleIB(ID3D11Device*, void*);
+
 	HRESULT LoadTexture(ID3D11Device*, WCHAR*);
 
-	VertexType* vertices;
+	TextureVL* m_VerticesTextureVL;
+	ColorVL* m_VerticesColorVL;
+
+	TextureShader* m_TextureShader;
+	ColorShader* m_ColorShader;
+
 	ID3D11Buffer *m_VertexBuffer, *m_IndexBuffer;
 	ID3D11ShaderResourceView* m_Texture;
 	int m_VertexCount, m_IndexCount;

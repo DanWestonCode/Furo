@@ -10,10 +10,10 @@
 #ifndef _QUAD_H_
 #define _QUAD_H_
 #include "VertexModel.h"
-#include "textureshader.h"
+
 
 using namespace DirectX;
-class Quad : public VertexModel
+__declspec(align(16)) class Quad : public VertexModel
 {
 protected:
 public:
@@ -29,10 +29,7 @@ public:
 
 	void UpdateTexture(float*);
 
-	int numTris;
-
-private:
-	TextureShader* m_TextureShader;
+	int numTris;	
 };
 
 #endif

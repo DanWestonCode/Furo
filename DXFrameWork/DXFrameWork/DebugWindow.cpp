@@ -17,7 +17,7 @@ DebugWindow::~DebugWindow()
 }
 
 
-HRESULT DebugWindow::Initialize(ID3D11Device* device, int screenWidth, int screenHeight, int bitmapWidth, int bitmapHeight)
+HRESULT DebugWindow::Initialize(ID3D11Device* device, int screenWidth, int screenHeight, int bitmapWidth, int bitmapHeight, HWND hwnd)
 {	
 	// Store the screen size.
 	m_screenWidth = screenWidth;
@@ -32,7 +32,7 @@ HRESULT DebugWindow::Initialize(ID3D11Device* device, int screenWidth, int scree
 	m_previousPosY = -1;
 
 	// Initialize the vertex and index buffers.
-	InitializeBuffers(device);
+	InitializeBuffers(device, hwnd);
 
 	return true;
 }
@@ -46,23 +46,49 @@ void DebugWindow::Shutdown()
 }
 
 
-void DebugWindow::Render(ID3D11DeviceContext* deviceContext, int positionX, int positionY)
+void DebugWindow::Render(ID3D11DeviceContext* deviceContext, int positionX, int positionY, XMMATRIX* worldMatrix, XMMATRIX* viewMatrix, XMMATRIX* projectionMatrix, ID3D11ShaderResourceView* _RenderTexture)
 {
 	// Re-build the dynamic vertex buffer for rendering to possibly a different location on the screen.
 	UpdateBuffers(deviceContext, positionX, positionY);
 
-	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	VertexModel::Render(deviceContext);
+	unsigned int stride;
+	unsigned int offset;
+
+	// Set vertex buffer stride and offset.
+	stride = sizeof(TextureVL);
+	offset = 0;
+
+	// Set the vertex buffer to active in the input assembler so it can be rendered.
+	deviceContext->IASetVertexBuffers(0, 1, &m_VertexBuffer, &stride, &offset);
+
+	// Set the index buffer to active in the input assembler so it can be rendered.
+	deviceContext->IASetIndexBuffer(m_IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// Render the model using the texture shader.
+	m_TextureShader->Render(deviceContext, GetIndexCount(), &m_worldMatrix, viewMatrix, projectionMatrix, _RenderTexture, 1.0f);
 }
 
 
-void DebugWindow::InitializeBuffers(ID3D11Device* device)
+void DebugWindow::InitializeBuffers(ID3D11Device* device, HWND hwnd)
 {
 	unsigned long* indices;
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
 	int i;
+
+	//Set up shader
+	//Create the texture shader object.
+	m_TextureShader = new TextureShader;
+	// Initialize the texture shader object.
+	result = m_TextureShader->Initialize(device, hwnd);
+	if (FAILED(result))
+	{
+		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
+	}
 
 
 	// Set the number of vertices in the vertex array.
@@ -72,13 +98,13 @@ void DebugWindow::InitializeBuffers(ID3D11Device* device)
 	m_IndexCount = m_VertexCount;
 
 	// Create the vertex array.
-	vertices = new VertexType[m_VertexCount];
+	m_VerticesTextureVL = new TextureVL[m_VertexCount];
 
 	// Create the index array.
 	indices = new unsigned long[m_IndexCount];
 	
 	// Initialize vertex array to zeros at first.
-	memset(vertices, 0, (sizeof(VertexType) * m_VertexCount));
+	memset(m_VerticesTextureVL, 0, (sizeof(TextureVL) * m_VertexCount));
 
 	// Load the index array with data.
 	for (i = 0; i < m_IndexCount; i++)
@@ -86,11 +112,11 @@ void DebugWindow::InitializeBuffers(ID3D11Device* device)
 		indices[i] = i;
 	}
 
-	BuildDynamicVB(device, m_VertexCount, vertices);
+	BuildDynamicVB(device, m_VertexCount, m_VerticesTextureVL);
 	BuildIndexBuffer(device, indices);
 
-	delete[] vertices;
-	vertices = 0;
+	/*delete[] m_VerticesTextureVL;
+	vertices = 0;*/
 
 	delete[] indices;
 	indices = 0;
@@ -100,9 +126,9 @@ void DebugWindow::InitializeBuffers(ID3D11Device* device)
 bool DebugWindow::UpdateBuffers(ID3D11DeviceContext* deviceContext, int positionX, int positionY)
 {
 	float left, right, top, bottom;
-	VertexType* vertices;
+	TextureVL* vertices;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	VertexType* verticesPtr;
+	TextureVL* verticesPtr;
 	HRESULT result;
 
 
@@ -130,7 +156,7 @@ bool DebugWindow::UpdateBuffers(ID3D11DeviceContext* deviceContext, int position
 	bottom = top - (float)m_bitmapHeight;
 
 	// Create the vertex array.
-	vertices = new VertexType[m_VertexCount];
+	vertices = new TextureVL[m_VertexCount];
 	if (!vertices)
 	{
 		return false;
@@ -171,10 +197,10 @@ bool DebugWindow::UpdateBuffers(ID3D11DeviceContext* deviceContext, int position
 	}
 
 	// Get a pointer to the data in the vertex buffer.
-	verticesPtr = (VertexType*)mappedResource.pData;
+	verticesPtr = (TextureVL*)mappedResource.pData;
 
 	// Copy the data into the vertex buffer.
-	memcpy(verticesPtr, (void*)vertices, (sizeof(VertexType) * m_VertexCount));
+	memcpy(verticesPtr, (void*)vertices, (sizeof(TextureVL) * m_VertexCount));
 
 	// Unlock the vertex buffer.
 	deviceContext->Unmap(m_VertexBuffer, 0);

@@ -1,3 +1,10 @@
+/*******************************************************************/
+/* The D3D class encapsulates the set up stages for creating a     */
+/* DirectX Device. This class is based from RasterTek tutorials    */
+/*                                                                 */
+/* Created by Daniel Weston 21/12/2015                             */
+/*******************************************************************/
+
 #ifndef _D3D_H_
 #define  _D3D_H_
 
@@ -10,13 +17,16 @@
 #include <DirectXMath.h>
 using namespace DirectX;
 
-class D3D
+__declspec(align(16)) class D3D
 {
 public:
 	D3D();
 	D3D(const D3D&);
 	~D3D();
 	 
+
+	void* operator new(size_t);
+	void operator delete(void*);
 
 	bool Initialize(int, int, bool, HWND, bool, float, float);
 	void Shutdown();
@@ -54,6 +64,7 @@ private:
 	ID3D11DepthStencilState* m_depthStencilState;
 	ID3D11DepthStencilView* m_depthStencilView;
 	ID3D11RasterizerState* m_rasterState;
+	ID3D11RasterizerState* m_rasterStateFrontFaceCull;
 
 	XMMATRIX m_projectionMatrix;
 	XMMATRIX m_worldMatrix;

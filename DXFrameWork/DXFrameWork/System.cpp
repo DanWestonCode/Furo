@@ -18,7 +18,7 @@ System::System(const System& other)
 bool System::Initialize()
 {
 	int screenWidth, screenHeight;
-	bool result;
+	HRESULT result;
 
 
 	// Initialize the width and height of the screen to zero before sending the variables into the function.
@@ -48,7 +48,7 @@ bool System::Initialize()
 
 	// Initialize the graphics object.
  	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
-	if (!result)
+	if (FAILED(result))
 	{
 		return false;
 	}

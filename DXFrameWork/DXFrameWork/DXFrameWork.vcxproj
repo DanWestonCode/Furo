@@ -89,6 +89,7 @@
     <ClInclude Include="DrawData.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="RayCaster.h" />
     <ClInclude Include="RenderTexture.h" />
     <ClInclude Include="TextureLoader.h" />
     <ClInclude Include="TextureShader.h" />
@@ -107,6 +108,7 @@
     <ClCompile Include="DebugWindow.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="RayCaster.cpp" />
     <ClCompile Include="RenderTexture.cpp" />
     <ClCompile Include="TextureLoader.cpp" />
     <ClCompile Include="TextureShader.cpp" />
@@ -134,6 +136,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="texture.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="model_position.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="raycast.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

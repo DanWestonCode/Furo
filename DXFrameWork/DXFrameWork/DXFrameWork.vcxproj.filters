@@ -109,6 +109,12 @@
     <None Include="texture.fx">
       <Filter>Shaders\texture</Filter>
     </None>
+    <None Include="model_position.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="raycast.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VertexModel.h">
@@ -162,6 +168,9 @@
     <ClInclude Include="Cube.h">
       <Filter>Header Files\Engine\Objects\Object3D\Vertex Objects</Filter>
     </ClInclude>
+    <ClInclude Include="RayCaster.h">
+      <Filter>Header Files\Engine\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -212,8 +221,11 @@
     <ClCompile Include="DebugWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Cube.cpp">
+    <ClCompile Include="RayCaster.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube.cpp">
+      <Filter>Source Files\Engine\Objects\Objects3D\Vertex Objects</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

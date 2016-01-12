@@ -18,6 +18,7 @@ struct PixelInputType
 {
 	float4 position : SV_POSITION;
 	float4 color : COLOR;
+	float4 tex : TEXCOORD0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -36,7 +37,9 @@ PixelInputType ColorVertexShader(VertexInputType input)
 	output.position = mul(output.position, projectionMatrix);
 
 	// Store the input color for the pixel shader to use.
-	output.color = input.color;
+	//output.color = input.color;
+
+	output.tex = input.position;
 
 	return output;
 }
@@ -46,5 +49,5 @@ PixelInputType ColorVertexShader(VertexInputType input)
 ////////////////////////////////////////////////////////////////////////////////
 float4 ColorPixelShader(PixelInputType input) : SV_TARGET
 {
-	return input.color;
+	return input.tex;
 }

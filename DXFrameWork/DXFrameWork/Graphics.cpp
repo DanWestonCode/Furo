@@ -55,7 +55,7 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(0.0f, 0.0f, -150.0f);
+	m_Camera->SetPosition(0.0f, 0.0f, -5.0f);
 
 	////create new quad
 	m_Quad = new Quad;
@@ -123,6 +123,10 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return S_FALSE;
 	}
 	m_furo->Initialize(Furo::FluidField::TwoDimensional, 100, 0.1f);
+
+	//m_RayCaster = new RayCaster;
+	//m_RayCaster->Initialize(m_D3D->GetDevice(), hwnd);
+	//m_RayCaster->SetBackBuffer(m_D3D->GetBackBuffer());
 	
 	return S_OK;
 }
@@ -254,24 +258,25 @@ bool Graphics::Render(float dt)
 	InputManager::Instance()->GetMouseLocation(x, y);
 	bool result;
 	
-	// Render the entire scene to the texture first.
 	result = RenderToTexture(dt);
 	if (!result)
 	{
 		return false;
 	}
 
+	m_D3D->SetBackBufferRenderTarget();
+
 	// Clear the buffers to begin the scene.
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
-	// Render the scene as normal to the back buffer.
+	//Render the scene as normal to the back buffer.
 	result = RenderScene(dt);
 	if (!result)
 	{
 		return false;
 	}
+	
 
-
-	// Turn off the Z buffer to begin all 2D rendering.
+	//// Turn off the Z buffer to begin all 2D rendering.
 	m_D3D->TurnZBufferOff();
 
 	// Get the world, view, and ortho matrices from the camera and d3d objects.
@@ -282,34 +287,16 @@ bool Graphics::Render(float dt)
 	// Put the debug window vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	m_DebugWindow->Render(m_D3D->GetDeviceContext(), 50, 50, &worldMatrix, &viewMatrix,
 		&orthoMatrix, m_RenderTexture->GetShaderResourceView());
-
 	
 	m_MousePointer->Render(m_D3D->GetDeviceContext(), x, y, &worldMatrix, &viewMatrix, &orthoMatrix);
 
 	// Turn the Z buffer back on now that all 2D rendering has completed.
 	m_D3D->TurnZBufferOn();
 
-	// Present the rendered scene to the screen.
+	//// Present the rendered scene to the screen.
 	m_D3D->EndScene();
 
 	return true;
-	
-	//// Generate the view matrix based on the camera's position.
-	//m_Camera->Render();
-
-	//// Get the world, view, and projection matrices from the camera and d3d objects.
-	//m_D3D->GetWorldMatrix(worldMatrix);
-	//m_Camera->GetViewMatrix(viewMatrix);
-	//m_D3D->GetProjectionMatrix(projectionMatrix);
-	//m_D3D->GetOrthoMatrix(orthoMatrix);
-	//
-	//// Turn off the Z buffer to begin all 2D rendering.
-	//m_D3D->TurnZBufferOff();
-	//// Put the bitmap vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	//m_MousePointer->Render(m_D3D->GetDeviceContext(), x, y, &worldMatrix, &viewMatrix, &orthoMatrix);
-	//// Render the model using the texture shader.
-	//m_TextureShader->Render(m_D3D->GetDeviceContext(), m_MousePointer->GetIndexCount(), &worldMatrix, &viewMatrix, &orthoMatrix, m_MousePointer->GetTexture(), 1.0f);
-	//m_D3D->TurnZBufferOn();
 }
 
 bool Graphics::RenderToTexture(float dt)
@@ -320,7 +307,7 @@ bool Graphics::RenderToTexture(float dt)
 	m_RenderTexture->SetRenderTarget(m_D3D->GetDeviceContext(), m_D3D->GetDepthStencilView());
 
 	// Clear the render to texture.
-	m_RenderTexture->ClearRenderTarget(m_D3D->GetDeviceContext(), m_D3D->GetDepthStencilView(), 0.0f, 0.0f, 1.0f, 1.0f);
+	m_RenderTexture->ClearRenderTarget(m_D3D->GetDeviceContext(), m_D3D->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Render the scene now and it will draw to the render to texture instead of the back buffer.
 	result = RenderScene(dt);
@@ -357,6 +344,7 @@ bool Graphics::RenderScene(float dt)
 	{
 		(*it)->Render(m_D3D->GetDeviceContext(), &worldMatrix, &viewMatrix, &projectionMatrix);
 	}
+
 
 	return true;
 }

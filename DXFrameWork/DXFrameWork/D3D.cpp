@@ -63,6 +63,7 @@ void D3D::SetBackBufferRenderTarget()
 }
 
 
+
 /*********************************/
 /* vsync refresh rate of monitor */
 /* HWND handle to window         */
@@ -340,7 +341,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	}
 
 	// Bind the render target view and depth stencil buffer to the output render pipeline.
-	m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
+	//m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
 
 	// Setup the raster description which will determine how and what polygons will be drawn.
 	rasterDesc.AntialiasedLineEnable = false;
@@ -629,6 +630,11 @@ void D3D::TurnZBufferOff()
 {
 	m_deviceContext->OMSetDepthStencilState(m_depthDisabledStencilState, 1);
 	return;
+}
+
+void D3D::SetRasterState(ID3D11RasterizerState* state)
+{
+	m_deviceContext->RSSetState(state);
 }
 
 

@@ -55,7 +55,7 @@ bool ColorShader::Render(ID3D11DeviceContext* deviceContext, int indexCount, Mat
 	return true;
 }
 
-//Load shader files and make them useble within DX11
+//Load shader files and make them usable within DX11
 bool ColorShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename)
 {
 	//Set up of the layout for the vertex buffer 
@@ -177,6 +177,22 @@ bool ColorShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFil
 		return false;
 	}
 
+
+	// Back face culling
+	D3D11_RASTERIZER_DESC rasterizerDesc;
+	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
+	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	rasterizerDesc.CullMode = D3D11_CULL_BACK;
+	rasterizerDesc.DepthClipEnable = true;
+	(device->CreateRasterizerState(&rasterizerDesc, &backfacecull));
+
+	// Front face culling
+	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
+	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	rasterizerDesc.CullMode = D3D11_CULL_FRONT;
+	rasterizerDesc.DepthClipEnable = true;
+	(device->CreateRasterizerState(&rasterizerDesc, &frontfacecull));
+
 	return true;
 }
 
@@ -296,7 +312,10 @@ void ColorShader::RenderShader(ID3D11DeviceContext* deviceContext, int indexCoun
 	deviceContext->VSSetShader(m_vertexShader, NULL, 0);
 	deviceContext->PSSetShader(m_pixelShader, NULL, 0);
 
-	// Render the triangle.
+	deviceContext->RSSetState(frontfacecull);
+	deviceContext->DrawIndexed(indexCount, 0, 0);
+
+	deviceContext->RSSetState(backfacecull);
 	deviceContext->DrawIndexed(indexCount, 0, 0);
 
 	return;

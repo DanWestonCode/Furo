@@ -24,6 +24,8 @@ public:
 	void ClearRenderTarget(ID3D11DeviceContext*, ID3D11DepthStencilView*, float, float, float, float);
 	ID3D11ShaderResourceView* GetShaderResourceView();
 
+	ID3D11ShaderResourceView* CreateRenderTargets(ID3D11Device*, int, int);
+
 private:
 	ID3D11Texture2D* m_renderTargetTexture;
 	ID3D11RenderTargetView* m_renderTargetView;

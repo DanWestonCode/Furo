@@ -23,7 +23,6 @@ Cube::~Cube()
 
 HRESULT Cube::Initialize(ID3D11Device* device, HWND hwnd)
 {
-	
 	HRESULT result;
 	unsigned long* indices;
 
@@ -58,68 +57,111 @@ HRESULT Cube::Initialize(ID3D11Device* device, HWND hwnd)
 		indices[i] = i;
 	}
 
-	float m_floatSize = 1;
+	float m_floatSize = 20;
 
 	int vert = 0;
+	Color colour = Color(1.0f,0.0f,0.0f,1.0f);
+	Color colour2 = Color(0.0f, 1.0f, 0.0f, 1.0f);
+	Color colour3 = Color(0.0f, 0.0f, 1.0f, 1.0f);
+	Color colour4 = Color(1.0f, 1.0f, 0.0f, 1.0f);
+	Color colour5 = Color(0.0f, 1.0f, 1.0f, 1.0f);
+	Color colour6 = Color(1.0f, 0.0f, 1.0f, 1.0f);
+
 	//top
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y + m_floatSize, m_pos.z + m_floatSize);	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y + m_floatSize, m_pos.z + m_floatSize);	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y + m_floatSize, m_pos.z);	
+	m_VerticesColorVL[vert].color = colour;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y + m_floatSize, m_pos.z + m_floatSize);
+	m_VerticesColorVL[vert].color = colour;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y + m_floatSize, m_pos.z + m_floatSize);
+	m_VerticesColorVL[vert].color = colour;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y + m_floatSize, m_pos.z);
 
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y + m_floatSize, m_pos.z);	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y + m_floatSize, m_pos.z);	
+	m_VerticesColorVL[vert].color = colour;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y + m_floatSize, m_pos.z);
+	m_VerticesColorVL[vert].color = colour;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y + m_floatSize, m_pos.z);
+	m_VerticesColorVL[vert].color = colour;
 	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y + m_floatSize, m_pos.z + m_floatSize);
 
-	//front	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y, m_pos.z + m_floatSize);	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y, m_pos.z + m_floatSize);	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y + m_floatSize, m_pos.z + m_floatSize);
-
-	
+	//front
+	m_VerticesColorVL[vert].color = colour2;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y, m_pos.z + m_floatSize);
+	m_VerticesColorVL[vert].color = colour2;
 	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y, m_pos.z + m_floatSize);
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y + m_floatSize, m_pos.z + m_floatSize);	
+	m_VerticesColorVL[vert].color = colour2;
 	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y + m_floatSize, m_pos.z + m_floatSize);
 
-	//right	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y, m_pos.z);	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y + m_floatSize, m_pos.z);	
+	m_VerticesColorVL[vert].color = colour2;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y, m_pos.z + m_floatSize);
+	m_VerticesColorVL[vert].color = colour2;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y + m_floatSize, m_pos.z + m_floatSize);
+	m_VerticesColorVL[vert].color = colour2;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y + m_floatSize, m_pos.z + m_floatSize);
+
+	//right
+	m_VerticesColorVL[vert].color = colour3;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y, m_pos.z);
+	m_VerticesColorVL[vert].color = colour3;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y + m_floatSize, m_pos.z);
+	m_VerticesColorVL[vert].color = colour3;
 	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y + m_floatSize, m_pos.z + m_floatSize);
 
-	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y, m_pos.z);	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y + m_floatSize, m_pos.z + m_floatSize);	
+	m_VerticesColorVL[vert].color = colour3;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y, m_pos.z);
+	m_VerticesColorVL[vert].color = colour3;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y + m_floatSize, m_pos.z + m_floatSize);
+	m_VerticesColorVL[vert].color = colour3;
 	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y, m_pos.z + m_floatSize);
 
-	//down	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y, m_pos.z);	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y, m_pos.z + m_floatSize);	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y, m_pos.z + m_floatSize);	
+	//down
+	m_VerticesColorVL[vert].color = colour4;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y, m_pos.z);
+	m_VerticesColorVL[vert].color = colour4;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y, m_pos.z + m_floatSize);
+	m_VerticesColorVL[vert].color = colour4;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y, m_pos.z + m_floatSize);
 
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y, m_pos.z);	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y, m_pos.z);	
+	m_VerticesColorVL[vert].color = colour4;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y, m_pos.z);
+	m_VerticesColorVL[vert].color = colour4;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y, m_pos.z);
+	m_VerticesColorVL[vert].color = colour4;
 	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y, m_pos.z + m_floatSize);
 
 	//back
+	m_VerticesColorVL[vert].color = colour5;
 	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y, m_pos.z);
+	m_VerticesColorVL[vert].color = colour5;
 	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y + m_floatSize, m_pos.z);
+	m_VerticesColorVL[vert].color = colour5;
 	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y, m_pos.z);
 
+	m_VerticesColorVL[vert].color = colour5;
 	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y + m_floatSize, m_pos.z);
+	m_VerticesColorVL[vert].color = colour5;
 	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y + m_floatSize, m_pos.z);
+	m_VerticesColorVL[vert].color = colour5;
 	m_VerticesColorVL[vert++].position = Vector3(m_pos.x + m_floatSize, m_pos.y, m_pos.z);
 
-	//left	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y + m_floatSize, m_pos.z + m_floatSize);	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y + m_floatSize, m_pos.z);	
+	//left
+	m_VerticesColorVL[vert].color = colour6;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y + m_floatSize, m_pos.z + m_floatSize);
+	m_VerticesColorVL[vert].color = colour6;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y + m_floatSize, m_pos.z);
+	m_VerticesColorVL[vert].color = colour6;
 	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y, m_pos.z);
 
-	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y, m_pos.z);	
-	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y, m_pos.z + m_floatSize);	
+	m_VerticesColorVL[vert].color = colour6;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y, m_pos.z);
+	m_VerticesColorVL[vert].color = colour6;
+	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y, m_pos.z + m_floatSize);
+	m_VerticesColorVL[vert].color = colour6;
 	m_VerticesColorVL[vert++].position = Vector3(m_pos.x, m_pos.y + m_floatSize, m_pos.z + m_floatSize);
 
 	BuildImmuatbleVB(device, m_VertexCount, m_VerticesColorVL);
 	BuildImmuatbleIB(device, indices);
+
+	/*BuildStaticVB(device, m_VertexCount, m_VerticesColorVL);
+	BuildIndexBuffer(device, indices);*/
 
 	// Release the arrays now that the vertex and index buffers have been created and loaded.
 	/*delete[] m_VerticesColorVLColorVLTextureVL;
@@ -127,7 +169,6 @@ HRESULT Cube::Initialize(ID3D11Device* device, HWND hwnd)
 
 	delete[] indices;
 	indices = 0;
-	return S_OK;
 }
 
 void Cube::Render(ID3D11DeviceContext* deviceContext, XMMATRIX* worldMatrix, XMMATRIX* viewMatrix, XMMATRIX* projectionMatrix)
@@ -141,7 +182,6 @@ void Cube::Render(ID3D11DeviceContext* deviceContext, XMMATRIX* worldMatrix, XMM
 	stride = sizeof(ColorVL);
 	offset = 0;
 
-	
 	// Set the vertex buffer to active in the input assembler so it can be rendered.
 	deviceContext->IASetVertexBuffers(0, 1, &m_VertexBuffer, &stride, &offset);
 
@@ -151,14 +191,8 @@ void Cube::Render(ID3D11DeviceContext* deviceContext, XMMATRIX* worldMatrix, XMM
 	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	//deviceContext->RSSetState(m_rasterState);
-	////// Render the model using the texture shader.
-	//m_ColorShader->Render(deviceContext, 36, m_worldMatrix, *viewMatrix, *projectionMatrix);
-
-	//deviceContext->RSSetState(m_rasterStateFrontFaceCull);
-	//// Render the model using the texture shader.
-	m_ColorShader->Render(deviceContext, m_IndexCount, m_worldMatrix, *viewMatrix, *projectionMatrix);
-
+	// Render the model using the texture shader.
+	m_ColorShader->Render(deviceContext, 36, m_worldMatrix, *viewMatrix, *projectionMatrix);
 }
 
 void Cube::Shutdown()

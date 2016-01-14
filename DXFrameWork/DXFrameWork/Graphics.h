@@ -13,7 +13,6 @@
 #include "RenderTexture.h"
 #include "DebugWindow.h"
 #include "DrawData.h"
-#include "RayCaster.h"
 #include "Furo.h"
 
 const bool FULL_SCREEN = false;
@@ -50,7 +49,6 @@ private:
 	RenderTexture* m_RenderTexture;
 	DebugWindow* m_DebugWindow;
 	DrawData* m_DD;
-	RayCaster* m_RayCaster;
 
 	bool action = false;
 };

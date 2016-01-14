@@ -48,15 +48,9 @@ public:
 	void TurnZBufferOn();
 	void TurnZBufferOff();
 
-	void SetRasterState(ID3D11RasterizerState* state);
-
 	ID3D11DepthStencilView* GetDepthStencilView();
 	void SetBackBufferRenderTarget();
 
-	ID3D11RenderTargetView* GetBackBuffer(){ return m_renderTargetView; }
-
-	ID3D11RasterizerState* m_rasterState;
-	ID3D11RasterizerState* m_rasterStateFrontFaceCull;
 
 private:
 	bool m_vsync_enabled;
@@ -69,7 +63,8 @@ private:
 	ID3D11Texture2D* m_depthStencilBuffer;
 	ID3D11DepthStencilState* m_depthStencilState;
 	ID3D11DepthStencilView* m_depthStencilView;
-	
+	ID3D11RasterizerState* m_rasterState;
+	ID3D11RasterizerState* m_rasterStateFrontFaceCull;
 
 	XMMATRIX m_projectionMatrix;
 	XMMATRIX m_worldMatrix;

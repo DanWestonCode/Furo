@@ -9,7 +9,7 @@
 #ifndef Cube_h__
 #define Cube_h__
 #include "VertexModel.h"
-#include "RayCaster.h"
+#include "ColorShader.h"
 
 using namespace DirectX;
 __declspec(align(16)) class Cube : public VertexModel
@@ -27,14 +27,12 @@ public:
 	virtual void Shutdown();
 	virtual void Render(ID3D11DeviceContext*, XMMATRIX*, XMMATRIX*, XMMATRIX*);
 	virtual void Update(float);
-	
 
 	int numTris;
 
 private:
-	RayCaster* m_rayCaster;
-
-
+	ColorShader* m_ColorShader;
+	
 };
 
 #endif // Cube_h__

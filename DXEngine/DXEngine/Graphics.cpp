@@ -6,20 +6,14 @@ const UINT							g_vol = 178;
 Graphics::Graphics()
 {
 	m_D3D = nullptr;
-	m_shader = nullptr;
+	m_ModelShader = nullptr;
+	m_VolumeRaycastShader = nullptr;
+	m_ModelFront = nullptr;
+	m_ModelBack = nullptr;
+	m_VolumeTexture = nullptr;
 
-	//rendertextures
-	ModelTexture2DFront = nullptr;
-	ModelShaderResourceViewFront = nullptr;
-	ModelRenderTargetViewFront = nullptr;
-	ModelTexture2DBack = nullptr;
-	ModelShaderResourceViewBack = nullptr;
-	ModelRenderTargetViewBack = nullptr;
 	//sampler
 	g_pSamplerLinear = nullptr;
-	//volume textures 
-	VolumeTexture3D = nullptr;
-	VolumeResourceView = nullptr;
 	//vertex and index
 	CubeIB = nullptr;
 	CubeVB = nullptr;
@@ -68,18 +62,23 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return S_FALSE;
 	}
 
-	m_shader = new ShaderBase;
-
 	m_ModelShader = new ModelShader;
 	m_ModelShader->Initialize(m_D3D->GetDevice(), hwnd);
 
 	m_VolumeRaycastShader = new VolumeRaycastShader;
 	m_VolumeRaycastShader->Initialize(m_D3D->GetDevice(), hwnd, screenWidth, screenHeight);
 
+	m_ModelFront = new RenderTexture;
+	m_ModelFront->Initialize(m_D3D->GetDevice(), m_D3D->m_ScreenWidth, m_D3D->m_ScreenHeight);
+
+	m_ModelBack = new RenderTexture;
+	m_ModelBack->Initialize(m_D3D->GetDevice(), m_D3D->m_ScreenWidth, m_D3D->m_ScreenHeight);
+
+	m_VolumeTexture = new VolumeTexture;
+	m_VolumeTexture->Initialize(m_D3D->GetDevice(), 256);
+
 	//Compile Shaders
-	CreateRenderTexture(m_D3D->GetDevice());
 	CreateSampler(m_D3D->GetDevice());
-	LoadVolume(m_D3D->GetDevice());
 	CreateCube(m_D3D->GetDevice());
 
 	// Initialize the view matrix
@@ -106,33 +105,23 @@ void Graphics::Shutdown()
 		delete m_D3D;
 		m_D3D = 0;
 	}
-
-	if (m_shader)
-	{
-		m_shader = nullptr;
-	}
-
-
-	//rendertexture
-	ModelTexture2DFront->Release();
-	ModelShaderResourceViewFront->Release();
-	ModelRenderTargetViewFront->Release();
-	ModelTexture2DBack->Release();
-	ModelShaderResourceViewBack->Release();
-	ModelRenderTargetViewBack->Release();
+	
 	//sampler
 	g_pSamplerLinear->Release();
-	//volume textures
-	VolumeTexture3D->Release();
-	VolumeResourceView->Release();
+
 	CubeVB->Release();
 	CubeIB->Release();
 
 	m_VolumeRaycastShader->Shutdown();
 	m_VolumeRaycastShader = nullptr;
-
 	m_ModelShader->Shutdown();
-	m_ModelShader = nullptr;
+	m_ModelShader = nullptr;	
+	m_ModelFront->Shutdown();
+	m_ModelFront = nullptr;
+	m_ModelBack->Shutdown();
+	m_ModelBack = nullptr;
+	m_VolumeTexture->Shutdown();
+	m_VolumeTexture = nullptr;
 
 	return;
 }
@@ -189,14 +178,14 @@ bool Graphics::Render(float dt)
 
 	// Front-face culling
 	m_D3D->GetDeviceContext()->RSSetState(m_D3D->m_backFaceCull);
-	m_D3D->GetDeviceContext()->ClearRenderTargetView(ModelRenderTargetViewBack, clearColor);
-	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &ModelRenderTargetViewBack, NULL);
+	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelBack->m_RenderTargetView, clearColor);
+	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelBack->m_RenderTargetView, NULL);
 	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw back faces
 
 	// Back-face culling
 	m_D3D->GetDeviceContext()->RSSetState(m_D3D->m_FrontFaceCull);
-	m_D3D->GetDeviceContext()->ClearRenderTargetView(ModelRenderTargetViewFront, clearColor);
-	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &ModelRenderTargetViewFront, NULL);
+	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelFront->m_RenderTargetView, clearColor);
+	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelFront->m_RenderTargetView, NULL);
 	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw front faces
 
 	//// Ray-casting
@@ -218,9 +207,9 @@ bool Graphics::Render(float dt)
 	m_D3D->GetDeviceContext()->PSSetSamplers(0, 1, &g_pSamplerLinear);
 
 	//// Set textures
-	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 1, &VolumeResourceView);
-	m_D3D->GetDeviceContext()->PSSetShaderResources(1, 1, &ModelShaderResourceViewFront);
-	m_D3D->GetDeviceContext()->PSSetShaderResources(2, 1, &ModelShaderResourceViewBack);
+	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 1, &m_VolumeTexture->m_ShaderResourceView);
+	m_D3D->GetDeviceContext()->PSSetShaderResources(1, 1, &m_ModelFront->m_ShaderResourceView);
+	m_D3D->GetDeviceContext()->PSSetShaderResources(2, 1, &m_ModelBack->m_ShaderResourceView);
 
 	// Draw the cube
 	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);
@@ -232,36 +221,6 @@ bool Graphics::Render(float dt)
 	m_D3D->EndScene();
 
 	return true;
-}
-
-
-
-void Graphics::CreateRenderTexture(ID3D11Device* device)
-{
-	HRESULT hr;
-	D3D11_TEXTURE2D_DESC descTex;
-	ZeroMemory(&descTex, sizeof(descTex));
-	descTex.ArraySize = 1;
-	descTex.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	descTex.Usage = D3D11_USAGE_DEFAULT;
-	descTex.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	descTex.Width = m_D3D->m_ScreenWidth;
-	descTex.Height = m_D3D->m_ScreenHeight;
-	descTex.MipLevels = D3D11_BIND_VERTEX_BUFFER;
-	descTex.SampleDesc.Count = 1;
-	descTex.CPUAccessFlags = 0;
-
-
-	hr = device->CreateTexture2D(&descTex, NULL, &ModelTexture2DFront);
-	// Create resource view
-	hr = device->CreateShaderResourceView(ModelTexture2DFront, NULL, &ModelShaderResourceViewFront);
-	// Create render target view
-	hr = device->CreateRenderTargetView(ModelTexture2DFront, NULL, &ModelRenderTargetViewFront);
-	(device->CreateTexture2D(&descTex, NULL, &ModelTexture2DBack));
-	// Create resource view
-	hr = device->CreateShaderResourceView(ModelTexture2DBack, NULL, &ModelShaderResourceViewBack);
-	// Create render target view
-	hr = device->CreateRenderTargetView(ModelTexture2DBack, NULL, &ModelRenderTargetViewBack);
 }
 
 void Graphics::CreateSampler(ID3D11Device* device)
@@ -277,49 +236,6 @@ void Graphics::CreateSampler(ID3D11Device* device)
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	hr = device->CreateSamplerState(&sampDesc, &g_pSamplerLinear);
-}
-
-void Graphics::LoadVolume(ID3D11Device* device)
-{
-	HRESULT hr;
-	HANDLE hFile = CreateFileW(L"../DXEngine/aneurism.raw", GENERIC_READ, 0, NULL, OPEN_EXISTING, OPEN_EXISTING, NULL);
-	if (hFile == INVALID_HANDLE_VALUE) {
-		MessageBox(NULL, L"Opening volume data file failed.", L"Error", MB_ICONERROR | MB_OK);
-	}
-
-	BYTE *buffer = (BYTE *)malloc(g_iVolumeSize*g_iVolumeSize*g_iVolumeSize * sizeof(BYTE));
-
-	DWORD numberOfBytesRead = 0;
-	if (ReadFile(hFile, buffer, g_iVolumeSize*g_iVolumeSize*g_iVolumeSize, &numberOfBytesRead, NULL) == 0)
-	{
-		MessageBox(NULL, L"Reading volume data failed.", L"Error", MB_ICONERROR | MB_OK);
-	}
-
-	CloseHandle(hFile);
-
-	D3D11_TEXTURE3D_DESC descTex;
-	ZeroMemory(&descTex, sizeof(descTex));
-	descTex.Height = g_iVolumeSize;
-	descTex.Width = g_iVolumeSize;
-	descTex.Depth = g_iVolumeSize;
-	descTex.MipLevels = 1;
-	descTex.Format = DXGI_FORMAT_R8_UNORM;
-	descTex.Usage = D3D11_USAGE_DEFAULT;
-	descTex.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_SHADER_RESOURCE;
-	descTex.CPUAccessFlags = 0;
-	// Initial data
-	D3D11_SUBRESOURCE_DATA initData;
-	ZeroMemory(&initData, sizeof(initData));
-	initData.pSysMem = buffer;
-	initData.SysMemPitch = g_iVolumeSize;
-	initData.SysMemSlicePitch = g_iVolumeSize*g_iVolumeSize;
-	// Create texture
-	hr = (device->CreateTexture3D(&descTex, &initData, &VolumeTexture3D));
-
-	// Create a resource view of the texture
-	hr = (device->CreateShaderResourceView(VolumeTexture3D, NULL, &VolumeResourceView));
-
-	free(buffer);
 }
 
 void Graphics::CreateCube(ID3D11Device* device)

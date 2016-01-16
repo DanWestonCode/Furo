@@ -6,6 +6,8 @@
 
 #include "ModelShader.h"
 #include "VolumeRaycastShader.h"
+#include "RenderTexture.h"
+#include "VolumeTexture.h"
 
 
 const bool FULL_SCREEN = false;
@@ -38,12 +40,9 @@ private:
 	void Update(float);
 	bool Render(float);
 
-	//create new texture
-	void CreateRenderTexture(ID3D11Device*);
 	//create sampler
 	void CreateSampler(ID3D11Device*);
 	//load volume texture
-	void LoadVolume(ID3D11Device*);
 	//create cube
 	void CreateCube(ID3D11Device*);
 
@@ -51,22 +50,15 @@ private:
 private:
 	//engine objects
 	D3D* m_D3D;
-	ShaderBase* m_shader;
 	ModelShader* m_ModelShader;
 	VolumeRaycastShader* m_VolumeRaycastShader;
+	RenderTexture* m_ModelFront;
+	RenderTexture* m_ModelBack;
+	VolumeTexture* m_VolumeTexture;
 
-	//render textures
-	ID3D11Texture2D* ModelTexture2DFront;
-	ID3D11ShaderResourceView* ModelShaderResourceViewFront;
-	ID3D11RenderTargetView*	ModelRenderTargetViewFront;
-	ID3D11Texture2D* ModelTexture2DBack;
-	ID3D11ShaderResourceView* ModelShaderResourceViewBack;
-	ID3D11RenderTargetView*	ModelRenderTargetViewBack;
 	//sampler 
 	ID3D11SamplerState* g_pSamplerLinear;
-	//volume texture
-	ID3D11Texture3D* VolumeTexture3D;
-	ID3D11ShaderResourceView* VolumeResourceView;
+	
 	//vertex and index buffers
 	ID3D11Buffer* CubeVB;
 	ID3D11Buffer* CubeIB;

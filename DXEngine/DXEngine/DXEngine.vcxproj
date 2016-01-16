@@ -76,27 +76,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="D3D.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ModelShader.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="RenderTexture.cpp" />
     <ClCompile Include="ShaderBase.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="Time.cpp" />
+    <ClCompile Include="VertexObject.cpp" />
     <ClCompile Include="VolumeRaycastShader.cpp" />
     <ClCompile Include="VolumeTexture.cpp" />
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Cube.h" />
     <ClInclude Include="D3D.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="ModelShader.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="RenderTexture.h" />
     <ClInclude Include="ShaderBase.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="Time.h" />
+    <ClInclude Include="VertexObject.h" />
     <ClInclude Include="VolumeRaycastShader.h" />
     <ClInclude Include="VolumeTexture.h" />
   </ItemGroup>

@@ -8,6 +8,7 @@
 #include "VolumeRaycastShader.h"
 #include "RenderTexture.h"
 #include "VolumeTexture.h"
+#include "Cube.h"
 
 
 const bool FULL_SCREEN = false;
@@ -42,11 +43,6 @@ private:
 
 	//create sampler
 	void CreateSampler(ID3D11Device*);
-	//load volume texture
-	//create cube
-	void CreateCube(ID3D11Device*);
-
-
 private:
 	//engine objects
 	D3D* m_D3D;
@@ -55,13 +51,10 @@ private:
 	RenderTexture* m_ModelFront;
 	RenderTexture* m_ModelBack;
 	VolumeTexture* m_VolumeTexture;
+	Cube* m_cube;
 
 	//sampler 
 	ID3D11SamplerState* g_pSamplerLinear;
-	
-	//vertex and index buffers
-	ID3D11Buffer* CubeVB;
-	ID3D11Buffer* CubeIB;
 
 	XMMATRIX viewProj;	
 };

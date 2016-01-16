@@ -11,13 +11,11 @@ Graphics::Graphics()
 	m_ModelFront = nullptr;
 	m_ModelBack = nullptr;
 	m_VolumeTexture = nullptr;
+	m_cube = nullptr;
 
 	//sampler
 	g_pSamplerLinear = nullptr;
 	//vertex and index
-	CubeIB = nullptr;
-	CubeVB = nullptr;
-
 }
 
 Graphics::Graphics(const Graphics& other)
@@ -77,9 +75,11 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_VolumeTexture = new VolumeTexture;
 	m_VolumeTexture->Initialize(m_D3D->GetDevice(), 256);
 
+	m_cube = new Cube;
+	m_cube->Initialise(m_D3D->GetDevice());
+
 	//Compile Shaders
 	CreateSampler(m_D3D->GetDevice());
-	CreateCube(m_D3D->GetDevice());
 
 	// Initialize the view matrix
 	XMVECTOR eye = XMVectorSet(0.f, 1.5f, -5.0f, 0.f);
@@ -109,9 +109,6 @@ void Graphics::Shutdown()
 	//sampler
 	g_pSamplerLinear->Release();
 
-	CubeVB->Release();
-	CubeIB->Release();
-
 	m_VolumeRaycastShader->Shutdown();
 	m_VolumeRaycastShader = nullptr;
 	m_ModelShader->Shutdown();
@@ -122,6 +119,8 @@ void Graphics::Shutdown()
 	m_ModelBack = nullptr;
 	m_VolumeTexture->Shutdown();
 	m_VolumeTexture = nullptr;
+	m_cube->Shutdown();
+	m_cube = nullptr;
 
 	return;
 }
@@ -132,6 +131,7 @@ bool Graphics::Frame(float dt)
 	//update any objects
 	//Update(dt);
 	// Render the graphics scene.
+	m_cube->Update(dt);
 	result = Render(dt);
 	if (!result)
 	{
@@ -148,21 +148,13 @@ bool Graphics::Render(float dt)
 	float clearColor[4] = { 0.f, 0.f, 0.f, 1.f };	// red, green, blue, alpha
 	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_D3D->m_renderTargetView, clearColor);
 
-	// Set vertex buffer
-	UINT stride = sizeof(XMFLOAT3);
-	UINT offset = 0;
-	m_D3D->GetDeviceContext()->IASetVertexBuffers(0, 1, &CubeVB, &stride, &offset);
-	// Set index buffer
-	m_D3D->GetDeviceContext()->IASetIndexBuffer(CubeIB, DXGI_FORMAT_R16_UINT, 0);
+	m_cube->Render(m_D3D->GetDeviceContext());
 
-	// Set primitive topology
-	m_D3D->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	// Set the input layout
+	//// Set the input layout
 	m_D3D->GetDeviceContext()->IASetInputLayout(m_ModelShader->GetInputLayout());
 
 	// Rotate the cube around the origin
-	XMMATRIX mWorld = XMMatrixIdentity();//XMMatrixRotationY(XM_PIDIV4*dt);
+	XMMATRIX mWorld = m_cube->m_worldMatrix;//XMMatrixIdentity();//XMMatrixRotationY(XM_PIDIV4*dt);
 	MatrixBuffer cb;
 	cb.mWVP = XMMatrixMultiply(viewProj, mWorld);
 	m_D3D->GetDeviceContext()->UpdateSubresource(m_ModelShader->m_MatrixBuffer, 0, NULL, &cb, 0, 0);
@@ -238,59 +230,3 @@ void Graphics::CreateSampler(ID3D11Device* device)
 	hr = device->CreateSamplerState(&sampDesc, &g_pSamplerLinear);
 }
 
-void Graphics::CreateCube(ID3D11Device* device)
-{
-	// Create ray-cast vertex and index buffers
-	HRESULT hr = S_OK;
-	XMFLOAT3 vertices[] =
-	{
-		XMFLOAT3(-1.f, -1.f, -1.f),
-		XMFLOAT3(-1.f, -1.f, 1.f),
-		XMFLOAT3(-1.f, 1.f, -1.f),
-		XMFLOAT3(-1.f, 1.f, 1.f),
-		XMFLOAT3(1.f, -1.f, -1.f),
-		XMFLOAT3(1.f, -1.f, 1.f),
-		XMFLOAT3(1.f, 1.f, -1.f),
-		XMFLOAT3(1.f, 1.f, 1.f),
-	};
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_IMMUTABLE;
-	bd.ByteWidth = sizeof(XMFLOAT3) * ARRAYSIZE(vertices);
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-	D3D11_SUBRESOURCE_DATA initData;
-	ZeroMemory(&initData, sizeof(initData));
-	initData.pSysMem = vertices;
-	hr = (device->CreateBuffer(&bd, &initData, &CubeVB));
-
-	// Create index buffer
-	WORD indices[] =
-	{
-		0, 1, 2,
-		2, 1, 3,
-
-		0, 4, 1,
-		1, 4, 5,
-
-		0, 2, 4,
-		4, 2, 6,
-
-		1, 5, 3,
-		3, 5, 7,
-
-		2, 3, 6,
-		6, 3, 7,
-
-		5, 4, 7,
-		7, 4, 6,
-	};
-	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_IMMUTABLE;
-	bd.ByteWidth = sizeof(WORD) * ARRAYSIZE(indices);
-	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-	ZeroMemory(&initData, sizeof(initData));
-	initData.pSysMem = indices;
-	hr = (device->CreateBuffer(&bd, &initData, &CubeIB));	
-}

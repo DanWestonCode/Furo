@@ -22,9 +22,6 @@
     <Filter Include="Source Files\Rendering">
       <UniqueIdentifier>{72e3da1a-be2e-4429-94cf-b45654d8544a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Main">
-      <UniqueIdentifier>{c1535819-5127-4fb0-a39d-333c1d41d598}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Rendering">
       <UniqueIdentifier>{d216da17-ee62-4f64-9871-a7bd4b568d54}</UniqueIdentifier>
     </Filter>
@@ -39,6 +36,18 @@
     </Filter>
     <Filter Include="Source Files\Shaders">
       <UniqueIdentifier>{ebe0aa5f-66b5-4ffa-8c35-9bd6f45b443f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Textures">
+      <UniqueIdentifier>{d3435564-1185-40f3-9d75-b055861f0265}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Textures">
+      <UniqueIdentifier>{cd6c9dd7-09e2-4e68-b40e-63dcec61fcd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects">
+      <UniqueIdentifier>{dd2e843e-88f8-4520-9700-c58272352c40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects">
+      <UniqueIdentifier>{6d482e65-d6c7-4289-86af-cbeb03d461d7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -69,10 +78,19 @@
     <ClCompile Include="VolumeRaycastShader.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
+    <ClCompile Include="VolumeTexture.cpp">
+      <Filter>Source Files\Textures</Filter>
+    </ClCompile>
     <ClCompile Include="RenderTexture.cpp">
+      <Filter>Source Files\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VolumeTexture.cpp">
+    <ClCompile Include="VertexObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -101,11 +119,20 @@
     <ClInclude Include="VolumeRaycastShader.h">
       <Filter>Header Files\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="RenderTexture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VolumeTexture.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTexture.h">
+      <Filter>Header Files\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Cube.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexObject.h">
+      <Filter>Header Files\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

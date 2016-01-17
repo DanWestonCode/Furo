@@ -6,7 +6,6 @@
 /*******************************************************************/
 #include "D3D.h"
 
-
 D3D::D3D()
 {
 	m_swapChain = nullptr;
@@ -301,6 +300,9 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	// Create an orthographic projection matrix for 2D rendering.
 	m_orthoMatrix = XMMatrixOrthographicLH((float)screenWidth, (float)screenHeight, screenNear, screenDepth);
 
+	TwInit(TW_DIRECT3D11, m_device);
+	TwWindowSize(m_ScreenWidth, m_ScreenHeight);
+	m_TwBar = TwNewBar("DXEngine");
 	return true;
 }
 

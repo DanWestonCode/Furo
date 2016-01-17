@@ -143,6 +143,8 @@ bool Graphics::Frame(float dt)
 
 bool Graphics::Render(float dt)
 {
+	
+
 	// Clear the back buffer
 	//m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &TheBackBufferRenderTargetView, NULL);
 	float clearColor[4] = { 0.f, 0.f, 0.f, 1.f };	// red, green, blue, alpha
@@ -209,6 +211,8 @@ bool Graphics::Render(float dt)
 	// Un-bind textures
 	ID3D11ShaderResourceView *nullRV[3] = { NULL, NULL, NULL };
 	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 3, nullRV);
+
+	TwDraw();
 
 	m_D3D->EndScene();
 

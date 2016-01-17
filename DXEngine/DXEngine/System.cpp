@@ -17,7 +17,7 @@ System::System(const System& other)
 {
 }
 
-bool System::Initialize()
+bool System::Initialize()	
 {
 	int screenWidth, screenHeight;
 	HRESULT result;
@@ -131,6 +131,8 @@ bool System::Frame()
 //Where windows system messages are directed
 LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
+	if (TwEventWin(hwnd, umsg, wparam, lparam)) // send event message to AntTweakBar
+		return 0; // event has been handled by AntTweakBar
 	return DefWindowProc(hwnd, umsg, wparam, lparam);
 }
 
@@ -220,7 +222,7 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 	SetFocus(m_hwnd);
 
 	// Hide the mouse cursor.
-	ShowCursor(false);
+	ShowCursor(true);
 
 	//REMEMBER YOU HAVE ADDED PREPROCESSOR TO 
 	//IGNORE DEPRECATION OF freopen
@@ -239,6 +241,9 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 //if everything is okay they are direcred into MessageHandler class
 LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 {
+	if (TwEventWin(hwnd, umessage, wparam, lparam)) // send event message to AntTweakBar
+		return 0; // event has been handled by AntTweakBar
+
 	switch (umessage)
 	{
 		// Check if the window is being destroyed.

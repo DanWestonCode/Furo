@@ -6,6 +6,7 @@
 /***************************************/
 #include "System.h"
 
+
 //First function called from the framework
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline, int iCmdshow)
 {

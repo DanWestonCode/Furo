@@ -15,6 +15,8 @@
 
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include "AntTweakBar.h"
+
 using namespace DirectX;
 
 __declspec(align(16)) class D3D
@@ -52,6 +54,7 @@ public:
 	ID3D11RasterizerState* m_FrontFaceCull;
 
 	ID3D11RenderTargetView* m_renderTargetView;
+	TwBar* m_TwBar;
 
 	int m_ScreenWidth, m_ScreenHeight;
 	
@@ -76,6 +79,7 @@ private:
 	ID3D11BlendState* m_alphaDisableBlendingState;
 
 	ID3D11DepthStencilState* m_depthDisabledStencilState;
+	
 	
 };
 #endif // !_D3D_H_

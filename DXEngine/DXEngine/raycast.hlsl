@@ -118,6 +118,8 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 		// Advance the current position
 		v += step;
 	}
+
+
  
 	return float4(result.r, result.r, result.r, result.y);
 }

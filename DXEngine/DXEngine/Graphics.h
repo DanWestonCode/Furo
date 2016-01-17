@@ -9,6 +9,8 @@
 #include "RenderTexture.h"
 #include "VolumeTexture.h"
 #include "Cube.h"
+#include "Quad.h"
+#include "VolumeRenderer.h"
 
 
 const bool FULL_SCREEN = false;
@@ -51,7 +53,10 @@ private:
 	RenderTexture* m_ModelFront;
 	RenderTexture* m_ModelBack;
 	VolumeTexture* m_VolumeTexture;
+	VolumeRenderer* m_VolumeRenderer;
+
 	Cube* m_cube;
+	Quad* m_Quad;
 
 	//sampler 
 	ID3D11SamplerState* g_pSamplerLinear;

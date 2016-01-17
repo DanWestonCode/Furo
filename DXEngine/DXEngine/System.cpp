@@ -131,8 +131,6 @@ bool System::Frame()
 //Where windows system messages are directed
 LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
-	if (TwEventWin(hwnd, umsg, wparam, lparam)) // send event message to AntTweakBar
-		return 0; // event has been handled by AntTweakBar
 	return DefWindowProc(hwnd, umsg, wparam, lparam);
 }
 

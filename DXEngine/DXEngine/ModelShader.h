@@ -10,9 +10,7 @@
 #define ModelShader_h__
 
 #include "ShaderBase.h"
-#include <DirectXMath.h>
 
-using namespace DirectX;
 __declspec(align(16)) class ModelShader : public ShaderBase
 {
 protected:

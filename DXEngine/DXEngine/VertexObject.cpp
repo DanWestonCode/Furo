@@ -17,14 +17,14 @@ void VertexObject::Shutdown()
 }
 
 //Build a static Vertex buffer for vertices
-HRESULT VertexObject::BuildDynamicVB(ID3D11Device* device, int _numVerts, void* _vertices)
+HRESULT VertexObject::BuildDynamicVB(ID3D11Device* device, int _numVerts, void* _vertices, UINT _ByteWidth)
 {
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData;
 	HRESULT result = S_OK;
 	// Set up the description of the static vertex buffer.
 	vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	vertexBufferDesc.ByteWidth = sizeof(ModelVertexLayout) * _numVerts;
+	vertexBufferDesc.ByteWidth = _ByteWidth;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	vertexBufferDesc.MiscFlags = 0;
@@ -42,7 +42,7 @@ HRESULT VertexObject::BuildDynamicVB(ID3D11Device* device, int _numVerts, void* 
 }
 
 //Build a dynamic vertex buffer for vertices
-HRESULT VertexObject::BuildStaticVB(ID3D11Device* device, int _numVerts, void* _vertices)
+HRESULT VertexObject::BuildStaticVB(ID3D11Device* device, int _numVerts, void* _vertices, UINT _ByteWidth)
 {
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData;
@@ -50,7 +50,7 @@ HRESULT VertexObject::BuildStaticVB(ID3D11Device* device, int _numVerts, void* _
 
 	// Set up the description of the static vertex buffer.
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(ModelVertexLayout) * _numVerts;
+	vertexBufferDesc.ByteWidth = _ByteWidth;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;

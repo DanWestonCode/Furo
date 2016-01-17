@@ -42,7 +42,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\InteractiveFluidDyanmics;C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;$(IncludePath)</IncludePath>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -54,7 +55,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\Debug;C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
@@ -88,12 +89,15 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ModelShader.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Quad.cpp" />
     <ClCompile Include="RenderTexture.cpp" />
     <ClCompile Include="ShaderBase.cpp" />
     <ClCompile Include="System.cpp" />
+    <ClCompile Include="ColourShader.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="VertexObject.cpp" />
     <ClCompile Include="VolumeRaycastShader.cpp" />
+    <ClCompile Include="VolumeRenderer.cpp" />
     <ClCompile Include="VolumeTexture.cpp" />
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
@@ -105,12 +109,15 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="ModelShader.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="Quad.h" />
     <ClInclude Include="RenderTexture.h" />
     <ClInclude Include="ShaderBase.h" />
     <ClInclude Include="System.h" />
+    <ClInclude Include="ColourShader.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="VertexObject.h" />
     <ClInclude Include="VolumeRaycastShader.h" />
+    <ClInclude Include="VolumeRenderer.h" />
     <ClInclude Include="VolumeTexture.h" />
   </ItemGroup>
   <ItemGroup>
@@ -120,6 +127,16 @@
     <None Include="raycast.hlsl">
       <FileType>Document</FileType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="color.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\InteractiveFluidDyanmics\InteractiveFluidDyanmics.vcxproj">
+      <Project>{1db8c053-3bc0-4878-81da-64aeeaea63b5}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DXEngine", "DXEngine\DXEngine.vcxproj", "{200ADCA3-F42B-42C8-B437-6E6B36C6DAEB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Furo", "..\InteractiveFluidDyanmics\InteractiveFluidDyanmics.vcxproj", "{1DB8C053-3BC0-4878-81DA-64AEEAEA63B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,6 +17,10 @@ Global
 		{200ADCA3-F42B-42C8-B437-6E6B36C6DAEB}.Debug|Win32.Build.0 = Debug|Win32
 		{200ADCA3-F42B-42C8-B437-6E6B36C6DAEB}.Release|Win32.ActiveCfg = Release|Win32
 		{200ADCA3-F42B-42C8-B437-6E6B36C6DAEB}.Release|Win32.Build.0 = Release|Win32
+		{1DB8C053-3BC0-4878-81DA-64AEEAEA63B5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1DB8C053-3BC0-4878-81DA-64AEEAEA63B5}.Debug|Win32.Build.0 = Debug|Win32
+		{1DB8C053-3BC0-4878-81DA-64AEEAEA63B5}.Release|Win32.ActiveCfg = Release|Win32
+		{1DB8C053-3BC0-4878-81DA-64AEEAEA63B5}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

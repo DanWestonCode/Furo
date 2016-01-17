@@ -22,8 +22,8 @@ public:
 	ID3D11Buffer *m_VertexBuffer, *m_IndexBuffer;
 
 protected:
-	HRESULT BuildDynamicVB(ID3D11Device*, int, void*);
-	HRESULT BuildStaticVB(ID3D11Device*, int, void*);
+	HRESULT BuildDynamicVB(ID3D11Device*, int, void*, UINT);
+	HRESULT BuildStaticVB(ID3D11Device*, int, void*, UINT);
 	HRESULT BuildIndexBuffer(ID3D11Device*, void*);
 
 	XMFLOAT3* vertices;

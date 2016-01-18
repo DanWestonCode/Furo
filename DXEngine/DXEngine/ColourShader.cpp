@@ -80,7 +80,7 @@ void ColourShader::Render(ID3D11DeviceContext* _deviceContext, XMMATRIX* _mWVM, 
 	dataPtr = (MatrixBuffer*)mappedResource.pData;
 
 	// Copy the matrices into the constant buffer.
-	dataPtr->mWVP = *_mWVM;
+	dataPtr->mWVP = XMMatrixMultiply(Camera::Instance()->GetViewProj(),*_mWVM);
 
 	// Unlock the constant buffer.
 	_deviceContext->Unmap(m_MatrixBuffer, 0);

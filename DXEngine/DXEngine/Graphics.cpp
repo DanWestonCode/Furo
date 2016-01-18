@@ -14,7 +14,6 @@ Graphics::Graphics()
 	m_cube = nullptr;
 	m_Quad = nullptr;
 	m_VolumeRenderer = nullptr;
-
 	//sampler
 	g_pSamplerLinear = nullptr;
 	//vertex and index
@@ -45,7 +44,6 @@ void Graphics::operator delete(void* memoryBlockPtr)
 HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	HRESULT result = S_OK;
-
 	// Create the Direct3D object.
 	m_D3D = new D3D;
 	if (!m_D3D)
@@ -115,25 +113,42 @@ void Graphics::Shutdown()
 	
 	//sampler
 	g_pSamplerLinear->Release();
+	delete g_pSamplerLinear;
+	g_pSamplerLinear = nullptr;
 
 	m_VolumeRaycastShader->Shutdown();
+	delete m_VolumeRaycastShader;
 	m_VolumeRaycastShader = nullptr;
+
 	m_ModelShader->Shutdown();
+	delete m_ModelShader;
 	m_ModelShader = nullptr;	
+
 	m_ModelFront->Shutdown();
+	delete m_ModelFront;
 	m_ModelFront = nullptr;
+
 	m_ModelBack->Shutdown();
+	delete m_ModelBack;
 	m_ModelBack = nullptr;
+
 	m_VolumeTexture->Shutdown();
+	delete m_VolumeTexture;
 	m_VolumeTexture = nullptr;
+
 	m_cube->Shutdown();
+	delete m_cube;
 	m_cube = nullptr;
 
 	m_VolumeRenderer->Shutdown();
+	delete m_VolumeRenderer;
 	m_VolumeRenderer = nullptr;
 
 	m_Quad->Shutdown();
+	delete m_Quad;
 	m_Quad = nullptr;
+
+	Camera::Instance()->DeleteInstance();
 
 	TwTerminate();
 
@@ -143,10 +158,14 @@ void Graphics::Shutdown()
 bool Graphics::Frame(float dt)
 {
 	bool result;
+	
+
+	Camera::Instance()->Update(dt);
 	m_VolumeRenderer->Update(dt);
 	m_Quad->Update(dt);
 	m_cube->Update(dt);
 	result = Render(dt);
+
 	if (!result)
 	{
 		return false;
@@ -158,8 +177,11 @@ bool Graphics::Frame(float dt)
 bool Graphics::Render(float dt)
 {
 	//// Clear the back buffer
-	float clearColor[4] = { 0.f, 0.f, 0.f, 1.f };	// red, green, blue, alpha
-	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_D3D->m_renderTargetView, clearColor);
+	float ClearBackBuffer[4] = { 0.f, 0.f, 1.f, 1.f };
+	float ClearRenderTarget[4] = { 0.f, 0.f, 0.f, 1.f };
+	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_D3D->m_renderTargetView, ClearBackBuffer);
+
+	Camera::Instance()->Render();
 
 	m_cube->Render(m_D3D->GetDeviceContext());
 
@@ -170,7 +192,7 @@ bool Graphics::Render(float dt)
 	XMMATRIX mWorld = m_cube->m_worldMatrix;//XMMatrixIdentity();//XMMatrixRotationY(XM_PIDIV4*dt);
 	
 	MatrixBuffer cb;
-	cb.mWVP = XMMatrixMultiply(viewProj, mWorld);
+	cb.mWVP = XMMatrixMultiply(Camera::Instance()->GetViewProj(), mWorld);
 	m_D3D->GetDeviceContext()->UpdateSubresource(m_ModelShader->m_MatrixBuffer, 0, NULL, &cb, 0, 0);
 
 	// Render to position textures
@@ -184,13 +206,13 @@ bool Graphics::Render(float dt)
 
 	// Front-face culling
 	m_D3D->GetDeviceContext()->RSSetState(m_D3D->m_backFaceCull);
-	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelBack->m_RenderTargetView, clearColor);
+	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelBack->m_RenderTargetView, ClearRenderTarget);
 	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelBack->m_RenderTargetView, NULL);
 	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw back faces
 
 	// Back-face culling
 	m_D3D->GetDeviceContext()->RSSetState(m_D3D->m_FrontFaceCull);
-	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelFront->m_RenderTargetView, clearColor);
+	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelFront->m_RenderTargetView, ClearRenderTarget);
 	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelFront->m_RenderTargetView, NULL);
 	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw front faces
 
@@ -228,7 +250,11 @@ bool Graphics::Render(float dt)
 
 	//m_Quad->Render(m_D3D->GetDeviceContext());
 
+	
+	TwAddVarRW(m_D3D->m_TwBar, "Camera Position", TW_TYPE_DIR3F, &Camera::Instance()->m_pos, "");
 	TwDraw();
+
+
 
 	m_D3D->EndScene();
 

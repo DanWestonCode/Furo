@@ -2,6 +2,7 @@
 #define TextureShader_h__
 
 #include "ShaderBase.h"
+#include "Camera.h"
 
 __declspec(align(16)) class ColourShader : public ShaderBase
 {

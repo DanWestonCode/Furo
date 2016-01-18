@@ -1,14 +1,3 @@
-//--------------------------------------------------------------------------------------
-// Ray cast through volume
-//
-// DirectX/HLSL implementation by
-// Christian B. Mendl, 2012
-//
-// Reference:
-// http://graphicsrunner.blogspot.de/2009/01/volume-rendering-101.html
-//--------------------------------------------------------------------------------------
-
-
 #pragma pack_matrix(row_major)
 
 

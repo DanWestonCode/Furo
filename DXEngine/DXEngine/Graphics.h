@@ -11,6 +11,7 @@
 #include "Cube.h"
 #include "Quad.h"
 #include "VolumeRenderer.h"
+#include "Camera.h"
 
 
 const bool FULL_SCREEN = false;
@@ -54,7 +55,7 @@ private:
 	RenderTexture* m_ModelBack;
 	VolumeTexture* m_VolumeTexture;
 	VolumeRenderer* m_VolumeRenderer;
-
+	float result;
 	Cube* m_cube;
 	Quad* m_Quad;
 

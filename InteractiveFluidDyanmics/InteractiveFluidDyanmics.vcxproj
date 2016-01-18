@@ -77,7 +77,8 @@
   <ItemGroup>
     <ClInclude Include="fluid.h" />
     <ClInclude Include="FluidHelper.h" />
-    <ClInclude Include="FluidSolver.h" />
+    <ClInclude Include="FluidSolver2D.h" />
+    <ClInclude Include="FluidSolver3D.h" />
     <ClInclude Include="FluidThreeDimensional.h" />
     <ClInclude Include="Furo.h" />
     <ClInclude Include="FluidTwoDimensional.h" />
@@ -85,7 +86,8 @@
   <ItemGroup>
     <ClCompile Include="fluid.cpp" />
     <ClCompile Include="FluidHelper.cpp" />
-    <ClCompile Include="FluidSolver.cpp" />
+    <ClCompile Include="FluidSolver2D.cpp" />
+    <ClCompile Include="FluidSolver3D.cpp" />
     <ClCompile Include="FluidThreeDimensional.cpp" />
     <ClCompile Include="Furo.cpp" />
     <ClCompile Include="FluidTwoDimensional.cpp" />

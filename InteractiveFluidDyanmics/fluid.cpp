@@ -4,7 +4,7 @@
 /* using Furo. The fluid base class contains base member var */
 /* -iables which are shared between both 3D and 2D based sim */
 /*                                                           */
-/* Created by Daniel Weston 19/12/2015                       */
+/* Created by Daniel Weston 19/12/2nullptr15                       */
 /*************************************************************/
 
 #include "fluid.h"
@@ -13,14 +13,14 @@
 Fluid::Fluid()
 {
 	//set pointers to null
-	m_velocityX = 0;
-	m_velocityY = 0;
-	m_prevVelX = 0;
-	m_prevVelY = 0;
-	m_density = 0;
-	m_prevDensity = 0;
+	m_velocityX = nullptr;
+	m_velocityY = nullptr;
+	m_prevVelX = nullptr;
+	m_prevVelY = nullptr;
+	m_density = nullptr;
+	m_prevDensity = nullptr;
 
-	m_fluidSolver = 0;
+	m_fluidSolver2D = nullptr;
 }
 
 Fluid::~Fluid()
@@ -38,42 +38,42 @@ void Fluid::Shutdown()
 	if (m_velocityX)
 	{
 		delete m_velocityX;
-		m_velocityX = 0;
+		m_velocityX = nullptr;
 	}
 	if (m_velocityY)
 	{
 		delete m_velocityY;
-		m_velocityY = 0;
+		m_velocityY = nullptr;
 	}
 	if (m_prevVelX)
 	{
 		delete m_prevVelX;
-		m_prevVelX = 0;
+		m_prevVelX = nullptr;
 	}
 	if (m_prevVelY)
 	{
 		delete m_prevVelY;
-		m_prevVelY = 0;
+		m_prevVelY = nullptr;
 	}
 	if (m_density)
 	{
 		delete m_density;
-		m_density = 0;
+		m_density = nullptr;
 	}
 	if (m_prevDensity)
 	{
 		delete m_prevDensity;
-		m_prevDensity = 0;
+		m_prevDensity = nullptr;
 	}
 	if (m_prevDensity)
 	{
 		delete m_prevDensity;
-		m_prevDensity = 0;
+		m_prevDensity = nullptr;
 	}
-	if (m_fluidSolver)
+	if (m_fluidSolver2D)
 	{
-		delete m_fluidSolver;
-		m_fluidSolver = 0;
+		delete m_fluidSolver2D;
+		m_fluidSolver2D = nullptr;
 	}
 }
 

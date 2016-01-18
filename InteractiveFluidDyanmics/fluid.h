@@ -9,7 +9,8 @@
 #ifndef _FLUID_H_
 #define _FLUID_H_
 
-#include "FluidSolver.h"
+#include "FluidSolver2D.h"
+#include "FluidSolver3D.h"
 class Fluid
 {
 //Functions
@@ -46,13 +47,18 @@ protected:
 
 	float* m_velocityX;
 	float* m_velocityY;
+	float* m_velocityZ;
+
 	float* m_prevVelX;
 	float* m_prevVelY;
+	float* m_prevVelZ;
+
 	float* m_density;
 	float* m_prevDensity;
 
 protected:
-	FluidSolver* m_fluidSolver;
+	FluidSolver2D* m_fluidSolver2D;
+	FluidSolver3D* m_fluidSolver3D;
 };
 
 #endif

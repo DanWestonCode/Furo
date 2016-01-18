@@ -2,7 +2,9 @@
 #define VolumeTexture_h__
 
 #include <d3d11.h>
-
+#include<cstring>
+#include <DirectXMath.h>
+using namespace DirectX;
 class VolumeTexture
 {
 public:

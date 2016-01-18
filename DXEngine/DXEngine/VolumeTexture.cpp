@@ -1,5 +1,4 @@
 #include "VolumeTexture.h"
-
 VolumeTexture::VolumeTexture()
 {
 	m_Texture3D = nullptr;
@@ -24,7 +23,21 @@ HRESULT VolumeTexture::Initialize(ID3D11Device* _device, int _volSize)
 		MessageBox(NULL, L"Reading volume data failed.", L"Error", MB_ICONERROR | MB_OK);
 	}
 
+	
+
+	for (int x = 0; x < 10 ; x++)
+	{
+		for (int y = 0; y < 10 ; y++)
+		{
+			for (int z = 0; z < 10; z++)
+			{
+				buffer[x + _volSize * (y + _volSize * z)] = 111;
+			}
+		}
+	}
+
 	CloseHandle(hFile);
+	
 
 	D3D11_TEXTURE3D_DESC descTex;
 	ZeroMemory(&descTex, sizeof(descTex));

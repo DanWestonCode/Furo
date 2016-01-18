@@ -16,20 +16,8 @@
     <Filter Include="Header Files\Fluids">
       <UniqueIdentifier>{753d331e-20b7-40d1-8c54-d57c8a0e068a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Fluids\2D">
-      <UniqueIdentifier>{ade4a9d4-05f5-406a-a39c-a0789c0ca406}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Fluids\3D">
-      <UniqueIdentifier>{1dab96e7-7d9a-4200-b6f3-1f4f3b4a1a38}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Fluids">
       <UniqueIdentifier>{860e2777-c456-446c-8a87-c523af9c51fc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Fluids\2D">
-      <UniqueIdentifier>{db42c69d-75e9-4049-997f-5c64ffec8c8a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Fluids\3D">
-      <UniqueIdentifier>{f9896ec7-fd10-4cbf-a033-fb93fd02a13f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Simulation">
       <UniqueIdentifier>{f22fc8e4-a405-4975-b94a-4cf52578c8f5}</UniqueIdentifier>
@@ -48,17 +36,20 @@
     <ClInclude Include="fluid.h">
       <Filter>Header Files\Fluids</Filter>
     </ClInclude>
-    <ClInclude Include="FluidSolver.h">
-      <Filter>Header Files\Simulation</Filter>
-    </ClInclude>
     <ClInclude Include="FluidHelper.h">
       <Filter>Header Files\Simulation</Filter>
     </ClInclude>
+    <ClInclude Include="FluidSolver2D.h">
+      <Filter>Header Files\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="FluidSolver3D.h">
+      <Filter>Header Files\Simulation</Filter>
+    </ClInclude>
     <ClInclude Include="FluidTwoDimensional.h">
-      <Filter>Header Files\Fluids\2D</Filter>
+      <Filter>Header Files\Fluids</Filter>
     </ClInclude>
     <ClInclude Include="FluidThreeDimensional.h">
-      <Filter>Header Files\Fluids\3D</Filter>
+      <Filter>Header Files\Fluids</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -71,14 +62,17 @@
     <ClCompile Include="FluidHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FluidTwoDimensional.cpp">
-      <Filter>Source Files\Fluids\2D</Filter>
-    </ClCompile>
-    <ClCompile Include="FluidSolver.cpp">
+    <ClCompile Include="FluidSolver2D.cpp">
       <Filter>Source Files\Simulation</Filter>
     </ClCompile>
+    <ClCompile Include="FluidTwoDimensional.cpp">
+      <Filter>Source Files\Fluids</Filter>
+    </ClCompile>
     <ClCompile Include="FluidThreeDimensional.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Fluids</Filter>
+    </ClCompile>
+    <ClCompile Include="FluidSolver3D.cpp">
+      <Filter>Source Files\Simulation</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -26,13 +26,13 @@ void FluidTwoDimensional::Initialize(int _size)
 	std::memset(m_density, 0, sizeof(float)*size);
 	std::memset(m_prevDensity, 0, sizeof(float)*size);
 
-	m_fluidSolver = new FluidSolver;
+	m_fluidSolver2D = new FluidSolver2D;
 }
 
 void FluidTwoDimensional::Update(float _dt)
 {
-	m_fluidSolver->VelocityStep(m_gridSize, m_velocityX, m_prevVelX, m_velocityY, m_prevVelY, m_visc, _dt);
-	m_fluidSolver->DensityStep(m_gridSize, m_density, m_prevDensity, m_velocityX, m_velocityY, m_diffusion, _dt);
+	m_fluidSolver2D->VelocityStep(m_gridSize, m_velocityX, m_prevVelX, m_velocityY, m_prevVelY, m_visc, _dt);
+	m_fluidSolver2D->DensityStep(m_gridSize, m_density, m_prevDensity, m_velocityX, m_velocityY, m_diffusion, _dt);
 }
 
 void FluidTwoDimensional::Clear()

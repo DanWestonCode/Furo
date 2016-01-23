@@ -27,7 +27,7 @@ HRESULT Quad::Initialise(ID3D11Device* device, HWND hwnd)
 	// Initialize the texture shader object.
 	result = m_ColorShader->Initialize(device, hwnd);
 
-	numTris = 100;
+	numTris = 200;
 	m_VertexCount = 6 * (numTris - 1) * (numTris - 1);
 	// Set the number of indices in the index array.
 	m_IndexCount = m_VertexCount;
@@ -164,38 +164,38 @@ void Quad::Update(float dt)
 	if (InputManager::Instance()->IsKeyDown(DIK_A))
 		m_rot.x += vel*dt;
 
-	m_Furo->GetFluid()->Clear();
+	m_Furo->m_textureFluid->Clear();
 	if (InputManager::Instance()->IsKeyDown(DIK_Q))
 	{
-		for (int i = 0; i < 100; i++)
+		for (int i = 35; i < 40; i++)
 		{
-			m_Furo->GetFluid()->SetDensity(i, 1, 1.0f);
+			m_Furo->m_textureFluid->SetDensity(i, 1, 1.0f);
 
 		}
 	}
 	if (InputManager::Instance()->IsKeyDown(DIK_E))
 	{
-		for (int i = 0; i < 100; i++)
+		for (int i = 35; i < 40; i++)
 		{
 
-			m_Furo->GetFluid()->SetVelX(i, 1, 100.0f);
-			m_Furo->GetFluid()->SetVelY(i, 1, 100.0f);
-			m_Furo->GetFluid()->SetVelX(i, 1, 100.0f);
-			m_Furo->GetFluid()->SetVelY(i, 1, 100.0f);
-			m_Furo->GetFluid()->SetVelX(i, 2, 100.0f);
-			m_Furo->GetFluid()->SetVelY(i, 2, 100.0f);
-			m_Furo->GetFluid()->SetVelX(i, 2, 100.0f);
-			m_Furo->GetFluid()->SetVelY(i, 2, 100.0f);
+			m_Furo->m_textureFluid->SetVelX(i, 1, 100.0f);
+			m_Furo->m_textureFluid->SetVelY(i, 1, 100.0f);
+			m_Furo->m_textureFluid->SetVelX(i, 1, 100.0f);
+			m_Furo->m_textureFluid->SetVelY(i, 1, 100.0f);
+			m_Furo->m_textureFluid->SetVelX(i, 2, 100.0f);
+			m_Furo->m_textureFluid->SetVelY(i, 2, 100.0f);
+			m_Furo->m_textureFluid->SetVelX(i, 2, 100.0f);
+			m_Furo->m_textureFluid->SetVelY(i, 2, 100.0f);
 
-			m_Furo->GetFluid()->SetVelX(i, 3, 100.0f);
-			m_Furo->GetFluid()->SetVelY(i, 3, 100.0f);
-			m_Furo->GetFluid()->SetVelX(i, 3, 100.0f);
-			m_Furo->GetFluid()->SetVelY(i, 3, 100.0f);
+			m_Furo->m_textureFluid->SetVelX(i, 3, 100.0f);
+			m_Furo->m_textureFluid->SetVelY(i, 3, 100.0f);
+			m_Furo->m_textureFluid->SetVelX(i, 3, 100.0f);
+			m_Furo->m_textureFluid->SetVelY(i, 3, 100.0f);
 		}
 
 	}
 
-	UpdateFluid(m_Furo->GetFluid()->GetDensity());
+	UpdateFluid(m_Furo->m_textureFluid->GetDensity());
 
 	VertexObject::Update(dt);
 }
@@ -207,8 +207,8 @@ void Quad::UpdateFluid(float* dens)
 	{
 		for (int j = 0; j < (numTris - 1); j++)
 		{
-			float x = dens[FluidHelper::GetIndex(numTris, i, j)];
-			//x *= 255;
+			float x = dens[i * (numTris + 2) + j];
+			x *= 255;
 
 			XMFLOAT4 colour = XMFLOAT4(x, x, x, x);
 

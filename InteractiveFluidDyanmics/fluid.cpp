@@ -15,8 +15,12 @@ Fluid::Fluid()
 	//set pointers to null
 	m_velocityX = nullptr;
 	m_velocityY = nullptr;
+	m_velocityZ = nullptr;
+
 	m_prevVelX = nullptr;
 	m_prevVelY = nullptr;
+	m_prevVelZ = nullptr;
+
 	m_density = nullptr;
 	m_prevDensity = nullptr;
 

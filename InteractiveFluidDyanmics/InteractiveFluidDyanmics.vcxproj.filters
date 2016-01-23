@@ -36,9 +36,6 @@
     <ClInclude Include="fluid.h">
       <Filter>Header Files\Fluids</Filter>
     </ClInclude>
-    <ClInclude Include="FluidHelper.h">
-      <Filter>Header Files\Simulation</Filter>
-    </ClInclude>
     <ClInclude Include="FluidSolver2D.h">
       <Filter>Header Files\Simulation</Filter>
     </ClInclude>
@@ -58,9 +55,6 @@
     </ClCompile>
     <ClCompile Include="fluid.cpp">
       <Filter>Source Files\Fluids</Filter>
-    </ClCompile>
-    <ClCompile Include="FluidHelper.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FluidSolver2D.cpp">
       <Filter>Source Files\Simulation</Filter>

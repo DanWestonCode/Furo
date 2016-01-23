@@ -13,7 +13,7 @@
 #include "FluidSolver3D.h"
 class Fluid
 {
-//Functions
+	//Functions
 public:
 	Fluid();
 	~Fluid();
@@ -22,7 +22,7 @@ public:
 	virtual void Shutdown();
 	virtual void Clear();
 
-//Getters/Setters
+	//Getters/Setters
 public:
 	int GetGridSize(){ return m_gridSize; }
 	void SetGridSize(int s){ m_gridSize = s; }
@@ -37,9 +37,11 @@ public:
 	void SetDt(float d){ m_dt = d; }
 
 	float* GetDensity(){ return m_density; }
-	void SetDensity(int x, int y, float val){ m_prevDensity[x * (m_gridSize + 2) + y] = val; }
-	void SetVelX(int x, int y, float val){ m_prevVelX[x * (m_gridSize + 2) + y] = val; }
-	void SetVelY(int x, int y, float val){ m_prevVelY[x * (m_gridSize + 2) + y] = val; }
+	virtual void SetDensity(){};
+	virtual void SetVelX(){};
+	virtual void SetVelY(){};
+	virtual void SetVelZ(){};
+
 //Variables
 protected:	
 	int m_gridSize;

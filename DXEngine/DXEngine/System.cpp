@@ -119,6 +119,7 @@ bool System::Frame()
 	}
 
 	// Do the frame processing for the graphics object.
+	std::cout << m_Time->DeltaTime() << std::endl;
 	result = m_Graphics->Frame(m_Time->DeltaTime());
 	if (!result)
 	{

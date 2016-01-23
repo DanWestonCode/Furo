@@ -4,7 +4,6 @@
 #include "VertexObject.h"
 #include "ColourShader.h"
 #include "Furo.h"
-#include "FluidHelper.h"
 
 
 __declspec(align(16)) class Quad : public VertexObject

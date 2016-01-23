@@ -2,6 +2,7 @@
 #define Furo_h__
 
 #include "FluidTwoDimensional.h"
+#include "FluidThreeDimensional.h"
 class Furo
 {
 public:
@@ -21,8 +22,9 @@ public:
 
 	Fluid* GetFluid();
 
-private:
+//private:
 	FluidTwoDimensional* m_textureFluid;
+	FluidThreeDimensional* m_volumeFluid;
 	FluidField m_simulationType;
 };
 

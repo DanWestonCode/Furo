@@ -303,7 +303,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	TwInit(TW_DIRECT3D11, m_device);
 	TwWindowSize(m_ScreenWidth, m_ScreenHeight);
 	m_TwBar = TwNewBar("DXEngine");
-	return true;
+	return S_OK;
 }
 
 

@@ -1,6 +1,6 @@
 #include "Graphics.h"
 
-const UINT							g_iVolumeSize = 256;	// voxel volume width, height and depth
+const UINT							g_iVolumeSize = 50;	// voxel volume width, height and depth
 const UINT							g_vol = 178;
 
 Graphics::Graphics()
@@ -53,7 +53,7 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Initialize the Direct3D object.
 	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
-	if (!result)
+	if (FAILED(result))
 	{
 		MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
 		return S_FALSE;
@@ -72,7 +72,7 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_ModelBack->Initialize(m_D3D->GetDevice(), m_D3D->m_ScreenWidth, m_D3D->m_ScreenHeight);
 
 	m_VolumeTexture = new VolumeTexture;
-	m_VolumeTexture->Initialize(m_D3D->GetDevice(), 256);
+	m_VolumeTexture->Initialize(m_D3D->GetDevice(), g_iVolumeSize);
 
 	m_cube = new Cube;
 	m_cube->Initialise(m_D3D->GetDevice());
@@ -80,8 +80,8 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Quad = new Quad;
 	m_Quad->Initialise(m_D3D->GetDevice(), hwnd);
 
-	m_VolumeRenderer = new VolumeRenderer;
-	m_VolumeRenderer->Initialize(m_D3D->GetDevice(), hwnd, screenWidth, screenHeight);
+	/*m_VolumeRenderer = new VolumeRenderer;
+	m_VolumeRenderer->Initialize(m_D3D->GetDevice(), hwnd, screenWidth, screenHeight);*/
 
 	//Compile Shaders
 	CreateSampler(m_D3D->GetDevice());
@@ -98,8 +98,7 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// View-projection matrix
 	viewProj = XMMatrixMultiply(mProjection, mView);
 
-	return true;
-
+	return S_OK;
 }
 
 void Graphics::Shutdown()
@@ -158,12 +157,8 @@ void Graphics::Shutdown()
 bool Graphics::Frame(float dt)
 {
 	bool result;
-	
 
-	Camera::Instance()->Update(dt);
-	m_VolumeRenderer->Update(dt);
-	m_Quad->Update(dt);
-	m_cube->Update(dt);
+	Update(dt);
 	result = Render(dt);
 
 	if (!result)
@@ -173,82 +168,90 @@ bool Graphics::Frame(float dt)
 
 	return true;
 }
+void Graphics::Update(float dt)
+{
+	Camera::Instance()->Update(dt);
+	m_Quad->Update(dt);
+
+	//m_cube->Update(dt);
+	//m_VolumeTexture->Update(m_D3D->GetDevice(), g_iVolumeSize, dt);
+}
 
 bool Graphics::Render(float dt)
 {
 	//// Clear the back buffer
-	float ClearBackBuffer[4] = { 0.f, 0.f, 1.f, 1.f };
+	float ClearBackBuffer[4] = { 0.f, 0.f, 0.f, 1.f };
 	float ClearRenderTarget[4] = { 0.f, 0.f, 0.f, 1.f };
 	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_D3D->m_renderTargetView, ClearBackBuffer);
 
 	Camera::Instance()->Render();
 
-	m_cube->Render(m_D3D->GetDeviceContext());
+	//m_cube->Render(m_D3D->GetDeviceContext());
+
+	////// Set the input layout
+	//m_D3D->GetDeviceContext()->IASetInputLayout(m_ModelShader->GetInputLayout());
+	//	
+	//// Rotate the cube around the origin
+	//XMMATRIX mWorld = m_cube->m_worldMatrix;//XMMatrixIdentity();//XMMatrixRotationY(XM_PIDIV4*dt);
+	//
+	//MatrixBuffer cb;
+	//cb.mWVP = XMMatrixMultiply(Camera::Instance()->GetViewProj(), mWorld);
+	//m_D3D->GetDeviceContext()->UpdateSubresource(m_ModelShader->m_MatrixBuffer, 0, NULL, &cb, 0, 0);
+
+	//// Render to position textures
+
+	//// Set the vertex shader
+	//m_D3D->GetDeviceContext()->VSSetShader(m_ModelShader->GetVertexShader(), NULL, 0);
+	//m_D3D->GetDeviceContext()->VSSetConstantBuffers(0, 1, &m_ModelShader->m_MatrixBuffer);
+
+	//// Set the pixel shader
+	//m_D3D->GetDeviceContext()->PSSetShader(m_ModelShader->GetPixelShader(), NULL, 0);
+
+	//// Front-face culling
+	//m_D3D->GetDeviceContext()->RSSetState(m_D3D->m_backFaceCull);
+	//m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelBack->m_RenderTargetView, ClearRenderTarget);
+	//m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelBack->m_RenderTargetView, NULL);
+	//m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw back faces
+
+	//// Back-face culling
+	//m_D3D->GetDeviceContext()->RSSetState(m_D3D->m_FrontFaceCull);
+	//m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelFront->m_RenderTargetView, ClearRenderTarget);
+	//m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelFront->m_RenderTargetView, NULL);
+	//m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw front faces
+
+	////// Ray-casting
 
 	//// Set the input layout
-	m_D3D->GetDeviceContext()->IASetInputLayout(m_ModelShader->GetInputLayout());
-		
-	// Rotate the cube around the origin
-	XMMATRIX mWorld = m_cube->m_worldMatrix;//XMMatrixIdentity();//XMMatrixRotationY(XM_PIDIV4*dt);
-	
-	MatrixBuffer cb;
-	cb.mWVP = XMMatrixMultiply(Camera::Instance()->GetViewProj(), mWorld);
-	m_D3D->GetDeviceContext()->UpdateSubresource(m_ModelShader->m_MatrixBuffer, 0, NULL, &cb, 0, 0);
+	//m_D3D->GetDeviceContext()->IASetInputLayout(m_ModelShader->GetInputLayout());
 
-	// Render to position textures
+	//// Render to standard render target
+	//m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_D3D->m_renderTargetView, NULL);
 
-	// Set the vertex shader
-	m_D3D->GetDeviceContext()->VSSetShader(m_ModelShader->GetVertexShader(), NULL, 0);
-	m_D3D->GetDeviceContext()->VSSetConstantBuffers(0, 1, &m_ModelShader->m_MatrixBuffer);
+	//// Set the vertex shader
+	//m_D3D->GetDeviceContext()->VSSetShader(m_VolumeRaycastShader->GetVertexShader(), NULL, 0);
+	//m_D3D->GetDeviceContext()->VSSetConstantBuffers(0, 1, &m_ModelShader->m_MatrixBuffer);
 
-	// Set the pixel shader
-	m_D3D->GetDeviceContext()->PSSetShader(m_ModelShader->GetPixelShader(), NULL, 0);
+	//// Set the pixel shader
+	//m_D3D->GetDeviceContext()->PSSetShader(m_VolumeRaycastShader->GetPixelShader(), NULL, 0);
+	//m_D3D->GetDeviceContext()->PSSetConstantBuffers(0, 1, &m_VolumeRaycastShader->m_WindowSizeCB);
+	////// Set texture sampler
+	//m_D3D->GetDeviceContext()->PSSetSamplers(0, 1, &g_pSamplerLinear);
 
-	// Front-face culling
-	m_D3D->GetDeviceContext()->RSSetState(m_D3D->m_backFaceCull);
-	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelBack->m_RenderTargetView, ClearRenderTarget);
-	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelBack->m_RenderTargetView, NULL);
-	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw back faces
+	////// Set textures
+	//m_D3D->GetDeviceContext()->PSSetShaderResources(0, 1, &m_VolumeTexture->m_ShaderResourceView);
+	//m_D3D->GetDeviceContext()->PSSetShaderResources(1, 1, &m_ModelFront->m_ShaderResourceView);
+	//m_D3D->GetDeviceContext()->PSSetShaderResources(2, 1, &m_ModelBack->m_ShaderResourceView);
 
-	// Back-face culling
-	m_D3D->GetDeviceContext()->RSSetState(m_D3D->m_FrontFaceCull);
-	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelFront->m_RenderTargetView, ClearRenderTarget);
-	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelFront->m_RenderTargetView, NULL);
-	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw front faces
+	//// Draw the cube
+	//m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);
 
-	//// Ray-casting
+	//// Un-bind textures
+	//ID3D11ShaderResourceView *nullRV[3] = { NULL, NULL, NULL };
+	//m_D3D->GetDeviceContext()->PSSetShaderResources(0, 3, nullRV);
 
-	// Set the input layout
-	m_D3D->GetDeviceContext()->IASetInputLayout(m_ModelShader->GetInputLayout());
+	////m_VolumeRenderer->Render(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), m_D3D);
 
-	// Render to standard render target
-	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_D3D->m_renderTargetView, NULL);
-
-	// Set the vertex shader
-	m_D3D->GetDeviceContext()->VSSetShader(m_VolumeRaycastShader->GetVertexShader(), NULL, 0);
-	m_D3D->GetDeviceContext()->VSSetConstantBuffers(0, 1, &m_ModelShader->m_MatrixBuffer);
-
-	// Set the pixel shader
-	m_D3D->GetDeviceContext()->PSSetShader(m_VolumeRaycastShader->GetPixelShader(), NULL, 0);
-	m_D3D->GetDeviceContext()->PSSetConstantBuffers(0, 1, &m_VolumeRaycastShader->m_WindowSizeCB);
-	//// Set texture sampler
-	m_D3D->GetDeviceContext()->PSSetSamplers(0, 1, &g_pSamplerLinear);
-
-	//// Set textures
-	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 1, &m_VolumeTexture->m_ShaderResourceView);
-	m_D3D->GetDeviceContext()->PSSetShaderResources(1, 1, &m_ModelFront->m_ShaderResourceView);
-	m_D3D->GetDeviceContext()->PSSetShaderResources(2, 1, &m_ModelBack->m_ShaderResourceView);
-
-	// Draw the cube
-	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);
-
-	// Un-bind textures
-	ID3D11ShaderResourceView *nullRV[3] = { NULL, NULL, NULL };
-	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 3, nullRV);
-
-	//m_VolumeRenderer->Render(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), m_D3D);
-
-	//m_Quad->Render(m_D3D->GetDeviceContext());
+	m_Quad->Render(m_D3D->GetDeviceContext());
 
 	
 	TwAddVarRW(m_D3D->m_TwBar, "Camera Position", TW_TYPE_DIR3F, &Camera::Instance()->m_pos, "");

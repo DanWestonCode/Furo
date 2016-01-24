@@ -105,6 +105,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="FluidShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="System.h">
@@ -161,6 +164,9 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="FluidShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="model_position.hlsl">
@@ -170,6 +176,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="color.fx">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Fluid.fx">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

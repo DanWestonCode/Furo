@@ -62,6 +62,8 @@ HRESULT VolumeTexture::Initialize(ID3D11Device* _device, int _volSize)
 
 void VolumeTexture::Update(ID3D11Device* _device, int _volSize, float dt)
 {
+	m_furo->Run(dt);
+	m_furo->m_volumeFluid->Clear();
 	if (InputManager::Instance()->IsKeyDown(DIK_Q))
 	{
 		for (int x = 0; x < 2; x++)
@@ -79,7 +81,7 @@ void VolumeTexture::Update(ID3D11Device* _device, int _volSize, float dt)
 		}
 	}
 
-	m_furo->Run(dt);	
+	
 
 	BYTE *buffer = (BYTE *)malloc(_volSize*_volSize*_volSize * sizeof(BYTE));
 	buffer = (BYTE *)m_furo->m_volumeFluid->GetDensity();

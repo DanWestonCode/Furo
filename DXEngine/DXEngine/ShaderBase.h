@@ -12,6 +12,7 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
+#include "Camera.h"
 
 using namespace DirectX;
 __declspec(align(16)) class ShaderBase
@@ -40,5 +41,6 @@ protected:
 	ID3D11VertexShader* m_VertexShader;
 	ID3D11InputLayout* m_InputLayout;
 	ID3D11PixelShader* m_PixelShader;
+	ID3D11SamplerState* m_Sampler;
 };
 #endif // ShaderBase_h__

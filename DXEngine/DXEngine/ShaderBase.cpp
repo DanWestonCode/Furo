@@ -7,11 +7,12 @@
 * shaders.
 * *********************************/
 #include "ShaderBase.h"
-
+#include "Camera.h"
 ShaderBase::ShaderBase()
 {
 	m_PixelShader = nullptr;
 	m_VertexShader = nullptr;
+	m_Sampler = nullptr;
 }
 ShaderBase::ShaderBase(const ShaderBase& other){}
 ShaderBase::~ShaderBase(){};
@@ -49,5 +50,7 @@ void ShaderBase::Shutdown()
 	m_PixelShader = nullptr;
 	m_InputLayout->Release();
 	m_InputLayout = nullptr;
+	m_Sampler->Release();
+	m_Sampler = nullptr;
 }
 

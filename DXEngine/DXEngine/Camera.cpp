@@ -4,7 +4,7 @@ Camera *Camera::m_Camera = nullptr;
 
 Camera::Camera()
 {
-	m_pos = XMFLOAT3(0.f, 1.5f, -500);
+	m_pos = XMFLOAT3(0.f, 1.5f, -5);
 	m_LookAt = XMFLOAT3(0.f, 0.0f, 0.f);
 	m_Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 }
@@ -20,7 +20,9 @@ void Camera::Render()
 	XMMATRIX mView = XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up));
 
 	// Initialize the projection matrix ~ FoV/Screen Asepct/ Screen Near / Screen Far
-	XMMATRIX mProjection = XMMatrixTranspose(XMMatrixPerspectiveFovLH(XM_PIDIV4, 1.f, 0.1f, 1000.f));
+	XMMATRIX mProjection = XMMatrixTranspose(XMMatrixOrthographicLH(XM_PIDIV4, 1.f, 0.1f, 1000.f));
+
+	
 
 	// View-projection matrix
 	m_ViewProjection = XMMatrixMultiply(mProjection, mView);

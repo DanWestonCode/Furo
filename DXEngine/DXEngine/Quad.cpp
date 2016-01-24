@@ -5,6 +5,9 @@ Quad::Quad()
 	m_ColorShader = nullptr;
 	m_ColorVertLayout = nullptr;
 	m_Furo = nullptr;
+	m_FluidShader = nullptr;
+	m_TextureB = nullptr;
+	m_TextureA = nullptr;
 }
 
 Quad::Quad(const Quad& other)
@@ -26,8 +29,10 @@ HRESULT Quad::Initialise(ID3D11Device* device, HWND hwnd)
 	m_ColorShader = new ColourShader;
 	// Initialize the texture shader object.
 	result = m_ColorShader->Initialize(device, hwnd);
+	m_FluidShader = new FluidShader;
+	m_FluidShader->Initialize(device, hwnd);
 
-	numTris = 200;
+	numTris = 50;
 	m_VertexCount = 6 * (numTris - 1) * (numTris - 1);
 	// Set the number of indices in the index array.
 	m_IndexCount = m_VertexCount;
@@ -74,11 +79,15 @@ HRESULT Quad::Initialise(ID3D11Device* device, HWND hwnd)
 	BuildDynamicVB(device, m_VertexCount, m_ColorVertLayout, sizeof(ColorVL) * m_VertexCount);
 	BuildIndexBuffer(device, indices);
 
-	//sizeof(_layout) * _numVerts
 
-	// Release the arrays now that the vertex and index buffers have been created and loaded.
-	/*delete[] m_VerticesTextureVL;
-	m_VerticesTextureVL = 0;*/
+	m_TextureA = new RenderTexture;
+	m_TextureB = new RenderTexture;
+	m_TextureA->Initialize(device, 800, 600);
+	m_TextureB->Initialize(device, 800, 600);
+
+
+	m_TextureA->tag = "TextureA";
+	m_TextureB->tag = "TextureB";
 
 	delete[] indices;
 	indices = 0;
@@ -93,7 +102,7 @@ HRESULT Quad::Initialise(ID3D11Device* device, HWND hwnd)
 	return S_OK;
 }
 
-void Quad::Render(ID3D11DeviceContext* deviceContext)
+void Quad::Render(ID3D11DeviceContext* deviceContext, D3D* _d3d)
 {
 	HRESULT hr;
 	ColorVL* colourPtr;
@@ -119,83 +128,98 @@ void Quad::Render(ID3D11DeviceContext* deviceContext)
 
 	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	
 
 	// Render the model using the texture shader.
-	m_ColorShader->Render(deviceContext, &m_worldMatrix, m_IndexCount);
+	//m_ColorShader->Render(deviceContext, &m_worldMatrix, m_IndexCount);
+	m_FluidShader->Render(deviceContext, &m_worldMatrix, m_IndexCount, m_TextureA, m_TextureB, _d3d->m_renderTargetView);
+
+	
+	deviceContext->OMSetRenderTargets(1, &_d3d->m_renderTargetView, NULL);
+
+	m_ColorShader->Render(deviceContext, &m_worldMatrix, m_IndexCount, m_TextureB);
+	
+ 	RenderTexture* temp = new RenderTexture;
+	//temp = m_TextureA;
+	//m_TextureA = m_TextureB;
+	//m_TextureB = temp;
+
 }
 
 void Quad::Shutdown()
 {
+	if (m_ColorShader)
+	{
+		m_ColorShader->Shutdown();
+		delete m_ColorShader;
+	}
+	if (m_ColorVertLayout)
+	{
+		m_ColorVertLayout = nullptr;
+		delete m_ColorVertLayout;
+	}
+	if (m_Furo)
+	{
+		m_Furo->Shutdown();
+		delete m_Furo;
+	}
+	if (m_FluidShader)
+	{
+		m_FluidShader->Shutdown();
+		delete m_FluidShader;
+	}
+	if (m_TextureB)
+	{
+		m_TextureB->Shutdown();
+		delete m_TextureB;
+	}
+	if (m_TextureA)
+	{
+		m_TextureA->Shutdown();
+		delete m_TextureA;
+	}
+
 	VertexObject::Shutdown();
 }
 
-//void Quad::UpdateTexture(float* dens)
-//{
-//	//float d = dens[FluidHelper::GetIndex(numTris, 1, 1)];
-//	int vert = 0;
-//	for (int i = 0; i < (numTris - 1); i++)
-//	{
-//		for (int j = 0; j < (numTris - 1); j++)
-//		{
-//			float x = dens[FluidHelper::GetIndex(numTris, i, j)];
-//			//x *= 255;
-//
-//			Color colour = Color(x, x, x, x);
-//
-//			m_VerticesTextureVL[vert].color = colour;
-//			vert++;
-//			m_VerticesTextureVL[vert].color = colour;
-//			vert++;
-//			m_VerticesTextureVL[vert].color = colour;
-//			vert++;
-//			m_VerticesTextureVL[vert].color = colour;
-//			vert++;
-//			m_VerticesTextureVL[vert].color = colour;
-//			vert++;
-//			m_VerticesTextureVL[vert].color = colour;
-//			vert++;
-//		}
-//	}
-//}
-
 void Quad::Update(float dt)
 {
-	m_Furo->Run(dt);
-	if (InputManager::Instance()->IsKeyDown(DIK_A))
-		m_rot.x += vel*dt;
+	//m_Furo->Run(dt);
+	//if (InputManager::Instance()->IsKeyDown(DIK_A))
+	//	m_rot.x += vel*dt;
 
-	m_Furo->m_textureFluid->Clear();
-	if (InputManager::Instance()->IsKeyDown(DIK_Q))
-	{
-		for (int i = 35; i < 40; i++)
-		{
-			m_Furo->m_textureFluid->SetDensity(i, 1, 1.0f);
+	//m_Furo->m_textureFluid->Clear();
+	//if (InputManager::Instance()->IsKeyDown(DIK_Q))
+	//{
+	//	for (int i = 35; i < 40; i++)
+	//	{
+	//		m_Furo->m_textureFluid->SetDensity(i, 1, 1.0f);
 
-		}
-	}
-	if (InputManager::Instance()->IsKeyDown(DIK_E))
-	{
-		for (int i = 35; i < 40; i++)
-		{
+	//	}
+	//}
+	//if (InputManager::Instance()->IsKeyDown(DIK_E))
+	//{
+	//	for (int i = 35; i < 40; i++)
+	//	{
 
-			m_Furo->m_textureFluid->SetVelX(i, 1, 100.0f);
-			m_Furo->m_textureFluid->SetVelY(i, 1, 100.0f);
-			m_Furo->m_textureFluid->SetVelX(i, 1, 100.0f);
-			m_Furo->m_textureFluid->SetVelY(i, 1, 100.0f);
-			m_Furo->m_textureFluid->SetVelX(i, 2, 100.0f);
-			m_Furo->m_textureFluid->SetVelY(i, 2, 100.0f);
-			m_Furo->m_textureFluid->SetVelX(i, 2, 100.0f);
-			m_Furo->m_textureFluid->SetVelY(i, 2, 100.0f);
+	//		m_Furo->m_textureFluid->SetVelX(i, 1, 100.0f);
+	//		m_Furo->m_textureFluid->SetVelY(i, 1, 100.0f);
+	//		m_Furo->m_textureFluid->SetVelX(i, 1, 100.0f);
+	//		m_Furo->m_textureFluid->SetVelY(i, 1, 100.0f);
+	//		m_Furo->m_textureFluid->SetVelX(i, 2, 100.0f);
+	//		m_Furo->m_textureFluid->SetVelY(i, 2, 100.0f);
+	//		m_Furo->m_textureFluid->SetVelX(i, 2, 100.0f);
+	//		m_Furo->m_textureFluid->SetVelY(i, 2, 100.0f);
 
-			m_Furo->m_textureFluid->SetVelX(i, 3, 100.0f);
-			m_Furo->m_textureFluid->SetVelY(i, 3, 100.0f);
-			m_Furo->m_textureFluid->SetVelX(i, 3, 100.0f);
-			m_Furo->m_textureFluid->SetVelY(i, 3, 100.0f);
-		}
+	//		m_Furo->m_textureFluid->SetVelX(i, 3, 100.0f);
+	//		m_Furo->m_textureFluid->SetVelY(i, 3, 100.0f);
+	//		m_Furo->m_textureFluid->SetVelX(i, 3, 100.0f);
+	//		m_Furo->m_textureFluid->SetVelY(i, 3, 100.0f);
+	//	}
 
-	}
+	//}
 
-	UpdateFluid(m_Furo->m_textureFluid->GetDensity());
+	//UpdateFluid(m_Furo->m_textureFluid->GetDensity());
 
 	VertexObject::Update(dt);
 }

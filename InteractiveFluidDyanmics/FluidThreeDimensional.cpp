@@ -42,10 +42,11 @@ void FluidThreeDimensional::Update(float dt)
 
 void FluidThreeDimensional::Clear()
 {
-	int size = (m_gridSize + 2) * (m_gridSize + 2);
+	int size = (m_gridSize)* (m_gridSize)* (m_gridSize);
 	//change to memset
 	std::memset(m_prevVelX, 0, sizeof(float)*size);
 	std::memset(m_prevVelY, 0, sizeof(float)*size);
+	std::memset(m_prevVelZ, 0, sizeof(float)*size);
 	std::memset(m_prevDensity, 0, sizeof(float)*size);
 }
 

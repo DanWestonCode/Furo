@@ -1,8 +1,8 @@
-#ifndef TextureShader_h__
-#define TextureShader_h__
+#ifndef ColourShader_h__
+#define ColourShader_h__
 
 #include "ShaderBase.h"
-#include "Camera.h"
+#include "RenderTexture.h"
 
 __declspec(align(16)) class ColourShader : public ShaderBase
 {
@@ -18,8 +18,8 @@ public:
 
 	virtual HRESULT Initialize(ID3D11Device*, HWND);
 	virtual void Shutdown();
-	void Render(ID3D11DeviceContext*, XMMATRIX*, int);
+	void Render(ID3D11DeviceContext*, XMMATRIX*, int, RenderTexture*);
 
 	ID3D11Buffer* m_MatrixBuffer;
 };
-#endif // TextureShader_h__
+#endif // ColourShader_h__

@@ -44,3 +44,8 @@ void RenderTexture::Shutdown()
 	m_RenderTargetView = nullptr;
 }
 
+void RenderTexture::SetRenderTarget(ID3D11DeviceContext* _deviceContext)
+{
+	_deviceContext->OMSetRenderTargets(1, &m_RenderTargetView, NULL);
+}
+

@@ -3,8 +3,10 @@
 
 #include "VertexObject.h"
 #include "ColourShader.h"
+#include "FluidShader.h"
+#include "RenderTexture.h"
 #include "Furo.h"
-
+#include "D3D.h"
 
 __declspec(align(16)) class Quad : public VertexObject
 {
@@ -21,7 +23,7 @@ public:
 	~Quad();
 
 	virtual HRESULT Initialise(ID3D11Device*, HWND);
-	virtual void Render(ID3D11DeviceContext*);
+	virtual void Render(ID3D11DeviceContext*, D3D*);
 	virtual void Shutdown();
 	virtual void Update(float);
 
@@ -30,7 +32,10 @@ private:
 	int numTris;
 
 public:
+	RenderTexture* m_TextureB;
+	RenderTexture* m_TextureA;
 	ColourShader* m_ColorShader;
+	FluidShader* m_FluidShader;
 	ColorVL* m_ColorVertLayout;
 	Furo* m_Furo;
 };

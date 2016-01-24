@@ -41,8 +41,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\InteractiveFluidDyanmics;C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Daniel\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Daniel\Documents\GitHub\InteractiveFluidDynamics\InteractiveFluidDyanmics;C:\Users\Daniel\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;$(IncludePath)</IncludePath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -55,13 +55,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\Debug;C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Daniel\Documents\GitHub\InteractiveFluidDynamics\DXEngine\Debug;C:\Users\Daniel\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Daniel\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>AntTweakBar.lib;AntTweakBar64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -86,6 +86,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="D3D.cpp" />
+    <ClCompile Include="FluidShader.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ModelShader.cpp" />
@@ -107,6 +108,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="D3D.h" />
+    <ClInclude Include="FluidShader.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="ModelShader.h" />
@@ -139,6 +141,11 @@
     <ProjectReference Include="..\..\InteractiveFluidDyanmics\InteractiveFluidDyanmics.vcxproj">
       <Project>{1db8c053-3bc0-4878-81da-64aeeaea63b5}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Fluid.fx">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

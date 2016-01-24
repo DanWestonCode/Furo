@@ -17,7 +17,7 @@ SamplerState samplerLinear : register(s0);
 // Constants and constant buffer variables
 //--------------------------------------------------------------------------------------
 
-static const uint g_iMaxIterations = 1000;
+static const uint g_iMaxIterations = 100;
 
 // Diagonal of a unit cube has length sqrt(3)
 static const float g_fStepSize = sqrt(3.f)/g_iMaxIterations;
@@ -99,7 +99,7 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 		float2 src = txVolume.Sample(samplerLinear, v).rr;
 
 		// Reduce alpha to have a more transparent result
-		//src.y *= 0.25;
+		src.y *= 0.25;
 
 		// Front to back blending
 		result += (1 - result.y)*src.y * src;

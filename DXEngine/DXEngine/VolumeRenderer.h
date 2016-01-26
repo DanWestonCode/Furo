@@ -26,8 +26,8 @@ public:
 
 	HRESULT Initialize(ID3D11Device*, HWND, int, int);
 	void Shutdown();
-	void Update(float);
-	void Render(ID3D11Device*, ID3D11DeviceContext*, D3D*);
+	void Update(float, D3D*);
+	void Render(D3D*);
 
 private:
 	void CreateSampler(ID3D11Device*);

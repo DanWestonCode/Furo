@@ -1,5 +1,5 @@
 #include "VolumeRenderer.h"
-const UINT							g_iVolumeSize = 256;
+const UINT							g_iVolumeSize = 50;
 VolumeRenderer::VolumeRenderer()
 {
 	m_ModelShader = nullptr;
@@ -83,12 +83,13 @@ void VolumeRenderer::Shutdown()
 	g_pSamplerLinear = nullptr;
 }
 
-void VolumeRenderer::Update(float dt)
+void VolumeRenderer::Update(float dt, D3D* _d3d)
 {
 	m_cube->Update(dt);
+	m_VolumeTexture->Update(_d3d->GetDevice(), 50, dt);
 }
 
-void VolumeRenderer::Render(ID3D11Device* _device, ID3D11DeviceContext* _deviceContext, D3D* m_D3D)
+void VolumeRenderer::Render(D3D* m_D3D)
 {
 	float ClearBackBuffer[4] = { 0.f, 0.f, 0.f, 1.f };
 	float ClearRenderTarget[4] = { 0.f, 0.f, 0.f, 1.f };
@@ -156,7 +157,6 @@ void VolumeRenderer::Render(ID3D11Device* _device, ID3D11DeviceContext* _deviceC
 	ID3D11ShaderResourceView *nullRV[3] = { NULL, NULL, NULL };
 	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 3, nullRV);
 }
-
 
 
 

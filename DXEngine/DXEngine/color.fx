@@ -46,6 +46,6 @@ PixelInputType ColorVertexShader(VertexInputType input)
 float4 ColorPixelShader(PixelInputType input) : SV_TARGET
 {
 	float4 output;
-	output = a.Sample(SampleType, input.tex);
-	return output;
+	//output = a.Sample(SampleType, input.tex);
+	return input.color;
 }

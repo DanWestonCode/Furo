@@ -86,6 +86,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="D3D.cpp" />
+    <ClCompile Include="Debug.cpp" />
     <ClCompile Include="FluidShader.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="InputManager.cpp" />
@@ -108,6 +109,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="D3D.h" />
+    <ClInclude Include="Debug.h" />
     <ClInclude Include="FluidShader.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputManager.h" />

@@ -32,7 +32,7 @@ HRESULT Quad::Initialise(ID3D11Device* device, HWND hwnd)
 	m_FluidShader = new FluidShader;
 	m_FluidShader->Initialize(device, hwnd);
 
-	numTris = 50;
+	numTris = 150;
 	m_VertexCount = 6 * (numTris - 1) * (numTris - 1);
 	// Set the number of indices in the index array.
 	m_IndexCount = m_VertexCount;
@@ -97,7 +97,7 @@ HRESULT Quad::Initialise(ID3D11Device* device, HWND hwnd)
 	{
 		return S_FALSE;
 	}
-	m_Furo->Initialize(Furo::FluidField::TwoDimensional, 100, 0.1f);
+	m_Furo->Initialize(Furo::FluidField::TwoDimensional, numTris, 0.1f);
 
 	return S_OK;
 }
@@ -131,15 +131,14 @@ void Quad::Render(ID3D11DeviceContext* deviceContext, D3D* _d3d)
 	
 
 	// Render the model using the texture shader.
-	//m_ColorShader->Render(deviceContext, &m_worldMatrix, m_IndexCount);
-	m_FluidShader->Render(deviceContext, &m_worldMatrix, m_IndexCount, m_TextureA, m_TextureB, _d3d->m_renderTargetView);
+	m_ColorShader->Render(deviceContext, &m_worldMatrix, m_IndexCount, m_TextureB);
+	/*m_FluidShader->Render(deviceContext, &m_worldMatrix, m_IndexCount, m_TextureA, m_TextureB, _d3d->m_renderTargetView);
 
-	
 	deviceContext->OMSetRenderTargets(1, &_d3d->m_renderTargetView, NULL);
 
-	m_ColorShader->Render(deviceContext, &m_worldMatrix, m_IndexCount, m_TextureB);
+	m_ColorShader->Render(deviceContext, &m_worldMatrix, m_IndexCount, m_TextureB);*/
 	
- 	RenderTexture* temp = new RenderTexture;
+ 	//RenderTexture* temp = new RenderTexture;
 	//temp = m_TextureA;
 	//m_TextureA = m_TextureB;
 	//m_TextureB = temp;
@@ -184,42 +183,43 @@ void Quad::Shutdown()
 
 void Quad::Update(float dt)
 {
-	//m_Furo->Run(dt);
-	//if (InputManager::Instance()->IsKeyDown(DIK_A))
-	//	m_rot.x += vel*dt;
+	m_Furo->Run(dt);
 
-	//m_Furo->m_textureFluid->Clear();
-	//if (InputManager::Instance()->IsKeyDown(DIK_Q))
-	//{
-	//	for (int i = 35; i < 40; i++)
-	//	{
-	//		m_Furo->m_textureFluid->SetDensity(i, 1, 1.0f);
+	if (InputManager::Instance()->IsKeyDown(DIK_A))
+		m_rot.x += vel*dt;
 
-	//	}
-	//}
-	//if (InputManager::Instance()->IsKeyDown(DIK_E))
-	//{
-	//	for (int i = 35; i < 40; i++)
-	//	{
+	m_Furo->m_textureFluid->Clear();
+	if (InputManager::Instance()->IsKeyDown(DIK_Q))
+	{
+		for (int i = 0; i < numTris; i++)
+		{
+			m_Furo->m_textureFluid->SetDensity(i, 2, 1.0f);
 
-	//		m_Furo->m_textureFluid->SetVelX(i, 1, 100.0f);
-	//		m_Furo->m_textureFluid->SetVelY(i, 1, 100.0f);
-	//		m_Furo->m_textureFluid->SetVelX(i, 1, 100.0f);
-	//		m_Furo->m_textureFluid->SetVelY(i, 1, 100.0f);
-	//		m_Furo->m_textureFluid->SetVelX(i, 2, 100.0f);
-	//		m_Furo->m_textureFluid->SetVelY(i, 2, 100.0f);
-	//		m_Furo->m_textureFluid->SetVelX(i, 2, 100.0f);
-	//		m_Furo->m_textureFluid->SetVelY(i, 2, 100.0f);
+		}
+	}
+	if (InputManager::Instance()->IsKeyDown(DIK_E))
+	{
+		for (int i = 0; i < numTris; i++)
+		{
 
-	//		m_Furo->m_textureFluid->SetVelX(i, 3, 100.0f);
-	//		m_Furo->m_textureFluid->SetVelY(i, 3, 100.0f);
-	//		m_Furo->m_textureFluid->SetVelX(i, 3, 100.0f);
-	//		m_Furo->m_textureFluid->SetVelY(i, 3, 100.0f);
-	//	}
+			m_Furo->m_textureFluid->SetVelX(i, 1, 100.0f);
+			m_Furo->m_textureFluid->SetVelY(i, 1, 100.0f);
+			m_Furo->m_textureFluid->SetVelX(i, 1, 100.0f);
+			m_Furo->m_textureFluid->SetVelY(i, 1, 100.0f);
+			m_Furo->m_textureFluid->SetVelX(i, 2, 100.0f);
+			m_Furo->m_textureFluid->SetVelY(i, 2, 100.0f);
+			m_Furo->m_textureFluid->SetVelX(i, 2, 100.0f);
+			m_Furo->m_textureFluid->SetVelY(i, 2, 100.0f);
 
-	//}
+			m_Furo->m_textureFluid->SetVelX(i, 3, 100.0f);
+			m_Furo->m_textureFluid->SetVelY(i, 3, 100.0f);
+			m_Furo->m_textureFluid->SetVelX(i, 3, 100.0f);
+			m_Furo->m_textureFluid->SetVelY(i, 3, 100.0f);
+		}
 
-	//UpdateFluid(m_Furo->m_textureFluid->GetDensity());
+	}
+
+	UpdateFluid(m_Furo->m_textureFluid->GetDensity());
 
 	VertexObject::Update(dt);
 }
@@ -234,7 +234,7 @@ void Quad::UpdateFluid(float* dens)
 			float x = dens[i * (numTris + 2) + j];
 			x *= 255;
 
-			XMFLOAT4 colour = XMFLOAT4(x, x, x, x);
+			XMFLOAT4 colour = XMFLOAT4(x, x, x, 1);
 
 			m_ColorVertLayout[vert++].color = colour;
 			m_ColorVertLayout[vert++].color = colour;

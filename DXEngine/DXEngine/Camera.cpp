@@ -19,10 +19,12 @@ void Camera::Render()
 	XMVECTOR up = XMLoadFloat3(&m_Up);//XMVectorSet(0.f, 1.f, 0.f, 0.f);
 	XMMATRIX mView = XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up));
 
-	// Initialize the projection matrix ~ FoV/Screen Asepct/ Screen Near / Screen Far
-	XMMATRIX mProjection = XMMatrixTranspose(XMMatrixPerspectiveFovLH(XM_PIDIV4, 1.f, 0.1f, 1000.f));
 
-	
+	float screenAspect = (float)800 / (float)600;
+
+	// Initialize the projection matrix ~ FoV/Screen Asepct/ Screen Near / Screen Far
+	XMMATRIX mProjection = XMMatrixTranspose(XMMatrixPerspectiveFovLH(XM_PIDIV4, screenAspect, 0.1f, 1000.f));
+
 
 	// View-projection matrix
 	m_ViewProjection = XMMatrixMultiply(mProjection, mView);

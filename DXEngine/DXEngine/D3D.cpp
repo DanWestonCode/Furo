@@ -6,6 +6,8 @@
 /*******************************************************************/
 #include "D3D.h"
 
+#include "Debug.h"
+
 D3D::D3D()
 {
 	m_swapChain = nullptr;
@@ -43,8 +45,6 @@ void D3D::operator delete(void* memoryBlockPtr)
 	return;
 }
 
-
-
 bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, bool fullscreen,
 	float screenDepth, float screenNear)
 {
@@ -62,11 +62,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 	D3D_FEATURE_LEVEL featureLevel;
 	ID3D11Texture2D* backBufferPtr;
-	D3D11_TEXTURE2D_DESC depthBufferDesc;
-	//D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
 	D3D11_RASTERIZER_DESC rasterDesc;
-	D3D11_VIEWPORT viewport;
 	float fieldOfView, screenAspect;
 
 
@@ -138,6 +134,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 
 	// Store the dedicated video card memory in megabytes.
 	m_videoCardMemory = (int)(adapterDesc.DedicatedVideoMemory / 1024 / 1024);
+
 
 	// Convert the name of the video card to a character array and store it.
 	error = wcstombs_s(&stringLength, m_videoCardDescription, 128, adapterDesc.Description, 128);
@@ -399,17 +396,8 @@ void D3D::Shutdown()
 }
 
 
-void D3D::BeginScene(float red, float green, float blue, float alpha)
+void D3D::BeginScene(float* color)
 {
-	float color[4];
-
-
-	// Setup the color to clear the buffer to.
-	color[0] = red;
-	color[1] = green;
-	color[2] = blue;
-	color[3] = alpha;
-
 	// Clear the back buffer.
 	m_deviceContext->ClearRenderTargetView(m_renderTargetView, color);
 
@@ -434,46 +422,5 @@ void D3D::EndScene()
 		m_swapChain->Present(0, 0);
 	}
 
-	return;
-}
-
-
-ID3D11Device* D3D::GetDevice()
-{
-	return m_device;
-}
-
-
-ID3D11DeviceContext* D3D::GetDeviceContext()
-{
-	return m_deviceContext;
-}
-
-
-void D3D::GetProjectionMatrix(XMMATRIX& projectionMatrix)
-{
-	projectionMatrix = m_projectionMatrix;
-	return;
-}
-
-
-void D3D::GetWorldMatrix(XMMATRIX& worldMatrix)
-{
-	worldMatrix = m_worldMatrix;
-	return;
-}
-
-
-void D3D::GetOrthoMatrix(XMMATRIX& orthoMatrix)
-{
-	orthoMatrix = m_orthoMatrix;
-	return;
-}
-
-
-void D3D::GetVideoCardInfo(char* cardName, int& memory)
-{
-	strcpy_s(cardName, 128, m_videoCardDescription);
-	memory = m_videoCardMemory;
 	return;
 }

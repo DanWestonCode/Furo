@@ -8,6 +8,7 @@ Graphics::Graphics()
 	m_D3D = nullptr;
 	m_Quad = nullptr;
 	m_VolumeRenderer = nullptr;
+	m_ClearBackBufferColor = nullptr;
 }
 
 Graphics::Graphics(const Graphics& other)
@@ -53,6 +54,15 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_VolumeRenderer = new VolumeRenderer;
 	m_VolumeRenderer->Initialize(m_D3D->GetDevice(), hwnd, m_D3D->m_ScreenWidth, m_D3D->m_ScreenHeight);
 
+	m_Quad = new Quad;
+	m_Quad->Initialise(m_D3D->GetDevice(), hwnd);
+
+	m_ClearBackBufferColor = new float;
+	std::memset(m_ClearBackBufferColor, 0, sizeof(float)*4);
+
+
+	TwAddVarRW(m_D3D->m_TwBar, "Camera Position", TW_TYPE_DIR3F, &Camera::Instance()->m_pos, "");
+	TwAddVarRW(m_D3D->m_TwBar, "Back Buffer", TW_TYPE_COLOR3F, &*m_ClearBackBufferColor, "");
 
 	return S_OK;
 }
@@ -87,6 +97,7 @@ bool Graphics::Frame(float dt)
 	bool result;
 
 	Update(dt);
+	
 	result = Render(dt);
 
 	if (!result)
@@ -96,33 +107,26 @@ bool Graphics::Frame(float dt)
 
 	return true;
 }
+
 void Graphics::Update(float dt)
 {
 	Camera::Instance()->Update(dt);
 	//m_Quad->Update(dt);
 
-	//m_VolumeTexture->Update(m_D3D->GetDevice(), g_iVolumeSize, dt);
-
-	m_VolumeRenderer->Update(dt);
+	m_VolumeRenderer->Update(dt, m_D3D);
 }
 
 bool Graphics::Render(float dt)
-{
-	//// Clear the back buffer
-	float ClearBackBuffer[4] = { 1.f, 0.f, 0.f, 1.f };
-	float ClearRenderTarget[4] = { 0.f, 0.f, 0.f, 1.f };
-	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_D3D->m_renderTargetView, NULL);
-	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_D3D->m_renderTargetView, ClearBackBuffer);
+{	
+	m_D3D->BeginScene(m_ClearBackBufferColor);
 
 	Camera::Instance()->Render();
 	
+	m_VolumeRenderer->Render(m_D3D);
+
 	//m_Quad->Render(m_D3D->GetDeviceContext(), m_D3D);	
-	
-	m_VolumeRenderer->Render(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), m_D3D);	
 
-	TwAddVarRW(m_D3D->m_TwBar, "Camera Position", TW_TYPE_DIR3F, &Camera::Instance()->m_pos, "");
 	TwDraw();
-
 	m_D3D->EndScene();
 
 	return true;

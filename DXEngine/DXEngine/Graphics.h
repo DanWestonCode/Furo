@@ -38,7 +38,7 @@ private:
 	//engine objects
 	D3D* m_D3D;
 	VolumeRenderer* m_VolumeRenderer;
-	float result;
+	float* m_ClearBackBufferColor;
 	Quad* m_Quad;
 };
 

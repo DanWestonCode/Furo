@@ -33,23 +33,28 @@ public:
 	bool Initialize(int, int, bool, HWND, bool, float, float);
 	void Shutdown();
 
-	void BeginScene(float, float, float, float);
+	void BeginScene(float*);
 	void EndScene();
 
-	ID3D11Device* GetDevice();
-	ID3D11DeviceContext* GetDeviceContext();
 
-	void GetProjectionMatrix(XMMATRIX&);
-	void GetWorldMatrix(XMMATRIX&);
-	void GetOrthoMatrix(XMMATRIX&);
+	ID3D11Device* GetDevice(){ return m_device;	}
+	ID3D11DeviceContext* GetDeviceContext(){ return m_deviceContext; }
+	ID3D11DepthStencilView* GetDepthStencilView(){ return m_depthStencilView; }
+	void GetProjectionMatrix(XMMATRIX& projectionMatrix) {
+		projectionMatrix = m_projectionMatrix;
+		return;
+	}
+	void GetWorldMatrix(XMMATRIX& worldMatrix)	{
+		worldMatrix = m_worldMatrix;
+		return;
+	}
+	void GetOrthoMatrix(XMMATRIX& orthoMatrix)	{
+		orthoMatrix = m_orthoMatrix;
+		return;
+	}
 
-	void GetVideoCardInfo(char*, int&);
-
-	void SetRasterState(ID3D11RasterizerState* state);
-
-	ID3D11DepthStencilView* GetDepthStencilView();
-	void SetBackBufferRenderTarget();
-
+public:
+	
 	ID3D11RasterizerState* m_backFaceCull;
 	ID3D11RasterizerState* m_FrontFaceCull;
 
@@ -57,11 +62,12 @@ public:
 	TwBar* m_TwBar;
 
 	int m_ScreenWidth, m_ScreenHeight;
-	
-	bool m_vsync_enabled;
-	int m_videoCardMemory;
-	char m_videoCardDescription[128];
-	IDXGISwapChain* m_swapChain;
+private:
+
+	XMMATRIX m_projectionMatrix;
+	XMMATRIX m_worldMatrix;
+	XMMATRIX m_orthoMatrix;
+
 	ID3D11Device* m_device;
 	ID3D11DeviceContext* m_deviceContext;
 
@@ -69,16 +75,10 @@ public:
 	ID3D11DepthStencilState* m_depthStencilState;
 	ID3D11DepthStencilView* m_depthStencilView;
 
+	bool m_vsync_enabled;
+	int m_videoCardMemory;
+	char m_videoCardDescription[128];
+	IDXGISwapChain* m_swapChain;
 
-	XMMATRIX m_projectionMatrix;
-	XMMATRIX m_worldMatrix;
-	XMMATRIX m_orthoMatrix;
-
-	ID3D11BlendState* m_alphaEnableBlendingState;
-	ID3D11BlendState* m_alphaDisableBlendingState;
-
-	ID3D11DepthStencilState* m_depthDisabledStencilState;
-	
-	
 };
 #endif // !_D3D_H_

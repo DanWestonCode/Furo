@@ -35,6 +35,8 @@ void Graphics::operator delete(void* memoryBlockPtr)
 
 HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
+	_hwnd = hwnd;
+
 	HRESULT result = S_OK;
 	// Create the Direct3D object.
 	m_D3D = new D3D;
@@ -54,16 +56,15 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_VolumeRenderer = new VolumeRenderer;
 	m_VolumeRenderer->Initialize(m_D3D->GetDevice(), hwnd, m_D3D->m_ScreenWidth, m_D3D->m_ScreenHeight);
 
-	m_Quad = new Quad;
-	m_Quad->Initialise(m_D3D->GetDevice(), hwnd);
-
-	m_ClearBackBufferColor = new float;
-	std::memset(m_ClearBackBufferColor, 0, sizeof(float)*4);
-
-
+	//TwAddSeparator(m_D3D->m_TwBar, "Engine", "");
 	TwAddVarRW(m_D3D->m_TwBar, "Camera Position", TW_TYPE_DIR3F, &Camera::Instance()->m_pos, "");
 	TwAddVarRW(m_D3D->m_TwBar, "Back Buffer", TW_TYPE_COLOR3F, &*m_ClearBackBufferColor, "");
 
+	m_Quad = new Quad;
+	m_Quad->Initialise(m_D3D, hwnd);
+
+	m_ClearBackBufferColor = new float;
+	std::memset(m_ClearBackBufferColor, 0, sizeof(float)*4);
 	return S_OK;
 }
 
@@ -111,9 +112,9 @@ bool Graphics::Frame(float dt)
 void Graphics::Update(float dt)
 {
 	Camera::Instance()->Update(dt);
-	//m_Quad->Update(dt);
+	m_Quad->Update(dt, _hwnd);
 
-	m_VolumeRenderer->Update(dt, m_D3D);
+	//m_VolumeRenderer->Update(dt, m_D3D);
 }
 
 bool Graphics::Render(float dt)
@@ -122,9 +123,9 @@ bool Graphics::Render(float dt)
 
 	Camera::Instance()->Render();
 	
-	m_VolumeRenderer->Render(m_D3D);
+	//m_VolumeRenderer->Render(m_D3D);
 
-	//m_Quad->Render(m_D3D->GetDeviceContext(), m_D3D);	
+	m_Quad->Render(m_D3D->GetDeviceContext(), m_D3D);	
 
 	TwDraw();
 	m_D3D->EndScene();

@@ -30,6 +30,8 @@ public:
 	void Shutdown();
 	bool Frame(float);
 
+	HWND _hwnd;
+
 private:
 	void Update(float);
 	bool Render(float);

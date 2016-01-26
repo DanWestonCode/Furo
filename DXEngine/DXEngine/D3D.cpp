@@ -7,6 +7,7 @@
 #include "D3D.h"
 
 #include "Debug.h"
+#include <string>
 
 D3D::D3D()
 {
@@ -48,7 +49,6 @@ void D3D::operator delete(void* memoryBlockPtr)
 bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, bool fullscreen,
 	float screenDepth, float screenNear)
 {
-
 	m_ScreenHeight = screenHeight;
 	m_ScreenWidth = screenWidth;
 	HRESULT result;

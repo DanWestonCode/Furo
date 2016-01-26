@@ -30,7 +30,6 @@ PixelInputType ColorVertexShader(VertexInputType input)
 
 	// Calculate the position of the vertex against the world, view, and projection matrices.
 	output.position = mul(worldMatrix, input.position);
-
 	// Store the input color for the pixel shader to use.
 	output.color = input.color;
 	output.color.a = input.color.a;
@@ -46,6 +45,6 @@ PixelInputType ColorVertexShader(VertexInputType input)
 float4 ColorPixelShader(PixelInputType input) : SV_TARGET
 {
 	float4 output;
-	//output = a.Sample(SampleType, input.tex);
+	//return a.Sample(SampleType, input.tex);
 	return input.color;
 }

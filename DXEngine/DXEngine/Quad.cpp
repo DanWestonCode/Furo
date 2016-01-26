@@ -1,5 +1,5 @@
 #include "Quad.h"
-
+#include "Camera.h"
 Quad::Quad()
 {
 	m_ColorShader = nullptr;
@@ -8,6 +8,9 @@ Quad::Quad()
 	m_FluidShader = nullptr;
 	m_TextureB = nullptr;
 	m_TextureA = nullptr;
+
+	veloMulti = 0;
+	densityMulti = 0;
 }
 
 Quad::Quad(const Quad& other)
@@ -19,20 +22,19 @@ Quad::~Quad()
 
 }
 
-HRESULT Quad::Initialise(ID3D11Device* device, HWND hwnd)
+HRESULT Quad::Initialise(D3D* _d3d, HWND hwnd)
 {
 	HRESULT result;
-	unsigned long* indices;
-
+	
 	//Set up shader
 	//Create the texture shader object.
 	m_ColorShader = new ColourShader;
 	// Initialize the texture shader object.
-	result = m_ColorShader->Initialize(device, hwnd);
+	result = m_ColorShader->Initialize(_d3d->GetDevice(), hwnd);
 	m_FluidShader = new FluidShader;
-	m_FluidShader->Initialize(device, hwnd);
+	m_FluidShader->Initialize(_d3d->GetDevice(), hwnd);
 
-	numTris = 150;
+	numTris = 120;
 	m_VertexCount = 6 * (numTris - 1) * (numTris - 1);
 	// Set the number of indices in the index array.
 	m_IndexCount = m_VertexCount;
@@ -41,16 +43,19 @@ HRESULT Quad::Initialise(ID3D11Device* device, HWND hwnd)
 	m_ColorVertLayout = new ColorVL[m_VertexCount];
 
 	// Create the index array.
-	indices = new unsigned long[m_IndexCount];
+	//indices = new unsigned long[6]{0,1,2,0,2,3};
 
+	
+	indices = new unsigned long[m_IndexCount];
 	//set up indices
 	for (int i = 0; i < m_VertexCount; i++)
 	{
 		indices[i] = i;
 	}
 
+	
 	int vert = 0;
-	XMFLOAT4 colour = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	XMFLOAT4 colour = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
 	//create vertices
 	for (int i = 0; i < (numTris - 1); i++)
 	{
@@ -76,21 +81,39 @@ HRESULT Quad::Initialise(ID3D11Device* device, HWND hwnd)
 		}
 	}
 
-	BuildDynamicVB(device, m_VertexCount, m_ColorVertLayout, sizeof(ColorVL) * m_VertexCount);
-	BuildIndexBuffer(device, indices);
 
+	//// Create the index array.
+	//indices = new unsigned long[6]{0, 1, 3, 1, 2, 3};
+
+	//int vert = 0;
+	//XMFLOAT4 colour = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+
+	//m_ColorVertLayout[vert].color = colour;
+	//m_ColorVertLayout[vert++].position = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+	//m_ColorVertLayout[vert].color = colour;
+	//m_ColorVertLayout[vert++].position = XMFLOAT3(0.0f, 1.0f, 0.0f);
+
+	//m_ColorVertLayout[vert].color = colour;
+	//m_ColorVertLayout[vert++].position = XMFLOAT3(1.0f, 1.0f, 0.0f);
+
+	//m_ColorVertLayout[vert].color = colour;
+	//m_ColorVertLayout[vert++].position = XMFLOAT3(1.0f, 0.0f, 0.0f);
 
 	m_TextureA = new RenderTexture;
 	m_TextureB = new RenderTexture;
-	m_TextureA->Initialize(device, 800, 600);
-	m_TextureB->Initialize(device, 800, 600);
+	m_TextureA->Initialize(_d3d->GetDevice(), 800, 600);
+	m_TextureB->Initialize(_d3d->GetDevice(), 800, 600);
 
 
 	m_TextureA->tag = "TextureA";
 	m_TextureB->tag = "TextureB";
 
-	delete[] indices;
-	indices = 0;
+	BuildDynamicVB(_d3d->GetDevice(), m_VertexCount, m_ColorVertLayout, sizeof(ColorVL) * m_VertexCount);
+	BuildIndexBuffer(_d3d->GetDevice(), indices);
+
+	/*delete[] indices;
+	indices = 0;*/
 
 	m_Furo = new Furo;
 	if (!m_Furo)
@@ -98,6 +121,12 @@ HRESULT Quad::Initialise(ID3D11Device* device, HWND hwnd)
 		return S_FALSE;
 	}
 	m_Furo->Initialize(Furo::FluidField::TwoDimensional, numTris, 0.1f);
+
+	TwAddSeparator(_d3d->m_TwBar, "Furo", "");
+	TwAddVarRW(_d3d->m_TwBar, "Diffusion", TW_TYPE_FLOAT, &m_Furo->GetFluid()->m_diffusion, "");
+	TwAddVarRW(_d3d->m_TwBar, "Viscosity", TW_TYPE_FLOAT, &m_Furo->GetFluid()->m_visc, "");
+	TwAddVarRW(_d3d->m_TwBar, "Density", TW_TYPE_FLOAT, &densityMulti, "");
+	TwAddVarRW(_d3d->m_TwBar, "Velocity", TW_TYPE_FLOAT, &veloMulti, "");
 
 	return S_OK;
 }
@@ -131,18 +160,21 @@ void Quad::Render(ID3D11DeviceContext* deviceContext, D3D* _d3d)
 	
 
 	// Render the model using the texture shader.
+	//m_ColorShader->Render(deviceContext, &m_worldMatrix, m_IndexCount, m_TextureB);
+	//m_FluidShader->Render(deviceContext, &m_worldMatrix, m_IndexCount, m_TextureA, m_TextureB, _d3d->m_renderTargetView);
+
+	//deviceContext->OMSetRenderTargets(1, &_d3d->m_renderTargetView, NULL);
+
 	m_ColorShader->Render(deviceContext, &m_worldMatrix, m_IndexCount, m_TextureB);
-	/*m_FluidShader->Render(deviceContext, &m_worldMatrix, m_IndexCount, m_TextureA, m_TextureB, _d3d->m_renderTargetView);
-
-	deviceContext->OMSetRenderTargets(1, &_d3d->m_renderTargetView, NULL);
-
-	m_ColorShader->Render(deviceContext, &m_worldMatrix, m_IndexCount, m_TextureB);*/
 	
- 	//RenderTexture* temp = new RenderTexture;
-	//temp = m_TextureA;
-	//m_TextureA = m_TextureB;
-	//m_TextureB = temp;
+	/*RenderTexture* temp = new RenderTexture;
+	temp = m_TextureA;
+	m_TextureA = m_TextureB;
+	m_TextureB = temp;*/
 
+	//Un-bind textures
+	ID3D11ShaderResourceView *nullRV[2] = { NULL, NULL };
+	deviceContext->PSSetShaderResources(0, 2, nullRV);
 }
 
 void Quad::Shutdown()
@@ -181,9 +213,33 @@ void Quad::Shutdown()
 	VertexObject::Shutdown();
 }
 
-void Quad::Update(float dt)
+void Quad::Update(float dt, HWND hwnd)
 {
 	m_Furo->Run(dt);
+
+	POINT mousePos;
+	GetCursorPos(&mousePos);
+	ScreenToClient(hwnd, &mousePos);
+
+	int mousex = mousePos.x;
+	int mousey = mousePos.y;
+
+
+	float tempDist;
+	float closestDist = FLT_MAX;
+	int hitIndex;
+
+
+	//XMVECTOR prwsPos, prwsDir;
+	//PickRayVector(mousex, mousey, prwsPos, prwsDir);
+	//tempDist = Pick(prwsPos, prwsDir, Camera::Instance()->m_worldMatrix);
+
+	//if (tempDist < closestDistee
+	//{
+	//	closestDist = tempDist;
+	//	//hitIndex = i;
+	//}
+
 
 	if (InputManager::Instance()->IsKeyDown(DIK_A))
 		m_rot.x += vel*dt;
@@ -193,7 +249,7 @@ void Quad::Update(float dt)
 	{
 		for (int i = 0; i < numTris; i++)
 		{
-			m_Furo->m_textureFluid->SetDensity(i, 2, 1.0f);
+			m_Furo->m_textureFluid->SetDensity(i, 2, densityMulti);
 
 		}
 	}
@@ -202,19 +258,19 @@ void Quad::Update(float dt)
 		for (int i = 0; i < numTris; i++)
 		{
 
-			m_Furo->m_textureFluid->SetVelX(i, 1, 100.0f);
-			m_Furo->m_textureFluid->SetVelY(i, 1, 100.0f);
-			m_Furo->m_textureFluid->SetVelX(i, 1, 100.0f);
-			m_Furo->m_textureFluid->SetVelY(i, 1, 100.0f);
-			m_Furo->m_textureFluid->SetVelX(i, 2, 100.0f);
-			m_Furo->m_textureFluid->SetVelY(i, 2, 100.0f);
-			m_Furo->m_textureFluid->SetVelX(i, 2, 100.0f);
-			m_Furo->m_textureFluid->SetVelY(i, 2, 100.0f);
+			m_Furo->m_textureFluid->SetVelX(i, 1, veloMulti);
+			m_Furo->m_textureFluid->SetVelY(i, 1, veloMulti);
+			m_Furo->m_textureFluid->SetVelX(i, 1, veloMulti);
+			m_Furo->m_textureFluid->SetVelY(i, 1, veloMulti);
+			m_Furo->m_textureFluid->SetVelX(i, 2, veloMulti);
+			m_Furo->m_textureFluid->SetVelY(i, 2, veloMulti);
+			m_Furo->m_textureFluid->SetVelX(i, 2, veloMulti);
+			m_Furo->m_textureFluid->SetVelY(i, 2, veloMulti);
 
-			m_Furo->m_textureFluid->SetVelX(i, 3, 100.0f);
-			m_Furo->m_textureFluid->SetVelY(i, 3, 100.0f);
-			m_Furo->m_textureFluid->SetVelX(i, 3, 100.0f);
-			m_Furo->m_textureFluid->SetVelY(i, 3, 100.0f);
+			m_Furo->m_textureFluid->SetVelX(i, 3, veloMulti);
+			m_Furo->m_textureFluid->SetVelY(i, 3, veloMulti);
+			m_Furo->m_textureFluid->SetVelX(i, 3, veloMulti);
+			m_Furo->m_textureFluid->SetVelY(i, 3, veloMulti);
 		}
 
 	}
@@ -232,9 +288,9 @@ void Quad::UpdateFluid(float* dens)
 		for (int j = 0; j < (numTris - 1); j++)
 		{
 			float x = dens[i * (numTris + 2) + j];
-			x *= 255;
+			//x *= 255;
 
-			XMFLOAT4 colour = XMFLOAT4(x, x, x, 1);
+			XMFLOAT4 colour = XMFLOAT4(x, x, x, x);
 
 			m_ColorVertLayout[vert++].color = colour;
 			m_ColorVertLayout[vert++].color = colour;

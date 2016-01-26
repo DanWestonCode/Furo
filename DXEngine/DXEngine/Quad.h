@@ -22,15 +22,16 @@ public:
 	Quad(const Quad&);
 	~Quad();
 
-	virtual HRESULT Initialise(ID3D11Device*, HWND);
+	virtual HRESULT Initialise(D3D*, HWND);
 	virtual void Render(ID3D11DeviceContext*, D3D*);
 	virtual void Shutdown();
-	virtual void Update(float);
+	virtual void Update(float, HWND);
+
 
 private:
 	void UpdateFluid(float* dens);
 	int numTris;
-
+	unsigned long* indices;
 public:
 	RenderTexture* m_TextureB;
 	RenderTexture* m_TextureA;
@@ -38,6 +39,9 @@ public:
 	FluidShader* m_FluidShader;
 	ColorVL* m_ColorVertLayout;
 	Furo* m_Furo;
+protected:
+	float veloMulti;
+	float densityMulti;
 };
 
 #endif // Quad_h__

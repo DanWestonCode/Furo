@@ -3,7 +3,6 @@ cbuffer MatrixBuffer
 	matrix worldMatrix;
 };
 
-
 struct VertexInputType
 {
 	float4 position : POSITION;
@@ -42,10 +41,9 @@ float4 FluidPixelShader(PixelInputType input) : SV_TARGET
 {
 	float4 textureColor;
 	
-
-	textureColor = a.Sample(SampleType, input.tex);
 	textureColor.r += 1;
-
+	textureColor = a.Sample(SampleType, input.tex);
+	
 
 	return textureColor;
 }

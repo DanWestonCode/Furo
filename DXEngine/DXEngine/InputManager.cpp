@@ -230,8 +230,7 @@ bool InputManager::IsKeyPressed(UCHAR key)
 	return false;
 }
 
-
-void InputManager::GetMouseLocation(int& mouseX, int& mouseY)
+void InputManager::GetMouseLocation(float& mouseX, float& mouseY)
 {
 	mouseX = m_mouseX;
 	mouseY = m_mouseY;

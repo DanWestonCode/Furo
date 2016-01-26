@@ -24,11 +24,12 @@ public:
 	virtual void Update(float);
 
 public:
+	XMMATRIX m_ViewProjection;
 	XMFLOAT3 m_Up, m_LookAt;
 	XMMATRIX GetViewProj(){ return m_ViewProjection; }
 	void DeleteInstance();
 protected:
-	XMMATRIX m_ViewProjection;
+	
 
 	static Camera *m_Camera;
 };

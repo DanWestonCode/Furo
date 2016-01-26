@@ -20,5 +20,5 @@ void Debug::operator delete(void* memoryBlockPtr)
 
 void Debug::Log(void* _input)
 {
-	std::cout << (std::string*)&_input << std::endl;
+	std::cout << _input << std::endl;
 }

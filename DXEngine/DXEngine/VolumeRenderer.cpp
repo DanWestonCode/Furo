@@ -157,6 +157,3 @@ void VolumeRenderer::Render(D3D* m_D3D)
 	ID3D11ShaderResourceView *nullRV[3] = { NULL, NULL, NULL };
 	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 3, nullRV);
 }
-
-
-

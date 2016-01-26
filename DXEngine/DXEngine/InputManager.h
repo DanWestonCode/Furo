@@ -28,7 +28,7 @@ public:
 	bool IsKeyDown(UCHAR);
 	bool IsKeyPressed(UCHAR);
 
-	void GetMouseLocation(int&, int&);
+	void GetMouseLocation(float&, float&);
 private:
 	bool ReadKeyboard();
 	bool ReadMouse();

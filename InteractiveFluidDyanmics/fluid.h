@@ -42,10 +42,12 @@ public:
 	virtual void SetVelY(){};
 	virtual void SetVelZ(){};
 
+	float m_diffusion, m_visc, m_dt;
+
 //Variables
 protected:	
 	int m_gridSize;
-	float m_diffusion, m_visc, m_dt;
+	
 
 	float* m_velocityX;
 	float* m_velocityY;

@@ -30,7 +30,7 @@ HRESULT VolumeTexture::Initialize(ID3D11Device* _device, int _volSize)
 		MessageBox(NULL, L"Reading volume data failed.", L"Error", MB_ICONERROR | MB_OK);
 	}
 
-	//CloseHandle(hFile);
+	CloseHandle(hFile);
 
 
 	D3D11_TEXTURE3D_DESC descTex;

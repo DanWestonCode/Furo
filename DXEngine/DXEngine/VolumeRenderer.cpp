@@ -1,5 +1,5 @@
 #include "VolumeRenderer.h"
-
+const UINT							g_iVolumeSize = 256;
 VolumeRenderer::VolumeRenderer()
 {
 	m_ModelShader = nullptr;
@@ -37,30 +37,19 @@ HRESULT VolumeRenderer::Initialize(ID3D11Device* _device, HWND _hWnd, int _width
 	m_ModelFront->Initialize(_device, _width, _height);
 
 	m_ModelBack = new RenderTexture;
-	m_ModelBack->Initialize(_device, _height, _width);
+	m_ModelBack->Initialize(_device, _width, _height);
 
 	m_VolumeTexture = new VolumeTexture;
-	m_VolumeTexture->Initialize(_device, 256);
+	m_VolumeTexture->Initialize(_device, g_iVolumeSize);
 
 	m_cube = new Cube;
 	m_cube->Initialise(_device);
 
 	CreateSampler(_device);
 
-	// Initialize the view matrix
-	XMVECTOR eye = XMVectorSet(0.f, 1.5f, -5.0f, 0.f);
-	XMVECTOR at = XMVectorSet(0.f, 0.0f, 0.f, 0.f);
-	XMVECTOR up = XMVectorSet(0.f, 1.f, 0.f, 0.f);
-	XMMATRIX mView = XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up));
-
-	// Initialize the projection matrix
-	XMMATRIX mProjection = XMMatrixTranspose(XMMatrixPerspectiveFovLH(XM_PIDIV4, 1.f, 0.1f, 15.f));
-
-	// View-projection matrix
-	viewProj = XMMatrixMultiply(mProjection, mView);
-
 	return result;
 }
+
 void VolumeRenderer::CreateSampler(ID3D11Device* device)
 {
 	HRESULT hr = S_OK;
@@ -98,11 +87,12 @@ void VolumeRenderer::Update(float dt)
 {
 	m_cube->Update(dt);
 }
+
 void VolumeRenderer::Render(ID3D11Device* _device, ID3D11DeviceContext* _deviceContext, D3D* m_D3D)
 {
-	float clearColor2[4] = { 1.f, 0.f, 0.f, 1.f };	// red, green, blue, alpha
-	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_D3D->m_renderTargetView, clearColor2);
-	float clearColor[4] = { 0.f, 0.f, 0.f, 1.f };
+	float ClearBackBuffer[4] = { 0.f, 0.f, 0.f, 1.f };
+	float ClearRenderTarget[4] = { 0.f, 0.f, 0.f, 1.f };
+
 	m_cube->Render(m_D3D->GetDeviceContext());
 
 	//// Set the input layout
@@ -110,8 +100,9 @@ void VolumeRenderer::Render(ID3D11Device* _device, ID3D11DeviceContext* _deviceC
 
 	// Rotate the cube around the origin
 	XMMATRIX mWorld = m_cube->m_worldMatrix;//XMMatrixIdentity();//XMMatrixRotationY(XM_PIDIV4*dt);
+
 	MatrixBuffer cb;
-	cb.mWVP = XMMatrixMultiply(viewProj, mWorld);
+	cb.mWVP = XMMatrixMultiply(Camera::Instance()->GetViewProj(), mWorld);
 	m_D3D->GetDeviceContext()->UpdateSubresource(m_ModelShader->m_MatrixBuffer, 0, NULL, &cb, 0, 0);
 
 	// Render to position textures
@@ -125,13 +116,13 @@ void VolumeRenderer::Render(ID3D11Device* _device, ID3D11DeviceContext* _deviceC
 
 	// Front-face culling
 	m_D3D->GetDeviceContext()->RSSetState(m_D3D->m_backFaceCull);
-	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelBack->m_RenderTargetView, clearColor);
+	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelBack->m_RenderTargetView, ClearRenderTarget);
 	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelBack->m_RenderTargetView, NULL);
 	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw back faces
 
 	// Back-face culling
 	m_D3D->GetDeviceContext()->RSSetState(m_D3D->m_FrontFaceCull);
-	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelFront->m_RenderTargetView, clearColor);
+	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelFront->m_RenderTargetView, ClearRenderTarget);
 	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelFront->m_RenderTargetView, NULL);
 	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw front faces
 
@@ -164,8 +155,6 @@ void VolumeRenderer::Render(ID3D11Device* _device, ID3D11DeviceContext* _deviceC
 	 //Un-bind textures
 	ID3D11ShaderResourceView *nullRV[3] = { NULL, NULL, NULL };
 	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 3, nullRV);
-
-	m_D3D->EndScene();
 }
 
 

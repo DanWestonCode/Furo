@@ -20,7 +20,7 @@ void Camera::Render()
 	XMMATRIX mView = XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up));
 
 	// Initialize the projection matrix ~ FoV/Screen Asepct/ Screen Near / Screen Far
-	XMMATRIX mProjection = XMMatrixTranspose(XMMatrixOrthographicLH(XM_PIDIV4, 1.f, 0.1f, 1000.f));
+	XMMATRIX mProjection = XMMatrixTranspose(XMMatrixPerspectiveFovLH(XM_PIDIV4, 1.f, 0.1f, 1000.f));
 
 	
 

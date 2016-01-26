@@ -58,7 +58,6 @@ public:
 
 	int m_ScreenWidth, m_ScreenHeight;
 	
-private:
 	bool m_vsync_enabled;
 	int m_videoCardMemory;
 	char m_videoCardDescription[128];

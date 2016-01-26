@@ -8,7 +8,7 @@
 /*************************************************************/
 
 #include "fluid.h"
-#include<cstring>
+#include <cstring>
 
 Fluid::Fluid()
 {

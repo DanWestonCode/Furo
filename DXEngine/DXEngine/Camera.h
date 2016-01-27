@@ -25,6 +25,11 @@ public:
 
 public:
 	XMMATRIX m_ViewProjection;
+
+	XMMATRIX m_projection;
+	XMMATRIX m_view;
+	XMMATRIX m_world;
+
 	XMFLOAT3 m_Up, m_LookAt;
 	XMMATRIX GetViewProj(){ return m_ViewProjection; }
 	void DeleteInstance();

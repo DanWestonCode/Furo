@@ -15,7 +15,7 @@ HRESULT VolumeTexture::Initialize(ID3D11Device* _device, int _volSize)
 	m_furo->Initialize(Furo::ThreeDimensional, _volSize, 0);
 
 	HRESULT result = S_OK;
-	HANDLE hFile = CreateFileW(L"../DXEngine/aneurism.raw", GENERIC_READ, 0, NULL, OPEN_EXISTING, OPEN_EXISTING, NULL);
+	HANDLE hFile = CreateFileW(L"../DXEngine/foot.raw", GENERIC_READ, 0, NULL, OPEN_EXISTING, OPEN_EXISTING, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
 		MessageBox(NULL, L"Opening volume data file failed.", L"Error", MB_ICONERROR | MB_OK);

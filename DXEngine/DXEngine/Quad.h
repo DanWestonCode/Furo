@@ -23,7 +23,7 @@ public:
 	~Quad();
 
 	virtual HRESULT Initialise(D3D*, HWND);
-	virtual void Render(ID3D11DeviceContext*, D3D*);
+	virtual void Render(D3D*);
 	virtual void Shutdown();
 	virtual void Update(float, HWND);
 

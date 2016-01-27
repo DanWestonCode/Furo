@@ -132,6 +132,8 @@ bool System::Frame()
 //Where windows system messages are directed
 LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
+	if (TwEventWin(hwnd, umsg, wparam, lparam)) // send event message to AntTweakBar
+		return 0; // event has been handled by AntTweakBar
 	return DefWindowProc(hwnd, umsg, wparam, lparam);
 }
 
@@ -192,8 +194,8 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 	else
 	{
 		// If windowed then set it to 800x600 resolution.
-		screenWidth = 800;
-		screenHeight = 600;
+		screenWidth = 1600;
+		screenHeight = 900;
 
 		// Place the window in the middle of the screen.
 		posX = (GetSystemMetrics(SM_CXSCREEN) - screenWidth) / 2;
@@ -240,8 +242,7 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 //if everything is okay they are direcred into MessageHandler class
 LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 {
-	if (TwEventWin(hwnd, umessage, wparam, lparam)) // send event message to AntTweakBar
-		return 0; // event has been handled by AntTweakBar
+	
 
 	switch (umessage)
 	{

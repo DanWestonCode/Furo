@@ -320,7 +320,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	m_orthoMatrix = XMMatrixOrthographicLH((float)screenWidth, (float)screenHeight, screenNear, screenDepth);
 
 	TwInit(TW_DIRECT3D11, m_device);
-	TwWindowSize(m_ScreenWidth, m_ScreenHeight);
+	TwWindowSize((float)screenWidth, (float)screenHeight);
 	m_TwBar = TwNewBar("DXEngine");
 	return S_OK;
 }

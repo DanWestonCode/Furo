@@ -9,8 +9,8 @@ Quad::Quad()
 	m_TextureB = nullptr;
 	m_TextureA = nullptr;
 
-	veloMulti = 0;
-	densityMulti = 0;
+	veloMulti = 100;
+	densityMulti = 1;
 }
 
 Quad::Quad(const Quad& other)
@@ -131,16 +131,16 @@ HRESULT Quad::Initialise(D3D* _d3d, HWND hwnd)
 	return S_OK;
 }
 
-void Quad::Render(ID3D11DeviceContext* deviceContext, D3D* _d3d)
+void Quad::Render(D3D* _d3d)
 {
 	HRESULT hr;
 	ColorVL* colourPtr;
 	D3D11_MAPPED_SUBRESOURCE resource;
 
-	hr = deviceContext->Map(m_VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	hr = _d3d->GetDeviceContext()->Map(m_VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	colourPtr = (ColorVL*)resource.pData;
 	memcpy(colourPtr, (void*)m_ColorVertLayout, (sizeof(ColorVL) * m_VertexCount));
-	deviceContext->Unmap(m_VertexBuffer, 0);
+	_d3d->GetDeviceContext()->Unmap(m_VertexBuffer, 0);
 
 	unsigned int stride;
 	unsigned int offset;
@@ -150,13 +150,13 @@ void Quad::Render(ID3D11DeviceContext* deviceContext, D3D* _d3d)
 	offset = 0;
 
 	// Set the vertex buffer to active in the input assembler so it can be rendered.
-	deviceContext->IASetVertexBuffers(0, 1, &m_VertexBuffer, &stride, &offset);
+	_d3d->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_VertexBuffer, &stride, &offset);
 
 	// Set the index buffer to active in the input assembler so it can be rendered.
-	deviceContext->IASetIndexBuffer(m_IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	_d3d->GetDeviceContext()->IASetIndexBuffer(m_IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	_d3d->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	
 
 	// Render the model using the texture shader.
@@ -165,7 +165,7 @@ void Quad::Render(ID3D11DeviceContext* deviceContext, D3D* _d3d)
 
 	//deviceContext->OMSetRenderTargets(1, &_d3d->m_renderTargetView, NULL);
 
-	m_ColorShader->Render(deviceContext, &m_worldMatrix, m_IndexCount, m_TextureB);
+	m_ColorShader->Render(_d3d->GetDeviceContext(), &m_worldMatrix, m_IndexCount, m_TextureB);
 	
 	/*RenderTexture* temp = new RenderTexture;
 	temp = m_TextureA;
@@ -173,8 +173,8 @@ void Quad::Render(ID3D11DeviceContext* deviceContext, D3D* _d3d)
 	m_TextureB = temp;*/
 
 	//Un-bind textures
-	ID3D11ShaderResourceView *nullRV[2] = { NULL, NULL };
-	deviceContext->PSSetShaderResources(0, 2, nullRV);
+	/*ID3D11ShaderResourceView *nullRV[2] = { NULL, NULL };
+	_d3d->GetDeviceContext()->PSSetShaderResources(0, 2, nullRV);*/
 }
 
 void Quad::Shutdown()
@@ -216,30 +216,6 @@ void Quad::Shutdown()
 void Quad::Update(float dt, HWND hwnd)
 {
 	m_Furo->Run(dt);
-
-	POINT mousePos;
-	GetCursorPos(&mousePos);
-	ScreenToClient(hwnd, &mousePos);
-
-	int mousex = mousePos.x;
-	int mousey = mousePos.y;
-
-
-	float tempDist;
-	float closestDist = FLT_MAX;
-	int hitIndex;
-
-
-	//XMVECTOR prwsPos, prwsDir;
-	//PickRayVector(mousex, mousey, prwsPos, prwsDir);
-	//tempDist = Pick(prwsPos, prwsDir, Camera::Instance()->m_worldMatrix);
-
-	//if (tempDist < closestDistee
-	//{
-	//	closestDist = tempDist;
-	//	//hitIndex = i;
-	//}
-
 
 	if (InputManager::Instance()->IsKeyDown(DIK_A))
 		m_rot.x += vel*dt;
@@ -290,7 +266,7 @@ void Quad::UpdateFluid(float* dens)
 			float x = dens[i * (numTris + 2) + j];
 			//x *= 255;
 
-			XMFLOAT4 colour = XMFLOAT4(x, x, x, x);
+			XMFLOAT4 colour = XMFLOAT4(0, 0, x, x);
 
 			m_ColorVertLayout[vert++].color = colour;
 			m_ColorVertLayout[vert++].color = colour;

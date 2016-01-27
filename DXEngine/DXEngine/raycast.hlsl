@@ -17,7 +17,7 @@ SamplerState samplerLinear : register(s0);
 // Constants and constant buffer variables
 //--------------------------------------------------------------------------------------
 
-static const uint g_iMaxIterations = 100;
+static const uint g_iMaxIterations = 128;
 
 // Diagonal of a unit cube has length sqrt(3)
 static const float g_fStepSize = sqrt(3.f)/g_iMaxIterations;

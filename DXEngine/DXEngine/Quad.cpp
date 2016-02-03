@@ -223,7 +223,7 @@ void Quad::Update(float dt, HWND hwnd)
 	m_Furo->m_textureFluid->Clear();
 	if (InputManager::Instance()->IsKeyDown(DIK_Q))
 	{
-		for (int i = 0; i < numTris; i++)
+		for (int i = 25; i < 26; i++)
 		{
 			m_Furo->m_textureFluid->SetDensity(i, 2, densityMulti);
 
@@ -231,22 +231,11 @@ void Quad::Update(float dt, HWND hwnd)
 	}
 	if (InputManager::Instance()->IsKeyDown(DIK_E))
 	{
-		for (int i = 0; i < numTris; i++)
+		for (int i = 25; i < 26; i++)
 		{
 
-			m_Furo->m_textureFluid->SetVelX(i, 1, veloMulti);
-			m_Furo->m_textureFluid->SetVelY(i, 1, veloMulti);
-			m_Furo->m_textureFluid->SetVelX(i, 1, veloMulti);
-			m_Furo->m_textureFluid->SetVelY(i, 1, veloMulti);
 			m_Furo->m_textureFluid->SetVelX(i, 2, veloMulti);
 			m_Furo->m_textureFluid->SetVelY(i, 2, veloMulti);
-			m_Furo->m_textureFluid->SetVelX(i, 2, veloMulti);
-			m_Furo->m_textureFluid->SetVelY(i, 2, veloMulti);
-
-			m_Furo->m_textureFluid->SetVelX(i, 3, veloMulti);
-			m_Furo->m_textureFluid->SetVelY(i, 3, veloMulti);
-			m_Furo->m_textureFluid->SetVelX(i, 3, veloMulti);
-			m_Furo->m_textureFluid->SetVelY(i, 3, veloMulti);
 		}
 
 	}
@@ -264,9 +253,9 @@ void Quad::UpdateFluid(float* dens)
 		for (int j = 0; j < (numTris - 1); j++)
 		{
 			float x = dens[i * (numTris + 2) + j];
-			//x *= 255;
+			//x *= 255;qe
 
-			XMFLOAT4 colour = XMFLOAT4(0, 0, x, x);
+			XMFLOAT4 colour = XMFLOAT4(x, x, x, x);
 
 			m_ColorVertLayout[vert++].color = colour;
 			m_ColorVertLayout[vert++].color = colour;

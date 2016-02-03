@@ -41,6 +41,7 @@ protected:
 	ID3D11VertexShader* m_VertexShader;
 	ID3D11InputLayout* m_InputLayout;
 	ID3D11PixelShader* m_PixelShader;
+	ID3D11ComputeShader* m_ComputeShader;
 	ID3D11SamplerState* m_Sampler;
 };
 #endif // ShaderBase_h__

@@ -91,7 +91,7 @@ void FluidShader::Render(ID3D11DeviceContext* _deviceContext, XMMATRIX* _mWVM, i
 	unsigned int bufferNumber;
 
 	
-	_deviceContext->OMSetRenderTargets(1, &_textureB->m_RenderTargetView, NULL);
+	_deviceContext->OMSetRenderTargets(1, &_textureB->m_RTV, NULL);
 
 
 	// Transpose the matrices to prepare them for the shader.
@@ -121,7 +121,7 @@ void FluidShader::Render(ID3D11DeviceContext* _deviceContext, XMMATRIX* _mWVM, i
 	
 
 	// Set shader texture resource in the pixel shader.
-	_deviceContext->PSSetShaderResources(0, 1, &_textureA->m_ShaderResourceView);
+	_deviceContext->PSSetShaderResources(0, 1, &_textureA->m_SRV);
 	_deviceContext->PSSetSamplers(0, 1, &m_Sampler);
 
 	// Render the triangle.

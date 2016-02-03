@@ -12,6 +12,7 @@ ShaderBase::ShaderBase()
 {
 	m_PixelShader = nullptr;
 	m_VertexShader = nullptr;
+	m_ComputeShader = nullptr;
 	m_Sampler = nullptr;
 }
 ShaderBase::ShaderBase(const ShaderBase& other){}
@@ -45,12 +46,14 @@ HRESULT ShaderBase::CompileShaderFromFile(WCHAR *ShaderFileName, LPCSTR ShaderEn
 void ShaderBase::Shutdown()
 {
 	m_VertexShader->Release();
-	m_VertexShader = nullptr;
+	delete m_VertexShader;
 	m_PixelShader->Release();
-	m_PixelShader = nullptr;
+	delete m_PixelShader;
 	m_InputLayout->Release();
-	m_InputLayout = nullptr;
+	delete m_InputLayout;
 	m_Sampler->Release();
-	m_Sampler = nullptr;
+	delete m_Sampler;
+	m_ComputeShader->Release();
+	delete m_ComputeShader;
 }
 

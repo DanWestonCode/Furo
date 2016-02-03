@@ -18,6 +18,7 @@ struct PixelInputType
 	float4 color : COLOR;
 };
 Texture2D a: register(t0);
+RWTexture2D<float4> b;
 SamplerState SampleType : register(s0);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,4 +42,10 @@ PixelInputType ColorVertexShader(VertexInputType input)
 float4 ColorPixelShader(PixelInputType input) : SV_TARGET
 {
 	return input.color;
+}
+
+[numthreads(16,16,1)]
+void CS(int3 dispatchThreadID : SV_DispatchThreadID)
+{
+	b[dispatchThreadID.xy] = a[dispatchThreadID.xy];
 }

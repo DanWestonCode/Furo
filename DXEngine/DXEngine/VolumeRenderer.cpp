@@ -117,14 +117,14 @@ void VolumeRenderer::Render(D3D* m_D3D)
 
 	// Front-face culling
 	m_D3D->GetDeviceContext()->RSSetState(m_D3D->m_backFaceCull);
-	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelBack->m_RenderTargetView, ClearRenderTarget);
-	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelBack->m_RenderTargetView, NULL);
+	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelBack->m_RTV, ClearRenderTarget);
+	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelBack->m_RTV, NULL);
 	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw back faces
 
 	// Back-face culling
 	m_D3D->GetDeviceContext()->RSSetState(m_D3D->m_FrontFaceCull);
-	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelFront->m_RenderTargetView, ClearRenderTarget);
-	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelFront->m_RenderTargetView, NULL);
+	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelFront->m_RTV, ClearRenderTarget);
+	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelFront->m_RTV, NULL);
 	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw front faces
 
 	//// Ray-casting
@@ -147,8 +147,8 @@ void VolumeRenderer::Render(D3D* m_D3D)
 
 	//// Set textures
 	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 1, &m_VolumeTexture->m_ShaderResourceView);
-	m_D3D->GetDeviceContext()->PSSetShaderResources(1, 1, &m_ModelFront->m_ShaderResourceView);
-	m_D3D->GetDeviceContext()->PSSetShaderResources(2, 1, &m_ModelBack->m_ShaderResourceView);
+	m_D3D->GetDeviceContext()->PSSetShaderResources(1, 1, &m_ModelFront->m_SRV);
+	m_D3D->GetDeviceContext()->PSSetShaderResources(2, 1, &m_ModelBack->m_SRV);
 
 	// Draw the cube
 	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);

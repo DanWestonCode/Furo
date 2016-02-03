@@ -112,9 +112,9 @@ bool Graphics::Frame(float dt)
 void Graphics::Update(float dt)
 {
 	Camera::Instance()->Update(dt);
-	//m_Quad->Update(dt, _hwnd);
+	m_Quad->Update(dt, _hwnd);
 
-	m_VolumeRenderer->Update(dt, m_D3D);
+	//m_VolumeRenderer->Update(dt, m_D3D);
 }
 
 bool Graphics::Render(float dt)
@@ -123,9 +123,9 @@ bool Graphics::Render(float dt)
 
 	Camera::Instance()->Render();
 	
-	m_VolumeRenderer->Render(m_D3D);
+	//m_VolumeRenderer->Render(m_D3D);
 
-	//m_Quad->Render(m_D3D);	
+	m_Quad->Render(m_D3D);	
 
 	TwDraw();
 	m_D3D->EndScene();

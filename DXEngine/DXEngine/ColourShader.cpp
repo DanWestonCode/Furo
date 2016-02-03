@@ -50,6 +50,14 @@ HRESULT ColourShader::Initialize(ID3D11Device* _device, HWND _hwn)
 	blob->Release();
 #pragma  endregion	
 
+#pragma  region Compute Shader
+	blob = nullptr;
+	// Compile and create the pixel shader
+	result = CompileShaderFromFile(L"../DXEngine/color.fx", "CS", "cs_5_0", &blob);
+	result = _device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_ComputeShader);
+	blob->Release();
+#pragma  endregion
+
 #pragma region Constant Buffers
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
@@ -111,7 +119,11 @@ void ColourShader::Render(ID3D11DeviceContext* _deviceContext, XMMATRIX* _mWVM, 
 	_deviceContext->VSSetShader(m_VertexShader, NULL, 0);
 	_deviceContext->PSSetShader(m_PixelShader, NULL, 0);
 
-	_deviceContext->PSSetShaderResources(0, 1, &_texture->m_ShaderResourceView);
+	//Set UAV
+	_deviceContext->CSSetUnorderedAccessViews(0, 1, &_texture->m_UAV, NULL);
+
+	//Set SRV
+	_deviceContext->PSSetShaderResources(0, 1, &_texture->m_SRV);
 	_deviceContext->PSSetSamplers(0, 1, &m_Sampler);
 
 	// Render the triangle.

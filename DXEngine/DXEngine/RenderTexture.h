@@ -18,7 +18,8 @@ public:
 public:
 	std::string  tag;
 	ID3D11Texture2D* m_Texture2D;
-	ID3D11ShaderResourceView* m_ShaderResourceView;
-	ID3D11RenderTargetView*	m_RenderTargetView;
+	ID3D11ShaderResourceView* m_SRV;
+	ID3D11RenderTargetView*	m_RTV;
+	ID3D11UnorderedAccessView* m_UAV;
 };
 #endif // RenderTexture_h__

@@ -49,5 +49,3 @@ void FluidThreeDimensional::Clear()
 	std::memset(m_prevVelZ, 0, sizeof(float)*size);
 	std::memset(m_prevDensity, 0, sizeof(float)*size);
 }
-
-

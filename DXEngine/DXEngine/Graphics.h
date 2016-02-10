@@ -9,6 +9,8 @@
 #include "VolumeRenderer.h"
 #include "Camera.h"
 
+#include "FluidShader.h"
+
 
 const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
@@ -42,6 +44,7 @@ private:
 	VolumeRenderer* m_VolumeRenderer;
 	float* m_ClearBackBufferColor;
 	Quad* m_Quad;
+	FluidShader* m_fluidShader;
 };
 
 #endif

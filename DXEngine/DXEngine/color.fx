@@ -44,8 +44,10 @@ float4 ColorPixelShader(PixelInputType input) : SV_TARGET
 	return input.color;
 }
 
-[numthreads(16,16,1)]
+[numthreads(256,1,1)]
 void CS(int3 dispatchThreadID : SV_DispatchThreadID)
 {
-	b[dispatchThreadID.xy] = a[dispatchThreadID.xy];
+	float4 textureColor = float4(1,1,1,1);
+
+	b[dispatchThreadID.xy] = textureColor;//a[dispatchThreadID.xy];
 }

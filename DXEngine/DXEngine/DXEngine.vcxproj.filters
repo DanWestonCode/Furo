@@ -184,7 +184,7 @@
     <None Include="color.fx">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Fluid.fx">
+    <None Include="Fluid.hlsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

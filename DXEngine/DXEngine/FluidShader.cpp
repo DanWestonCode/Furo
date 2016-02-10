@@ -2,129 +2,119 @@
 
 FluidShader::FluidShader()
 {
-	m_MatrixBuffer = nullptr;
+	m_BoundaryConditionsCS = nullptr;
+	m_outputBuffer = nullptr;
+	m_BoundaryConditionsWRITE = nullptr;
+	m_BoundaryConditionsREAD = nullptr;
+	m_outputresult = nullptr;
 }
 FluidShader::FluidShader(const FluidShader& other){}
 FluidShader::~FluidShader(){}
 
-HRESULT FluidShader::Initialize(ID3D11Device* _device, HWND _hwn)
+HRESULT FluidShader::Initialize(ID3D11Device* _device)
+{
+	CompileShaders(_device);
+	CreateBuffers(_device);
+	return S_OK;
+}
+
+void FluidShader::CompileShaders(ID3D11Device* _device)
 {
 	HRESULT result;
 	ID3DBlob* blob = nullptr;
 
-#pragma region Vertex Shader
-	result = CompileShaderFromFile(L"../DXEngine/Fluid.fx", "FluidVertexShader", "vs_5_0", &blob);
-	result = _device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_VertexShader);
-#pragma endregion	
-
-#pragma region Input Layout
-	// Shader Input Layout
-	D3D11_INPUT_ELEMENT_DESC m_layout[2];
-	m_layout[0].SemanticName = "POSITION"; //match name in VS shader
-	m_layout[0].SemanticIndex = 0;
-	m_layout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	m_layout[0].InputSlot = 0;
-	m_layout[0].AlignedByteOffset = 0;
-	m_layout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	m_layout[0].InstanceDataStepRate = 0;
-
-	m_layout[1].SemanticName = "COLOR";
-	m_layout[1].SemanticIndex = 0;
-	m_layout[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	m_layout[1].InputSlot = 0;
-	m_layout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-	m_layout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	m_layout[1].InstanceDataStepRate = 0;
-
-	UINT numElements = ARRAYSIZE(m_layout);
-
-	result = _device->CreateInputLayout(m_layout, numElements, blob->GetBufferPointer(), blob->GetBufferSize(), &m_InputLayout);
-	blob->Release();
-#pragma endregion	
-
-#pragma region Pixel Shader
+	#pragma region Boundary Conditions
 	blob = nullptr;
 	// Compile and create the pixel shader
-	result = CompileShaderFromFile(L"../DXEngine/Fluid.fx", "FluidPixelShader", "ps_5_0", &blob);
-	result = _device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_PixelShader);
+	result = CompileShaderFromFile(L"../DXEngine/fluid.hlsl", "ComputeBoundaryConditions", "cs_5_0", &blob);
+	result = _device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_BoundaryConditionsCS);
 	blob->Release();
-#pragma  endregion	
+	#pragma endregion
+}
 
-#pragma region Constant Buffers
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_DYNAMIC;
-	bd.ByteWidth = sizeof(MatrixBuffer);
-	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	result = _device->CreateBuffer(&bd, NULL, &m_MatrixBuffer);
+void FluidShader::CreateBuffers(ID3D11Device* _device)
+{
+	HRESULT result;
+	D3D11_BUFFER_DESC outputDesc, inputDesc, sysOutputDesc;
+	D3D11_SUBRESOURCE_DATA vinitData;
+	int numElements = 16;
+
+	#pragma region Boundary Conditions
+	m_BoundaryConditionsWRITE = new BoundaryConditions[numElements];
+	m_BoundaryConditionsREAD = new BoundaryConditions[numElements];
+	std::memset(m_BoundaryConditionsWRITE, 0, sizeof(BoundaryConditions)*numElements);
+	std::memset(m_BoundaryConditionsREAD, 0, sizeof(BoundaryConditions)*numElements);
 
 
-#pragma endregion
+	//Output buffer to be bound to UAV
+	outputDesc.Usage = D3D11_USAGE_DEFAULT;
+	outputDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
+	outputDesc.ByteWidth = sizeof(BoundaryConditions) * numElements;
+	outputDesc.CPUAccessFlags = 0;
+	outputDesc.StructureByteStride = sizeof(BoundaryConditions);
+	outputDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;	
+	result =_device->CreateBuffer(&outputDesc, 0, &m_outputBuffer);
 
-#pragma region Sampler
-	D3D11_SAMPLER_DESC sampDesc;
-	ZeroMemory(&sampDesc, sizeof(sampDesc));
-	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sampDesc.MinLOD = 0;
-	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	result = _device->CreateSamplerState(&sampDesc, &m_Sampler);
-#pragma endregion Sampler
+	//System buffer to get GPU result
+	outputDesc.Usage = D3D11_USAGE_STAGING;
+	outputDesc.BindFlags = 0;
+	outputDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	result = _device->CreateBuffer(&outputDesc, 0, &m_outputresult);
 
-	return result;
+	//UAV to send to shader 
+	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
+	uavDesc.Format = DXGI_FORMAT_UNKNOWN;
+	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+	uavDesc.Buffer.FirstElement = 0;
+	uavDesc.Buffer.Flags = 0;
+	uavDesc.Buffer.NumElements = numElements;
+	result =_device->CreateUnorderedAccessView(m_outputBuffer, &uavDesc, &m_BoundaryConditionsUAV);
+	#pragma endregion
+
 }
 
 void FluidShader::Shutdown()
 {
+	m_BoundaryConditionsCS->Release();
+	delete m_BoundaryConditionsCS;
+	m_outputBuffer->Release();
+	delete m_outputBuffer;
+	m_BoundaryConditionsWRITE = nullptr;
+	delete m_BoundaryConditionsWRITE;
+	m_outputresult = nullptr;
+	delete m_outputresult;
+
 	ShaderBase::Shutdown();
 }
 
-void FluidShader::Render(ID3D11DeviceContext* _deviceContext, XMMATRIX* _mWVM, int _indexCount, RenderTexture* _textureA, RenderTexture* _textureB, ID3D11RenderTargetView* _back)
+void FluidShader::Render(ID3D11DeviceContext* _deviceContext)
 {
 	HRESULT result;
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	MatrixBuffer* MatrixDataPtr;
-	unsigned int bufferNumber;
 
+	//set the Compute shader
+	_deviceContext->CSSetShader(m_BoundaryConditionsCS, nullptr, 0);
+	//bind the UAV to the shader 
+	_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_BoundaryConditionsUAV, 0);
+	_deviceContext->Dispatch(1, 1, 1);
+
+	// Unbind output from compute shader
+	ID3D11UnorderedAccessView* nullUAV[] = { NULL };
+	_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
+	// Disable Compute Shader
+	_deviceContext->CSSetShader(nullptr, nullptr, 0);
 	
-	_deviceContext->OMSetRenderTargets(1, &_textureB->m_RTV, NULL);
+	_deviceContext->CopyResource(m_outputresult, m_outputBuffer);
+	D3D11_MAPPED_SUBRESOURCE mappedData;
+	result = _deviceContext->Map(m_outputresult, 0, D3D11_MAP_READ, 0, &mappedData);
 
-
-	// Transpose the matrices to prepare them for the shader.
-	*_mWVM = XMMatrixTranspose(*_mWVM);
-
-	// Lock the constant buffer so it can be written to.
-	result = _deviceContext->Map(m_MatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	// Get a pointer to the data in the constant buffer.
-	MatrixDataPtr = (MatrixBuffer*)mappedResource.pData;
-	// Copy the matrices into the constant buffer.
-	MatrixDataPtr->mWVP = XMMatrixMultiply(Camera::Instance()->GetViewProj(), *_mWVM);
-	// Unlock the constant buffer.
-	_deviceContext->Unmap(m_MatrixBuffer, 0);
-
-	// Set the position of the constant buffer in the vertex shader.
-	bufferNumber = 0;
-		
-
-	// Finally set the constant buffer in the vertex shader with the updated values.
-	_deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_MatrixBuffer);
-	// Set the vertex input layout.
-	_deviceContext->IASetInputLayout(m_InputLayout);
-
-	// Set the vertex and pixel shaders that will be used to render this triangle.
-	_deviceContext->VSSetShader(m_VertexShader, NULL, 0);
-	_deviceContext->PSSetShader(m_PixelShader, NULL, 0);
+	m_BoundaryConditionsREAD = reinterpret_cast<BoundaryConditions*>(mappedData.pData);
 	
+	for (int i = 0; i < 16; i++)
+	{
+		Debug::Instance()->Log(m_BoundaryConditionsREAD[i].x.x);
+	}
 
-	// Set shader texture resource in the pixel shader.
-	_deviceContext->PSSetShaderResources(0, 1, &_textureA->m_SRV);
-	_deviceContext->PSSetSamplers(0, 1, &m_Sampler);
+	_deviceContext->Unmap(m_outputresult, 0);
 
-	// Render the triangle.
-	_deviceContext->DrawIndexed(_indexCount, 0, 0);
-
+	result = S_OK;
 }

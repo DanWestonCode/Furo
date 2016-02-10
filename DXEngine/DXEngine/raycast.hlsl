@@ -1,11 +1,12 @@
 #pragma pack_matrix(row_major)
 
-
 //--------------------------------------------------------------------------------------
 // Textures and samplers
 //--------------------------------------------------------------------------------------
 
 Texture3D<float> txVolume : register(t0);
+StructuredBuffer<BoundaryConditions> _boundaryConditions;
+
 
 Texture2D<float4> txPositionFront : register(t1);
 Texture2D<float4> txPositionBack  : register(t2);
@@ -107,47 +108,7 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 		// Advance the current position
 		v += step;
 	}
-
-
  
 	return float4(result.r, result.r, result.r, result.y);
 }
 
-
-//--------------------------------------------------------------------------------------
-// Visualize front- and backface position textures
-//--------------------------------------------------------------------------------------
-
-float4 ShowFrontPositionPS(PSInput input) : SV_TARGET
-{
-	// Current pixel location on screen, used to sample position texture
-	float2 tex = 4*input.pos.xy*g_fInvWindowSize;
-
-	// Read cube front face positions (in model coordinates) from texture
-	float3 pos_front = txPositionFront.Sample(samplerLinear, tex);
-
-	return float4(pos_front, 1);
-}
-
-float4 ShowBackPositionPS(PSInput input) : SV_TARGET
-{
-	// Current pixel location on screen, used to sample position texture
-	float2 tex = 4*(input.pos.xy*g_fInvWindowSize - float2(0.35, 0));
-
-	// Read cube back face positions (in model coordinates) from texture
-	float3 pos_back  =  txPositionBack.Sample(samplerLinear, tex);
-
-	return float4(pos_back,  1);
-}
-
-float4 ShowDirectionPS(PSInput input) : SV_TARGET
-{
-	// Current pixel location on screen, used to sample position texture
-	float2 tex = 4*(input.pos.xy*g_fInvWindowSize - float2(0.7, 0));
-
-	// Read cube front and back face positions (in model coordinates) from texture
-	float3 pos_front = txPositionFront.Sample(samplerLinear, tex);
-	float3 pos_back  =  txPositionBack.Sample(samplerLinear, tex);
-
-	return float4(pos_back - pos_front, 1);
-}

@@ -145,7 +145,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Fluid.fx">
+    <None Include="Fluid.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

@@ -83,6 +83,10 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 		return false;
 	}
 
+	//get graphics card desc
+	DXGI_ADAPTER_DESC adapterDescription; 
+	adapter->GetDesc(&adapterDescription);
+
 	// Enumerate the primary adapter output (monitor).
 	result = adapter->EnumOutputs(0, &adapterOutput);
 	if (FAILED(result))
@@ -218,7 +222,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	featureLevel = D3D_FEATURE_LEVEL_11_0;
 
 	// Create the swap chain, Direct3D device, and Direct3D device context.
-	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &featureLevel, 1,
+	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_DEBUG, &featureLevel, 1,
 		D3D11_SDK_VERSION, &swapChainDesc, &m_swapChain, &m_device, NULL, &m_deviceContext);
 	if (FAILED(result))
 	{
@@ -258,10 +262,8 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	depthStencilDesc.CPUAccessFlags = 0;
 	depthStencilDesc.MiscFlags = 0;
 
-
 	m_device->CreateTexture2D(&depthStencilDesc, NULL, &m_depthStencilBuffer);
 	m_device->CreateDepthStencilView(m_depthStencilBuffer, NULL, &m_depthStencilView);
-
 
 	m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
 
@@ -291,8 +293,6 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	rasterizerDesc.CullMode = D3D11_CULL_FRONT;
 	rasterizerDesc.DepthClipEnable = true;
 	(m_device->CreateRasterizerState(&rasterizerDesc, &m_FrontFaceCull));
-	
-
 
 	// Setup the (default) viewport
 	D3D11_VIEWPORT vp;
@@ -324,7 +324,6 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	m_TwBar = TwNewBar("DXEngine");
 	return S_OK;
 }
-
 
 void D3D::Shutdown()
 {
@@ -395,7 +394,6 @@ void D3D::Shutdown()
 	return;
 }
 
-
 void D3D::BeginScene(float* color)
 {
 	// Clear the back buffer.
@@ -406,7 +404,6 @@ void D3D::BeginScene(float* color)
 
 	return;
 }
-
 
 void D3D::EndScene()
 {

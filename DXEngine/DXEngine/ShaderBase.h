@@ -13,6 +13,7 @@
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include "Camera.h"
+#include "Debug.h"
 
 using namespace DirectX;
 __declspec(align(16)) class ShaderBase

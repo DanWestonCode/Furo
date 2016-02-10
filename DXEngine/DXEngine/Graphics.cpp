@@ -9,6 +9,7 @@ Graphics::Graphics()
 	m_Quad = nullptr;
 	m_VolumeRenderer = nullptr;
 	m_ClearBackBufferColor = nullptr;
+	m_fluidShader = nullptr;
 }
 
 Graphics::Graphics(const Graphics& other)
@@ -24,7 +25,6 @@ Graphics::~Graphics()
 void* Graphics::operator new(size_t memorySize)
 {
 	return _aligned_malloc(memorySize, 16);
-
 }
 
 void Graphics::operator delete(void* memoryBlockPtr)
@@ -57,14 +57,16 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_VolumeRenderer->Initialize(m_D3D->GetDevice(), hwnd, m_D3D->m_ScreenWidth, m_D3D->m_ScreenHeight);
 	m_ClearBackBufferColor = new float;
 	std::memset(m_ClearBackBufferColor, 0, sizeof(float) * 4);
-	//TwAddSeparator(m_D3D->m_TwBar, "Engine", "");
-	TwAddVarRW(m_D3D->m_TwBar, "Camera Position", TW_TYPE_DIR3F, &Camera::Instance()->m_pos, "");
-	TwAddVarRW(m_D3D->m_TwBar, "Back Buffer", TW_TYPE_COLOR3F, &*m_ClearBackBufferColor, "");
+	////TwAddSeparator(m_D3D->m_TwBar, "Engine", "");
+	//TwAddVarRW(m_D3D->m_TwBar, "Camera Position", TW_TYPE_DIR3F, &Camera::Instance()->m_pos, "");
+	//TwAddVarRW(m_D3D->m_TwBar, "Back Buffer", TW_TYPE_COLOR3F, &*m_ClearBackBufferColor, "");
 
-	m_Quad = new Quad;
-	m_Quad->Initialise(m_D3D, hwnd);
+	/*m_Quad = new Quad;
+	m_Quad->Initialise(m_D3D, hwnd);*/
 
-	
+	m_fluidShader = new FluidShader;
+	m_fluidShader->Initialize(m_D3D->GetDevice());
+
 	return S_OK;
 }
 
@@ -87,6 +89,8 @@ void Graphics::Shutdown()
 	m_Quad = nullptr;
 
 	Camera::Instance()->DeleteInstance();
+
+	m_fluidShader->Shutdown();
 
 	TwTerminate();
 
@@ -112,9 +116,9 @@ bool Graphics::Frame(float dt)
 void Graphics::Update(float dt)
 {
 	Camera::Instance()->Update(dt);
-	m_Quad->Update(dt, _hwnd);
+	//m_Quad->Update(dt, _hwnd);
 
-	//m_VolumeRenderer->Update(dt, m_D3D);
+	m_VolumeRenderer->Update(dt, m_D3D);
 }
 
 bool Graphics::Render(float dt)
@@ -123,14 +127,13 @@ bool Graphics::Render(float dt)
 
 	Camera::Instance()->Render();
 	
-	//m_VolumeRenderer->Render(m_D3D);
+	m_VolumeRenderer->Render(m_D3D);
+	//m_fluidShader->Render(m_D3D->GetDeviceContext());
 
-	m_Quad->Render(m_D3D);	
+	//m_Quad->Render(m_D3D);		
 
-	TwDraw();
+	//TwDraw();
 	m_D3D->EndScene();
 
 	return true;
 }
-
-

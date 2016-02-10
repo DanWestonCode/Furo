@@ -7,9 +7,14 @@
 __declspec(align(16)) class FluidShader : public ShaderBase
 {
 protected:
-	struct MatrixBuffer
+	void CompileShaders(ID3D11Device*);
+	void CreateBuffers(ID3D11Device*);
+
+protected:
+	struct BoundaryConditions
 	{
-		XMMATRIX mWVP;
+		XMFLOAT3 x;
+		XMFLOAT3 y;
 	};
 
 public:
@@ -17,10 +22,23 @@ public:
 	FluidShader(const FluidShader&);
 	~FluidShader();
 
-	virtual HRESULT Initialize(ID3D11Device*, HWND);
+	virtual HRESULT Initialize(ID3D11Device*);
 	virtual void Shutdown();
-	void Render(ID3D11DeviceContext*, XMMATRIX*, int, RenderTexture*, RenderTexture*, ID3D11RenderTargetView*);
+	void Render(ID3D11DeviceContext*);
 
-	ID3D11Buffer* m_MatrixBuffer;
-	};
+public:
+	//shaders
+	ID3D11ComputeShader* m_BoundaryConditionsCS;
+
+	//buffers
+	ID3D11Buffer* m_outputBuffer;
+	ID3D11Buffer* m_outputresult;
+
+	//UAVS
+	ID3D11UnorderedAccessView* m_BoundaryConditionsUAV;
+
+	//vars
+	BoundaryConditions* m_BoundaryConditionsWRITE;
+	BoundaryConditions*	m_BoundaryConditionsREAD;
+};
 #endif // FluidShader_h__

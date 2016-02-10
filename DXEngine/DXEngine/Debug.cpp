@@ -18,7 +18,7 @@ void Debug::operator delete(void* memoryBlockPtr)
 	_aligned_free(memoryBlockPtr);
 }
 
-void Debug::Log(void* _input)
+void Debug::Log(float _input)
 {
 	std::cout << _input << std::endl;
 }

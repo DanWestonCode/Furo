@@ -94,4 +94,3 @@ void Cube::Update(float dt)
 
 	VertexObject::Update(dt);
 }
-

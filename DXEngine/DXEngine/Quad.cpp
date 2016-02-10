@@ -31,8 +31,7 @@ HRESULT Quad::Initialise(D3D* _d3d, HWND hwnd)
 	m_ColorShader = new ColourShader;
 	// Initialize the texture shader object.
 	result = m_ColorShader->Initialize(_d3d->GetDevice(), hwnd);
-	m_FluidShader = new FluidShader;
-	m_FluidShader->Initialize(_d3d->GetDevice(), hwnd);
+
 
 	numTris = 120;
 	m_VertexCount = 6 * (numTris - 1) * (numTris - 1);

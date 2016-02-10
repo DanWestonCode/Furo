@@ -31,7 +31,6 @@ public:
 
 private:
 	void CreateSampler(ID3D11Device*);
-
 protected:
 	//objects
 	ModelShader* m_ModelShader;
@@ -45,6 +44,5 @@ protected:
 	ID3D11SamplerState* g_pSamplerLinear;
 
 	XMMATRIX viewProj;
-
 };
 #endif // VolumeRenderer_h__

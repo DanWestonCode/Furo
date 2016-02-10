@@ -1,14 +1,10 @@
-struct BoundaryConditions
-{
-	float3 x;
-	float3 y;
-};
+#define NUM_THREADS 8
 
-RWStructuredBuffer<BoundaryConditions> _boundaryConditions;
+RWTexture3D<float> _BoundaryConditions;
 
-[numthreads(16, 1, 1)]
-void ComputeBoundaryConditions(int3 id : SV_DispatchThreadID)
+[numthreads(NUM_THREADS, NUM_THREADS, NUM_THREADS)]
+void ComputeBoundaryConditions(uint3 id : SV_DispatchThreadID)
 {
-	_boundaryConditions[id.x].x = float3(id.x,id.y,id.z);
+	_BoundaryConditions[id] = float3(1,1,1);
 }
 

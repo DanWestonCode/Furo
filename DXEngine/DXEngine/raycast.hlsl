@@ -5,8 +5,8 @@
 //--------------------------------------------------------------------------------------
 
 Texture3D<float> txVolume : register(t0);
-StructuredBuffer<BoundaryConditions> _boundaryConditions;
 
+uniform float3 _Size;
 
 Texture2D<float4> txPositionFront : register(t1);
 Texture2D<float4> txPositionBack  : register(t2);
@@ -110,5 +110,38 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 	}
  
 	return float4(result.r, result.r, result.r, result.y);
+}
+
+float SampleBilinear(StructuredBuffer<float> buffer, float3 uv, float3 size)
+{
+	uv = saturate(uv);
+	uv = uv * (size-1.0);
+				
+	int x = uv.x;
+	int y = uv.y;
+	int z = uv.z;
+				
+	int X = size.x;
+	int XY = size.x*size.y;
+				
+	float fx = uv.x-x;
+	float fy = uv.y-y;
+	float fz = uv.z-z;
+				
+	int xp1 = min(_Size.x-1, x+1);
+	//int yp1 = min(_Size.y-1, y+1);
+	//int zp1 = min(_Size.z-1, z+1);
+				
+	//float x0 = buffer[x+y*X+z*XY] * (1.0f-fx) + buffer[xp1+y*X+z*XY] * fx;
+	//float x1 = buffer[x+y*X+zp1*XY] * (1.0f-fx) + buffer[xp1+y*X+zp1*XY] * fx;
+				
+	//float x2 = buffer[x+yp1*X+z*XY] * (1.0f-fx) + buffer[xp1+yp1*X+z*XY] * fx;
+	//float x3 = buffer[x+yp1*X+zp1*XY] * (1.0f-fx) + buffer[xp1+yp1*X+zp1*XY] * fx;
+				
+	//float z0 = x0 * (1.0f-fz) + x1 * fz;
+	//float z1 = x2 * (1.0f-fz) + x3 * fz;
+				
+	//return z0 * (1.0f-fy) + z1 * fy;	
+	return 1.0f;			
 }
 

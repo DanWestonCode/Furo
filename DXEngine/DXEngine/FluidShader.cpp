@@ -3,10 +3,7 @@
 FluidShader::FluidShader()
 {
 	m_BoundaryConditionsCS = nullptr;
-	m_outputBuffer = nullptr;
-	m_BoundaryConditionsWRITE = nullptr;
-	m_BoundaryConditionsREAD = nullptr;
-	m_outputresult = nullptr;
+	m_BoundaryConditions = nullptr;
 }
 FluidShader::FluidShader(const FluidShader& other){}
 FluidShader::~FluidShader(){}
@@ -37,38 +34,47 @@ void FluidShader::CreateBuffers(ID3D11Device* _device)
 	HRESULT result;
 	D3D11_BUFFER_DESC outputDesc, inputDesc, sysOutputDesc;
 	D3D11_SUBRESOURCE_DATA vinitData;
-	int numElements = 16;
+	int numElements = 32;
+
+	#pragma region Texture3DDesc
+	D3D11_TEXTURE3D_DESC textureDesc;
+	ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE3D_DESC));
+	textureDesc.Width = 32;
+	textureDesc.Height = 32;
+	textureDesc.Depth = 32;
+	textureDesc.MipLevels = 1;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.MiscFlags = 0;
+	#pragma endregion
+
+	#pragma region SRVDesc
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE3D;
+	srvDesc.Texture3D.MostDetailedMip = 0;
+	srvDesc.Texture3D.MipLevels = 1;
+	#pragma endregion
+
+	#pragma region UAVDesc
+	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
+	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE3D;
+	uavDesc.Texture3D.FirstWSlice = 0;
+	uavDesc.Texture3D.MipSlice = 0;
+	uavDesc.Texture3D.WSize = 32;
+	#pragma endregion
 
 	#pragma region Boundary Conditions
-	m_BoundaryConditionsWRITE = new BoundaryConditions[numElements];
-	m_BoundaryConditionsREAD = new BoundaryConditions[numElements];
-	std::memset(m_BoundaryConditionsWRITE, 0, sizeof(BoundaryConditions)*numElements);
-	std::memset(m_BoundaryConditionsREAD, 0, sizeof(BoundaryConditions)*numElements);
+	textureDesc.Format = DXGI_FORMAT_R16_FLOAT;
+	srvDesc.Format = DXGI_FORMAT_R16_FLOAT;
+	uavDesc.Format = DXGI_FORMAT_R16_FLOAT;
 
-
-	//Output buffer to be bound to UAV
-	outputDesc.Usage = D3D11_USAGE_DEFAULT;
-	outputDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
-	outputDesc.ByteWidth = sizeof(BoundaryConditions) * numElements;
-	outputDesc.CPUAccessFlags = 0;
-	outputDesc.StructureByteStride = sizeof(BoundaryConditions);
-	outputDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;	
-	result =_device->CreateBuffer(&outputDesc, 0, &m_outputBuffer);
-
-	//System buffer to get GPU result
-	outputDesc.Usage = D3D11_USAGE_STAGING;
-	outputDesc.BindFlags = 0;
-	outputDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-	result = _device->CreateBuffer(&outputDesc, 0, &m_outputresult);
-
-	//UAV to send to shader 
-	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
-	uavDesc.Format = DXGI_FORMAT_UNKNOWN;
-	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
-	uavDesc.Buffer.FirstElement = 0;
-	uavDesc.Buffer.Flags = 0;
-	uavDesc.Buffer.NumElements = numElements;
-	result =_device->CreateUnorderedAccessView(m_outputBuffer, &uavDesc, &m_BoundaryConditionsUAV);
+	//Create Texture3D
+	result = (_device->CreateTexture3D(&textureDesc, NULL, &m_BoundaryConditions));
+	//Create SRV
+	result = (_device->CreateShaderResourceView(m_BoundaryConditions, &srvDesc, &m_BoundaryConditionsSRV));
+	//Create UAV
+	result = (_device->CreateUnorderedAccessView(m_BoundaryConditions, &uavDesc, &m_BoundaryConditionsUAV));
 	#pragma endregion
 
 }
@@ -77,12 +83,8 @@ void FluidShader::Shutdown()
 {
 	m_BoundaryConditionsCS->Release();
 	delete m_BoundaryConditionsCS;
-	m_outputBuffer->Release();
-	delete m_outputBuffer;
-	m_BoundaryConditionsWRITE = nullptr;
-	delete m_BoundaryConditionsWRITE;
-	m_outputresult = nullptr;
-	delete m_outputresult;
+	m_BoundaryConditions = nullptr;
+	delete m_BoundaryConditions;
 
 	ShaderBase::Shutdown();
 }
@@ -95,26 +97,13 @@ void FluidShader::Render(ID3D11DeviceContext* _deviceContext)
 	_deviceContext->CSSetShader(m_BoundaryConditionsCS, nullptr, 0);
 	//bind the UAV to the shader 
 	_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_BoundaryConditionsUAV, 0);
-	_deviceContext->Dispatch(1, 1, 1);
+	_deviceContext->Dispatch(8, 8, 1);
 
 	// Unbind output from compute shader
 	ID3D11UnorderedAccessView* nullUAV[] = { NULL };
 	_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
 	// Disable Compute Shader
 	_deviceContext->CSSetShader(nullptr, nullptr, 0);
-	
-	_deviceContext->CopyResource(m_outputresult, m_outputBuffer);
-	D3D11_MAPPED_SUBRESOURCE mappedData;
-	result = _deviceContext->Map(m_outputresult, 0, D3D11_MAP_READ, 0, &mappedData);
-
-	m_BoundaryConditionsREAD = reinterpret_cast<BoundaryConditions*>(mappedData.pData);
-	
-	for (int i = 0; i < 16; i++)
-	{
-		Debug::Instance()->Log(m_BoundaryConditionsREAD[i].x.x);
-	}
-
-	_deviceContext->Unmap(m_outputresult, 0);
 
 	result = S_OK;
 }

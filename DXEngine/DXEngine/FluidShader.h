@@ -10,13 +10,6 @@ protected:
 	void CompileShaders(ID3D11Device*);
 	void CreateBuffers(ID3D11Device*);
 
-protected:
-	struct BoundaryConditions
-	{
-		XMFLOAT3 x;
-		XMFLOAT3 y;
-	};
-
 public:
 	FluidShader();
 	FluidShader(const FluidShader&);
@@ -30,15 +23,13 @@ public:
 	//shaders
 	ID3D11ComputeShader* m_BoundaryConditionsCS;
 
-	//buffers
-	ID3D11Buffer* m_outputBuffer;
-	ID3D11Buffer* m_outputresult;
+	//Textures
+	ID3D11Texture3D* m_BoundaryConditions;
 
-	//UAVS
+	//UAVs
 	ID3D11UnorderedAccessView* m_BoundaryConditionsUAV;
 
-	//vars
-	BoundaryConditions* m_BoundaryConditionsWRITE;
-	BoundaryConditions*	m_BoundaryConditionsREAD;
+	//SRVs
+	ID3D11ShaderResourceView* m_BoundaryConditionsSRV;
 };
 #endif // FluidShader_h__

@@ -1,6 +1,6 @@
 #include "Graphics.h"
 
-const UINT							g_iVolumeSize = 256;	// voxel volume width, height and depth
+const UINT							g_iVolumeSize = 256;	//Voxel volume width, height and depth
 const UINT							g_vol = 178;
 
 Graphics::Graphics()
@@ -59,7 +59,7 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	std::memset(m_ClearBackBufferColor, 0, sizeof(float) * 4);
 	////TwAddSeparator(m_D3D->m_TwBar, "Engine", "");
 	//TwAddVarRW(m_D3D->m_TwBar, "Camera Position", TW_TYPE_DIR3F, &Camera::Instance()->m_pos, "");
-	//TwAddVarRW(m_D3D->m_TwBar, "Back Buffer", TW_TYPE_COLOR3F, &*m_ClearBackBufferColor, "");
+	TwAddVarRW(m_D3D->m_TwBar, "Back Buffer", TW_TYPE_COLOR3F, &*m_ClearBackBufferColor, "");
 
 	/*m_Quad = new Quad;
 	m_Quad->Initialise(m_D3D, hwnd);*/
@@ -132,7 +132,7 @@ bool Graphics::Render(float dt)
 
 	//m_Quad->Render(m_D3D);		
 
-	//TwDraw();
+	TwDraw();
 	m_D3D->EndScene();
 
 	return true;

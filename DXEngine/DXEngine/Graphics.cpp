@@ -54,7 +54,7 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	m_VolumeRenderer = new VolumeRenderer;
-	m_VolumeRenderer->Initialize(m_D3D->GetDevice(), hwnd, m_D3D->m_ScreenWidth, m_D3D->m_ScreenHeight);
+	m_VolumeRenderer->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hwnd, m_D3D->m_ScreenWidth, m_D3D->m_ScreenHeight);
 	m_ClearBackBufferColor = new float;
 	std::memset(m_ClearBackBufferColor, 0, sizeof(float) * 4);
 	////TwAddSeparator(m_D3D->m_TwBar, "Engine", "");
@@ -63,9 +63,6 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	/*m_Quad = new Quad;
 	m_Quad->Initialise(m_D3D, hwnd);*/
-
-	m_fluidShader = new FluidShader;
-	m_fluidShader->Initialize(m_D3D->GetDevice());
 
 	return S_OK;
 }
@@ -128,7 +125,6 @@ bool Graphics::Render(float dt)
 	Camera::Instance()->Render();
 	
 	m_VolumeRenderer->Render(m_D3D);
-	//m_fluidShader->Render(m_D3D->GetDeviceContext());
 
 	//m_Quad->Render(m_D3D);		
 

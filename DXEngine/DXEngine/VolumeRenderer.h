@@ -8,6 +8,7 @@
 #include "Cube.h"
 #include "D3D.h"
 #include "VolumeRenderer.h"
+#include "FluidShader.h"
 
 __declspec(align(16)) class VolumeRenderer
 {
@@ -24,7 +25,7 @@ public:
 	void* operator new(size_t);
 	void operator delete(void*);
 
-	HRESULT Initialize(ID3D11Device*, HWND, int, int);
+	HRESULT Initialize(ID3D11Device*, ID3D11DeviceContext*, HWND, int, int);
 	void Shutdown();
 	void Update(float, D3D*);
 	void Render(D3D*);
@@ -39,6 +40,7 @@ protected:
 	RenderTexture* m_ModelBack;
 	VolumeTexture* m_VolumeTexture;
 	Cube* m_cube;
+	FluidShader* m_FluidShader;
 	
 	//sampler 
 	ID3D11SamplerState* g_pSamplerLinear;

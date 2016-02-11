@@ -5,8 +5,6 @@ VolumeTexture::VolumeTexture()
 	m_Texture3D = nullptr;
 	m_ShaderResourceView = nullptr;
 	m_furo = nullptr;
-
-	m_fluidShader = nullptr;
 }
 VolumeTexture::VolumeTexture(const VolumeTexture& other){}
 VolumeTexture::~VolumeTexture(){}
@@ -15,9 +13,6 @@ HRESULT VolumeTexture::Initialize(ID3D11Device* _device, int _volSize)
 {
 	m_furo = new Furo;
 	m_furo->Initialize(Furo::ThreeDimensional, _volSize, 0);
-
-	m_fluidShader = new FluidShader();
-	m_fluidShader->Initialize(_device);
 
 	HRESULT result = S_OK;
 	HANDLE hFile = CreateFileW(L"../DXEngine/foot.raw", GENERIC_READ, 0, NULL, OPEN_EXISTING, OPEN_EXISTING, NULL);
@@ -98,7 +93,6 @@ void VolumeTexture::Update(ID3D11Device* _device, ID3D11DeviceContext* _deviceCo
 
 void VolumeTexture::Render(ID3D11DeviceContext* _deviceContext)
 {
-	m_fluidShader->Render(_deviceContext);
 }
 
 void VolumeTexture::Shutdown()
@@ -107,6 +101,5 @@ void VolumeTexture::Shutdown()
 	m_Texture3D = nullptr;
 	m_ShaderResourceView->Release();
 	m_ShaderResourceView = nullptr;
-
 	m_furo->Shutdown();
 }

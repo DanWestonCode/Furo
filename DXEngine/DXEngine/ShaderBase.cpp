@@ -12,7 +12,6 @@ ShaderBase::ShaderBase()
 {
 	m_PixelShader = nullptr;
 	m_VertexShader = nullptr;
-	m_ComputeShader = nullptr;
 	m_Sampler = nullptr;
 }
 ShaderBase::ShaderBase(const ShaderBase& other){}
@@ -40,6 +39,12 @@ HRESULT ShaderBase::CompileShaderFromFile(WCHAR *ShaderFileName, LPCSTR ShaderEn
 	hr = D3DCompileFromFile(ShaderFileName, NULL, NULL, ShaderEntryPoint, ShaderModel, dwShaderFlags, 0,
 		ppBlobOut, &pErrorBlob);
 
+	if (pErrorBlob && FAILED(hr))
+	{
+		char* _error = (char*)pErrorBlob->GetBufferPointer();
+		
+		Debug::Instance()->Log(_error);
+	}
 	return hr;
 }
 
@@ -53,7 +58,6 @@ void ShaderBase::Shutdown()
 	delete m_InputLayout;
 	m_Sampler->Release();
 	delete m_Sampler;
-	m_ComputeShader->Release();
-	delete m_ComputeShader;
 }
+
 

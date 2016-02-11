@@ -105,11 +105,13 @@
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Advection.hlsl" />
     <ClInclude Include="AntTweakBar.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="D3D.h" />
     <ClInclude Include="Debug.h" />
+    <ClInclude Include="FluidProperty.h" />
     <ClInclude Include="FluidShader.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputManager.h" />
@@ -145,7 +147,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Fluid.hlsl">
+    <None Include="BoundaryConditions.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

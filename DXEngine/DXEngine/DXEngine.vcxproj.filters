@@ -49,6 +49,9 @@
     <Filter Include="Source Files\Objects">
       <UniqueIdentifier>{6d482e65-d6c7-4289-86af-cbeb03d461d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Fluid Compute">
+      <UniqueIdentifier>{6ab194b9-d0bc-4378-8768-31ab03f0f736}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InputManager.cpp">
@@ -173,6 +176,12 @@
     <ClInclude Include="Debug.h">
       <Filter>Header Files\SystemUtils</Filter>
     </ClInclude>
+    <ClInclude Include="Advection.hlsl">
+      <Filter>Shaders\Fluid Compute</Filter>
+    </ClInclude>
+    <ClInclude Include="FluidProperty.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="model_position.hlsl">
@@ -184,8 +193,8 @@
     <None Include="color.fx">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Fluid.hlsl">
-      <Filter>Shaders</Filter>
+    <None Include="BoundaryConditions.hlsl">
+      <Filter>Shaders\Fluid Compute</Filter>
     </None>
   </ItemGroup>
 </Project>

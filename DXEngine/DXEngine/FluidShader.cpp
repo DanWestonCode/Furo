@@ -1,19 +1,57 @@
 #include "FluidShader.h"
 #define READ 0
 #define WRITE 1
+#define NUMTHREADS 8
 
 FluidShader::FluidShader()
 {
 	m_BoundaryConditionsCS = nullptr;
 	m_BoundaryConditions = nullptr;
+
+	m_Velocity[READ] = nullptr;
+	m_Velocity[WRITE] = nullptr;
+	m_Density[READ] = nullptr;
+	m_Density[WRITE] = nullptr;
+	m_Temperature[READ] = nullptr;
+	m_Temperature[WRITE] = nullptr;
+	m_Vorticity[READ] = nullptr;
+	m_Vorticity[WRITE] = nullptr;
+
+	m_ImpulseBuffer = nullptr;
+	m_AdvectionBuffer = nullptr;
+	m_FluidBuffer = nullptr;
 }
 FluidShader::FluidShader(const FluidShader& other){}
 FluidShader::~FluidShader(){}
 
-HRESULT FluidShader::Initialize(ID3D11Device* _device)
+HRESULT FluidShader::Initialize(ID3D11Device* _device, ID3D11DeviceContext* _deviceContext)
 {
 	CompileShaders(_device);
 	CreateTextures(_device);
+	CreateSampler(_device);
+
+	HRESULT result;
+
+	D3D11_BUFFER_DESC bufferDesc;
+	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
+
+	//fluid buffer
+	bufferDesc.ByteWidth = sizeof(FluidBuffer);
+	_device->CreateBuffer(&bufferDesc, NULL, &m_FluidBuffer);
+
+	//advection buffer
+	bufferDesc.ByteWidth = sizeof(AdvectionBuffer);
+	_device->CreateBuffer(&bufferDesc, NULL, &m_AdvectionBuffer);
+
+	//Impulse buffer
+	bufferDesc.ByteWidth = sizeof(ImpulseBuffer);
+	_device->CreateBuffer(&bufferDesc, NULL, &m_ImpulseBuffer);
+
+	ComputeBoundaryConditions(_deviceContext);
 	return S_OK;
 }
 
@@ -22,11 +60,18 @@ void FluidShader::CompileShaders(ID3D11Device* _device)
 	HRESULT result;
 	ID3DBlob* blob = nullptr;
 
-	#pragma region Boundary Conditions
+	#pragma region Boundary Conditions Compute
 	blob = nullptr;
 	// Compile and create the pixel shader
-	result = CompileShaderFromFile(L"../DXEngine/fluid.hlsl", "ComputeBoundaryConditions", "cs_5_0", &blob);
+	result = CompileShaderFromFile(L"../DXEngine/BoundaryConditions.hlsl", "ComputeBoundaryConditions", "cs_5_0", &blob);
 	result = _device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_BoundaryConditionsCS);
+	#pragma endregion
+
+	#pragma region Advection Compute
+	blob = nullptr;
+	// Compile and create the pixel shader
+	result = CompileShaderFromFile(L"../DXEngine/Advection.hlsl", "ComputeAdvection", "cs_5_0", &blob);
+	result = _device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_AdvectionCS);
 	#pragma endregion
 
 	blob->Release();
@@ -137,6 +182,27 @@ void FluidShader::CreateTextures(ID3D11Device* _device)
 
 }
 
+void FluidShader::CreateSampler(ID3D11Device* _device)
+{
+	D3D11_SAMPLER_DESC samplerDesc;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDesc.MipLODBias = 0.0f;
+	samplerDesc.MaxAnisotropy = 16;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	samplerDesc.BorderColor[0] = 0;
+	samplerDesc.BorderColor[1] = 0;
+	samplerDesc.BorderColor[2] = 0;
+	samplerDesc.BorderColor[3] = 0;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	// Create the texture sampler state.
+	HRESULT hresult = _device->CreateSamplerState(&samplerDesc, &m_Sampler);
+}
+
 void FluidShader::Shutdown()
 {
 	m_BoundaryConditionsCS->Release();
@@ -151,9 +217,36 @@ void FluidShader::Shutdown()
 	ShaderBase::Shutdown();
 }
 
-void FluidShader::Render(ID3D11DeviceContext* _deviceContext)
+void FluidShader::Update(ID3D11DeviceContext* _deviceContext, float _dt)
 {
-	ComputeBoundaryConditions(_deviceContext);	
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	FluidBuffer* dataPtr;
+	//update General buffer
+	HRESULT result = _deviceContext->Map(m_AdvectionBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	dataPtr = (FluidBuffer*)mappedResource.pData;
+	dataPtr->dt = _dt;
+	dataPtr->fDensityBuoyancy = 0;
+	dataPtr->fDensityWeight = 0;
+	dataPtr->fVorticityStrength = 0;
+	dataPtr->vBuoyancyDirection = XMFLOAT3(0,1,0);
+	_deviceContext->Unmap(m_AdvectionBuffer, 0);
+
+
+	//advect temp against velocity
+	ComputeAdvection(_deviceContext, m_TemperatureUAV[WRITE], m_TemperatureSRV[READ], m_VelocitySRV[READ], 1.0f, 1.0f);
+	std::swap(m_TemperatureUAV[READ], m_TemperatureUAV[WRITE]);
+	std::swap(m_TemperatureSRV[READ], m_TemperatureSRV[WRITE]);
+	//std::swap(m_Temperature[READ], m_Temperature[WRITE]);
+
+	//advect density against velocity
+	ComputeAdvection(_deviceContext, m_DensityUAV[WRITE], m_DensitySRV[READ], m_VelocitySRV[READ], 1.0f, 1.0f);
+	std::swap(m_TemperatureUAV[READ], m_TemperatureUAV[WRITE]);
+	std::swap(m_TemperatureSRV[READ], m_TemperatureSRV[WRITE]);
+
+	//advect velocity against velocity
+	ComputeAdvection(_deviceContext, m_VelocityUAV[WRITE], m_VelocitySRV[READ], m_VelocitySRV[READ], 1.0f, 1.0f);
+	std::swap(m_TemperatureUAV[READ], m_TemperatureUAV[WRITE]);
+	std::swap(m_TemperatureSRV[READ], m_TemperatureSRV[WRITE]);
 }
 
 void FluidShader::ComputeBoundaryConditions(ID3D11DeviceContext* _deviceContext)
@@ -163,20 +256,63 @@ void FluidShader::ComputeBoundaryConditions(ID3D11DeviceContext* _deviceContext)
 	//bind the UAV to the shader 
 	_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_BoundaryConditionsUAV, 0);
 	//Dispatch Shader
-	_deviceContext->Dispatch(2, 2, 2);
+	_deviceContext->Dispatch((UINT)m_volSize / NUMTHREADS, (UINT)m_volSize / NUMTHREADS, (UINT)m_volSize / NUMTHREADS);
 	//Unbind
-	ComputeUnbind(_deviceContext, 1);
+	ComputeUnbind(_deviceContext, 1, 0);
 }
 
-void FluidShader::ComputeUnbind(ID3D11DeviceContext* _deviceContext, int _numViews)
+void FluidShader::ComputeAdvection(ID3D11DeviceContext* _deviceContext, ID3D11UnorderedAccessView* _targetUAV, ID3D11ShaderResourceView* _targetSRV, ID3D11ShaderResourceView* _velocitySRV, float _dissipation, float _decay)
 {
-	// Unbind output from compute shader
-	ID3D11UnorderedAccessView* nullUAV[] = { NULL };
-	for (int i = 1; i <= _numViews; i++)
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	AdvectionBuffer* dataPtr;
+	// Lock the screen size constant buffer so it can be written to.
+	HRESULT result = _deviceContext->Map(m_AdvectionBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	dataPtr = (AdvectionBuffer*)mappedResource.pData;
+	dataPtr->dissapation = _dissipation;
+	dataPtr->dtMod = 0.0f;
+	dataPtr->decay = _decay;
+	_deviceContext->Unmap(m_AdvectionBuffer, 0);
+
+	ID3D11Buffer *const pProcessConstantBuffers[2] = { m_FluidBuffer, m_AdvectionBuffer};
+	_deviceContext->CSSetConstantBuffers(0, 2, pProcessConstantBuffers);
+
+	//set sampler in Compute shader
+	_deviceContext->CSSetSamplers(0, 1, &m_Sampler);
+	//target advection shader
+	_deviceContext->CSSetShader(m_AdvectionCS, nullptr, 0);
+	//bind the target as the UAV for the advection shader
+	_deviceContext->CSSetUnorderedAccessViews(0, 1, &_targetUAV, 0);
+	//Set the field to advect against
+	ID3D11ShaderResourceView *const SRV[3] = { _targetSRV, m_BoundaryConditionsSRV, _velocitySRV };
+	_deviceContext->CSSetShaderResources(0, 3, SRV);
+	//Dispatch Shader
+	_deviceContext->Dispatch((UINT)m_volSize / NUMTHREADS, (UINT)m_volSize / NUMTHREADS, (UINT)m_volSize / NUMTHREADS);
+	ComputeUnbind(_deviceContext, 1, 3);
+}
+
+void FluidShader::ComputeUnbind(ID3D11DeviceContext* _deviceContext, int _numUAVS, int _numSRVS)
+{
+	if (_numUAVS > 0)
 	{
-		_deviceContext->CSSetUnorderedAccessViews(0, i, nullUAV, 0);
+		// Unbind output from compute shader
+		ID3D11UnorderedAccessView* nullUAV[] = { NULL };
+		for (int i = 1; i <= _numUAVS; i++)
+		{
+			_deviceContext->CSSetUnorderedAccessViews(0, i, nullUAV, 0);
+		}
 	}
-	
+
+	if (_numSRVS)
+	{
+		// Unbind output from compute shader
+		ID3D11ShaderResourceView* nullSRV[] = { NULL };
+		for (int i = 1; i <= _numUAVS; i++)
+		{
+			_deviceContext->CSSetShaderResources(0, i, nullSRV);
+		}
+	}
+
 	// Disable Compute Shader
 	_deviceContext->CSSetShader(nullptr, nullptr, 0);
 }

@@ -1,6 +1,6 @@
 #include "Graphics.h"
 
-const UINT							g_iVolumeSize = 256;	//Voxel volume width, height and depth
+const UINT							g_iVolumeSize = 64;	//Voxel volume width, height and depth
 const UINT							g_vol = 178;
 
 Graphics::Graphics()
@@ -9,7 +9,6 @@ Graphics::Graphics()
 	m_Quad = nullptr;
 	m_VolumeRenderer = nullptr;
 	m_ClearBackBufferColor = nullptr;
-	m_fluidShader = nullptr;
 }
 
 Graphics::Graphics(const Graphics& other)
@@ -74,8 +73,7 @@ void Graphics::Shutdown()
 		m_D3D->Shutdown();
 		delete m_D3D;
 		m_D3D = 0;
-	}
-	
+	}	
 
 	m_VolumeRenderer->Shutdown();
 	delete m_VolumeRenderer;
@@ -86,8 +84,6 @@ void Graphics::Shutdown()
 	m_Quad = nullptr;
 
 	Camera::Instance()->DeleteInstance();
-
-	m_fluidShader->Shutdown();
 
 	TwTerminate();
 

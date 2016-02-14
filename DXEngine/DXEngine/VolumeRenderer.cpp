@@ -1,5 +1,5 @@
 #include "VolumeRenderer.h"
-const UINT							g_iVolumeSize = 128;
+const UINT							g_iVolumeSize = 32;
 VolumeRenderer::VolumeRenderer()
 {
 	m_ModelShader = nullptr;
@@ -9,7 +9,6 @@ VolumeRenderer::VolumeRenderer()
 	m_VolumeTexture = nullptr;
 	m_cube = nullptr;
 	g_pSamplerLinear = nullptr;
-	m_FluidShader = nullptr;
 }
 void* VolumeRenderer::operator new(size_t memorySize)
 {
@@ -41,15 +40,11 @@ HRESULT VolumeRenderer::Initialize(ID3D11Device* _device, ID3D11DeviceContext* _
 	m_ModelBack->Initialize(_device, _width, _height);
 
 	m_VolumeTexture = new VolumeTexture;
-	m_VolumeTexture->Initialize(_device, g_iVolumeSize);
+	m_VolumeTexture->Initialize(_device, _deviceContext, g_iVolumeSize);
 
 	m_cube = new Cube;
 	m_cube->Initialise(_device);
 
-	m_FluidShader = new FluidShader;
-	m_FluidShader->m_volSize = g_iVolumeSize;
-	m_FluidShader->Initialize(_device, _deviceContext);
-	
 	CreateSampler(_device);
 
 	return result;
@@ -90,15 +85,16 @@ void VolumeRenderer::Shutdown()
 
 void VolumeRenderer::Update(float dt, D3D* _d3d)
 {
-	m_FluidShader->Update(_d3d->GetDeviceContext(), dt);
 	m_cube->Update(dt);
-	//m_VolumeTexture->Update(_d3d->GetDevice(), _d3d->GetDeviceContext(), g_iVolumeSize, dt);
+	m_VolumeTexture->Update(_d3d->GetDevice(), _d3d->GetDeviceContext(), g_iVolumeSize, dt);
 }
 
 void VolumeRenderer::Render(D3D* m_D3D)
 {
 	float ClearBackBuffer[4] = { 0.f, 0.f, 0.f, 1.f };
 	float ClearRenderTarget[4] = { 0.f, 0.f, 0.f, 1.f };
+
+	m_VolumeTexture->Render(m_D3D->GetDeviceContext());
 
 	m_cube->Render(m_D3D->GetDeviceContext());
 
@@ -152,7 +148,7 @@ void VolumeRenderer::Render(D3D* m_D3D)
 	m_D3D->GetDeviceContext()->PSSetSamplers(0, 1, &g_pSamplerLinear);
 
 	//// Set textures
-	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 1, &m_FluidShader->m_DensitySRV[0]);//&m_VolumeTexture->m_ShaderResourceView);
+	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 1, &m_VolumeTexture->m_fluidShader->m_DensitySRV[0]);//&m_VolumeTexture->m_ShaderResourceView);
 	//m_VolumeTexture->m_fluidShader->m_boundarySRV);
 	m_D3D->GetDeviceContext()->PSSetShaderResources(1, 1, &m_ModelFront->m_SRV);
 	m_D3D->GetDeviceContext()->PSSetShaderResources(2, 1, &m_ModelBack->m_SRV);

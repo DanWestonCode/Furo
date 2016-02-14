@@ -44,8 +44,5 @@ protected:
 	ID3D11PixelShader* m_PixelShader;
 	ID3D11ComputeShader* m_ComputeShader;
 	ID3D11SamplerState* m_Sampler;
-
-public:
-	
 };
 #endif // ShaderBase_h__

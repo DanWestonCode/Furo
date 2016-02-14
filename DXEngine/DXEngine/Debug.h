@@ -19,7 +19,7 @@ public:
 	void operator delete(void*);
 
 
-	void Log(void*);
+	void Log(char*);
 
 private:
 	static Debug *m_Debug;

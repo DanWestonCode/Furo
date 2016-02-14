@@ -8,7 +8,6 @@
 #include "Cube.h"
 #include "D3D.h"
 #include "VolumeRenderer.h"
-#include "FluidShader.h"
 
 __declspec(align(16)) class VolumeRenderer
 {
@@ -40,7 +39,6 @@ protected:
 	RenderTexture* m_ModelBack;
 	VolumeTexture* m_VolumeTexture;
 	Cube* m_cube;
-	FluidShader* m_FluidShader;
 	
 	//sampler 
 	ID3D11SamplerState* g_pSamplerLinear;

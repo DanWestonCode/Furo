@@ -5,14 +5,19 @@ VolumeTexture::VolumeTexture()
 	m_Texture3D = nullptr;
 	m_ShaderResourceView = nullptr;
 	m_furo = nullptr;
+
+	m_fluidShader = nullptr;
 }
 VolumeTexture::VolumeTexture(const VolumeTexture& other){}
 VolumeTexture::~VolumeTexture(){}
 
-HRESULT VolumeTexture::Initialize(ID3D11Device* _device, int _volSize)
+HRESULT VolumeTexture::Initialize(ID3D11Device* _device, ID3D11DeviceContext* _deviceContext, int _volSize)
 {
 	m_furo = new Furo;
 	m_furo->Initialize(Furo::ThreeDimensional, _volSize, 0);
+
+	m_fluidShader = new FluidShader();
+	m_fluidShader->Initialize(_device, _deviceContext, _volSize);
 
 	HRESULT result = S_OK;
 	HANDLE hFile = CreateFileW(L"../DXEngine/foot.raw", GENERIC_READ, 0, NULL, OPEN_EXISTING, OPEN_EXISTING, NULL);
@@ -64,35 +69,13 @@ void VolumeTexture::Update(ID3D11Device* _device, ID3D11DeviceContext* _deviceCo
 {	
 	D3D11_MAPPED_SUBRESOURCE mappedTex;
 	HRESULT result;
-
-	/*m_furo->Run(dt);
-	m_furo->m_volumeFluid->Clear();
-	if (InputManager::Instance()->IsKeyDown(DIK_Q))
-	{
-	for (int x = 0; x < _volSize; x++)
-	{
-	for (int y = 0; y < _volSize; y++)
-	{
-	for (int z = 0; z < _volSize; z++)
-	{
-	m_furo->m_volumeFluid->SetDensity(x, y, z, 1.0f);
-	m_furo->m_volumeFluid->SetVelX(x, y, z, 5.0f);
-	m_furo->m_volumeFluid->SetVelY(x, y, z, 5.0f);
-	m_furo->m_volumeFluid->SetVelZ(x, y, z, 5.0f);
-	}
-	}
-	}
-	}*/
-
-	//result = _deviceContext->Map(m_Texture3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedTex);
-
-	//memcpy(mappedTex.pData, m_furo->m_volumeFluid->GetDensity(), sizeof(m_furo->m_volumeFluid->GetDensity()));
-
-	//_deviceContext->Unmap(m_Texture3D, 0);
+	m_fluidShader->Update(_deviceContext, dt);
+	
 }
 
 void VolumeTexture::Render(ID3D11DeviceContext* _deviceContext)
 {
+	
 }
 
 void VolumeTexture::Shutdown()
@@ -101,5 +84,6 @@ void VolumeTexture::Shutdown()
 	m_Texture3D = nullptr;
 	m_ShaderResourceView->Release();
 	m_ShaderResourceView = nullptr;
+
 	m_furo->Shutdown();
 }

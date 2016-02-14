@@ -6,6 +6,7 @@
 #include <DirectXMath.h>
 #include "Furo.h"
 #include <iostream>
+#include "FluidShader.h"
 
 using namespace DirectX;
 class VolumeTexture
@@ -16,7 +17,7 @@ public:
 	VolumeTexture(const VolumeTexture&);
 	~VolumeTexture();
 
-	HRESULT Initialize(ID3D11Device*, int);
+	HRESULT Initialize(ID3D11Device*, ID3D11DeviceContext*, int);
 	void Shutdown();
 	void Update(ID3D11Device*, ID3D11DeviceContext*, int, float);
 	void Render(ID3D11DeviceContext*);
@@ -26,6 +27,7 @@ public:
 	ID3D11Texture3D* m_Texture3D;
 	ID3D11ShaderResourceView* m_ShaderResourceView;
 	Furo* m_furo;
+	FluidShader* m_fluidShader; 
 };
 
 #endif // VolumeTexture_h__

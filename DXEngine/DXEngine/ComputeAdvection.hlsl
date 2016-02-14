@@ -23,7 +23,7 @@ SamplerState linearSampler : register (s0);
 void ComputeAdvection(uint3 id : SV_DispatchThreadID)
 {
     //if there's an obstacle bail
-	if(_BoundaryConditions[id] > 0.1)
+	if(_BoundaryConditions[id] > 0)
 	{
         _AdvectionTargetWrite[id] = float3(0,0,0);
         return;
@@ -34,7 +34,7 @@ void ComputeAdvection(uint3 id : SV_DispatchThreadID)
 	_Velocity.GetDimensions(_Size.x, _Size.y, _Size.z);
 
     //back trace advection
-	float3 prevPos = id - dt * _Velocity[id];
+	float3 prevPos = id - 1 * dt * _Velocity[id];
     prevPos = (prevPos+0.5f)/_Size;
 
     float3 result = _AdvectionTargetRead.SampleLevel(linearSampler, prevPos, 0);

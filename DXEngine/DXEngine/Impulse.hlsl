@@ -1,6 +1,6 @@
 #define NUM_THREADS 8
 
-cbuffer AdvectionBuffer : register (b0) 
+cbuffer ImpulseBuffer : register (b0) 
 {
     float radius;
 	float amount;

@@ -196,5 +196,17 @@
     <None Include="ComputeAdvection.hlsl">
       <Filter>Shaders\Fluid</Filter>
     </None>
+    <None Include="ComputeBuoyancy.hlsl">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="ComputeVorticityConfinement.hlsl">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="ComputeDivergence.hlsl">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="ComputeJacobi.hlsl">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
   </ItemGroup>
 </Project>

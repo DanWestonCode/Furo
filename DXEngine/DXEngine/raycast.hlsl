@@ -109,5 +109,5 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 		v += step;
 	}
  
-	return float4(result.r, result.r, result.r, result.y);
+	return float4(result.r, 0.0f, result.r, result.y);
 }

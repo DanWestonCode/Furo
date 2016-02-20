@@ -41,8 +41,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\InteractiveFluidDyanmics;C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Daniel\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Daniel\Documents\GitHub\InteractiveFluidDynamics\InteractiveFluidDyanmics;C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;$(IncludePath)</IncludePath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -55,13 +55,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\Debug;C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Daniel\Documents\GitHub\InteractiveFluidDynamics\DXEngine\Debug;C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Daniel\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>AntTweakBar.lib;AntTweakBar64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

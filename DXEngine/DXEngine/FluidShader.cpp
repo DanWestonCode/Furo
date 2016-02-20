@@ -282,7 +282,7 @@ void FluidShader::Shutdown()
 
 void FluidShader::Update(ID3D11DeviceContext* _deviceContext, float _dt)
 {
-	m_timeStep = _dt;
+	m_timeStep = _dt*10;
 
 	ComputeAdvection(_deviceContext, m_TemperatureUAV[WRITE], m_TemperatureSRV[READ]);
 	std::swap(m_TemperatureUAV[READ], m_TemperatureUAV[WRITE]);
@@ -308,13 +308,13 @@ void FluidShader::Update(ID3D11DeviceContext* _deviceContext, float _dt)
 	std::swap(m_TemperatureUAV[READ], m_TemperatureUAV[WRITE]);
 	std::swap(m_TemperatureSRV[READ], m_TemperatureSRV[WRITE]);
 
-	ComputeVorticityConfinement(_deviceContext);
-	std::swap(m_VelocityUAV[READ], m_VelocityUAV[WRITE]);
-	std::swap(m_VelocitySRV[READ], m_VelocitySRV[WRITE]);
+	//ComputeVorticityConfinement(_deviceContext);
+	//std::swap(m_VelocityUAV[READ], m_VelocityUAV[WRITE]);
+	//std::swap(m_VelocitySRV[READ], m_VelocitySRV[WRITE]);
 
-	ComputeDivergence(_deviceContext);
+	//ComputeDivergence(_deviceContext);
 
-	ComputeJacobi(_deviceContext);
+	//ComputeJacobi(_deviceContext);
 }
 
 void FluidShader::ComputeBoundaryConditions(ID3D11DeviceContext* _deviceContext)
@@ -397,10 +397,10 @@ void FluidShader::ComputeBuoyancy(ID3D11DeviceContext* _deviceContext)
 	_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_VelocityUAV[WRITE], 0);
 
 	//Set the field to advect against
-	ID3D11ShaderResourceView *const SRV[3] = { m_VelocitySRV[READ], m_DensitySRV[READ], m_VelocitySRV[READ] };
+	ID3D11ShaderResourceView *const SRV[3] = { m_VelocitySRV[READ], m_DensitySRV[READ], m_TemperatureSRV[READ] };
 	_deviceContext->CSSetShaderResources(0, 3, SRV);
 
-	_deviceContext->Dispatch((UINT)size / NUM_THREADS, (UINT)size / NUM_THREADS, (UINT)size / NUM_THREADS);
+	_deviceContext->Dispatch((UINT)ceil(size / NUM_THREADS), (UINT)ceil(size / NUM_THREADS), (UINT)ceil(size / NUM_THREADS));
 
 	ID3D11ShaderResourceView* nullSRV[3] = { NULL, NULL, NULL };
 	_deviceContext->CSSetShaderResources(0, 3, nullSRV);
@@ -424,7 +424,7 @@ void FluidShader::ComputeImpulse(ID3D11DeviceContext* _deviceContext, ID3D11Unor
 	dataPtr->amount = densityAmount;
 	dataPtr->dt = m_timeStep;
 	dataPtr->radius = impulseRadius;
-	dataPtr->sourcePos = XMFLOAT3(16.0f, 1.0f, 16.0f);
+	dataPtr->sourcePos = XMFLOAT3(32, 2.0f, 32);
 	_deviceContext->Unmap(m_DensityBuffer, 0);
 
 	_deviceContext->CSSetConstantBuffers(0, 1, &m_DensityBuffer);

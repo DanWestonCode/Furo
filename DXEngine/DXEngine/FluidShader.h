@@ -34,15 +34,24 @@ protected:
 		float dt;
 		float weight;
 	};
+	struct ConfinementBuffer
+	{
+		float dt;
+		float VorticityStrength;
+		float padding1;
+		float padding2;
+	};
 
 private:
 	void ComputeBoundaryConditions(ID3D11DeviceContext*);
 	void ComputeAdvection(ID3D11DeviceContext*, ID3D11UnorderedAccessView*, ID3D11ShaderResourceView*);
-	void ComputeImpulse(ID3D11DeviceContext*, ID3D11UnorderedAccessView*, ID3D11ShaderResourceView*);	
+	void ComputeImpulse(ID3D11DeviceContext*, ID3D11UnorderedAccessView*, ID3D11ShaderResourceView*, float);	
 	void ComputeBuoyancy(ID3D11DeviceContext*);
-	void ComputeVorticityConfinement(ID3D11DeviceContext*);
+	void ComputeVorticity(ID3D11DeviceContext*);
+	void ComputeConfinement(ID3D11DeviceContext*);
 	void ComputeDivergence(ID3D11DeviceContext*);
 	void ComputeJacobi(ID3D11DeviceContext*);
+	void ComputeProjection(ID3D11DeviceContext*);
 
 public:
 	FluidShader();
@@ -54,29 +63,33 @@ public:
 	void Update(ID3D11DeviceContext*, float);
 
 	int size;
-	float impulseRadius,
-		densityAmount,
+	float m_impulseRadius,
+		m_densityAmount,
+		m_TemperatureAmount,
 		m_timeStep,
 		m_dissipation,
 		m_decay,
 		m_ambientTemperature, 
 		m_buoyancy,
-		m_weight;
+		m_weight,
+		m_VorticityStrength;
 public:
 	//shaders
 	ID3D11ComputeShader* m_BoundaryConditionsCS;
 	ID3D11ComputeShader* m_AdvectionCS;
 	ID3D11ComputeShader* m_BuoyancyCS;
 	ID3D11ComputeShader* m_ImpulseCS;
-	ID3D11ComputeShader* m_VortConCS;
+	ID3D11ComputeShader* m_VorticityCS;
+	ID3D11ComputeShader* m_ConfinementCS;
 	ID3D11ComputeShader* m_DivergenceCS;
 	ID3D11ComputeShader* m_JacobiCS;
+	ID3D11ComputeShader* m_ProjectionCS;
 
 	//Textures
 	ID3D11Texture3D* m_BoundaryConditions;
 	ID3D11Texture3D* m_Velocity[2];
 	ID3D11Texture3D* m_Density[2];
-	ID3D11Texture3D* m_Vorticity[2];
+	ID3D11Texture3D* m_Vorticity;
 	ID3D11Texture3D* m_Temperature[2];
 	ID3D11Texture3D* m_Divergence;
 	ID3D11Texture3D* m_Pressure[2];
@@ -85,7 +98,7 @@ public:
 	ID3D11UnorderedAccessView* m_BoundaryConditionsUAV;
 	ID3D11UnorderedAccessView* m_VelocityUAV[2];
 	ID3D11UnorderedAccessView* m_DensityUAV[2];
-	ID3D11UnorderedAccessView* m_VorticityUAV[2];
+	ID3D11UnorderedAccessView* m_VorticityUAV;
 	ID3D11UnorderedAccessView* m_TemperatureUAV[2];
 	ID3D11UnorderedAccessView* m_DivergenceUAV;
 	ID3D11UnorderedAccessView* m_PressureUAV[2];
@@ -94,7 +107,7 @@ public:
 	ID3D11ShaderResourceView* m_BoundaryConditionsSRV;
 	ID3D11ShaderResourceView* m_VelocitySRV[2];
 	ID3D11ShaderResourceView* m_DensitySRV[2];
-	ID3D11ShaderResourceView* m_VorticitySRV[2];
+	ID3D11ShaderResourceView* m_VorticitySRV;
 	ID3D11ShaderResourceView* m_TemperatureSRV[2];
 	ID3D11ShaderResourceView* m_DivergenceSRV;
 	ID3D11ShaderResourceView* m_PressureSRV[2];
@@ -103,5 +116,6 @@ public:
 	ID3D11Buffer* m_DensityBuffer;
 	ID3D11Buffer* m_AdvectionBuffer;
 	ID3D11Buffer* m_BuoyancyBuffer;
+	ID3D11Buffer* m_ConfinementBuffer;
 };
 #endif // FluidShader_h__

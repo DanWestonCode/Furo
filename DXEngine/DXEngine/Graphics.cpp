@@ -57,7 +57,7 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_ClearBackBufferColor = new float;
 	std::memset(m_ClearBackBufferColor, 0, sizeof(float) * 4);
 	////TwAddSeparator(m_D3D->m_TwBar, "Engine", "");
-	//TwAddVarRW(m_D3D->m_TwBar, "Camera Position", TW_TYPE_DIR3F, &Camera::Instance()->m_pos, "");
+	TwAddVarRW(m_D3D->m_TwBar, "Camera Position", TW_TYPE_DIR3F, &Camera::Instance()->m_pos, "");
 	TwAddVarRW(m_D3D->m_TwBar, "Back Buffer", TW_TYPE_COLOR3F, &*m_ClearBackBufferColor, "");
 
 	/*m_Quad = new Quad;

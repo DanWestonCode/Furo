@@ -30,14 +30,14 @@ void ComputeDivergence( uint3 id : SV_DispatchThreadID )
 	// Enforce boundaries
 	float3 obstacleVelocity = float3(0,0,0);
     
-    if(_BoundaryConditions[coordT] > 0.1) vT = obstacleVelocity;
-    if(_BoundaryConditions[coordB] > 0.1) vB = obstacleVelocity;
+    if(_BoundaryConditions[coordT] > 0) vT = obstacleVelocity;
+    if(_BoundaryConditions[coordB] > 0) vB = obstacleVelocity;
     
-    if(_BoundaryConditions[coordR] > 0.1) vR = obstacleVelocity;
-    if(_BoundaryConditions[coordL] > 0.1) vL = obstacleVelocity;
+    if(_BoundaryConditions[coordR] > 0) vR = obstacleVelocity;
+    if(_BoundaryConditions[coordL] > 0) vL = obstacleVelocity;
     
-    if(_BoundaryConditions[coordU] > 0.1) vU = obstacleVelocity;
-    if(_BoundaryConditions[coordD] > 0.1) vD = obstacleVelocity;
+    if(_BoundaryConditions[coordU] > 0) vU = obstacleVelocity;
+    if(_BoundaryConditions[coordD] > 0) vD = obstacleVelocity;
 
 	float result = 0.5f * (vR.x - vL.x + vT.y - vB.y + vU.z - vD.z);
 

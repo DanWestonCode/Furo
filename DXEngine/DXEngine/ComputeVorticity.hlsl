@@ -1,12 +1,11 @@
 #define NUM_THREADS 8
 
+RWTexture3D<float4> _VorticityResult : register (u0);
 
-RWTexture3D<int> _VorticityResult : register (u0);
 Texture3D<float3> _Velocity : register (t0);
-Texture3D<int> _BoundaryConditions : register (t1);
 
 [numthreads(NUM_THREADS, NUM_THREADS, NUM_THREADS)]
-void ComputeVorticityConfinement( uint3 id : SV_DispatchThreadID )
+void ComputeVorticity( uint3 id : SV_DispatchThreadID )
  {
 	uint3 dimensions;
 	//get dimensions of texture

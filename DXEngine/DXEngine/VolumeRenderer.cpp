@@ -62,6 +62,7 @@ void VolumeRenderer::CreateSampler(ID3D11Device* device)
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	sampDesc.MaxAnisotropy = 16;
 	hr = device->CreateSamplerState(&sampDesc, &g_pSamplerLinear);
 }
 
@@ -148,7 +149,7 @@ void VolumeRenderer::Render(D3D* m_D3D)
 	m_D3D->GetDeviceContext()->PSSetSamplers(0, 1, &g_pSamplerLinear);
 
 	//// Set textures
-	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 1, &m_VolumeTexture->m_fluidShader->m_DensitySRV[0]);//m_VolumeTexture->m_ShaderResourceView
+	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 1, &m_VolumeTexture->m_fluidShader->m_DensitySRV[0]);//
 	//m_VolumeTexture->m_fluidShader->m_boundarySRV);
 	m_D3D->GetDeviceContext()->PSSetShaderResources(1, 1, &m_ModelFront->m_SRV);
 	m_D3D->GetDeviceContext()->PSSetShaderResources(2, 1, &m_ModelBack->m_SRV);

@@ -13,15 +13,33 @@ void ComputeBoundaryConditions(uint3 id : SV_DispatchThreadID)
     //default no obstacle
     float obstacle = 0;
     
-    if(id.x-1 < 0) obstacle = 1;
-    if(id.x+1 > (int)_Size.x-1) obstacle = 1;
+	if (id.x - 1 < 0)
+	{
+		obstacle = 1;
+	}
+	if (id.x + 1 > (int)_Size.x - 1)
+	{
+		obstacle = 1;
+	}
     
-    if(id.y-1 < 0) obstacle = 1;
-    if(id.y+1 > (int)_Size.y-1) obstacle = 1;
+	if (id.y - 1 < 0)
+	{
+		obstacle = 1;
+	}
+	if (id.y + 1 > (int)_Size.y - 1)
+	{
+		obstacle = 1;
+	}
     
-    if(id.z-1 < 0) obstacle = 1;
-    if(id.z+1 > (int)_Size.z-1) obstacle = 1;
+	if (id.z - 1 < 0)
+	{
+		obstacle = 1;
+	}
+	if (id.z + 1 > (int)_Size.z - 1)
+	{
+		obstacle = 1;
+	}
     
 	//set up obstacle
-    _BoundaryConditions[idx] = obstacle;
+	_BoundaryConditions[idx] = obstacle;
 }

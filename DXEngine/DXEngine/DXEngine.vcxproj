@@ -165,7 +165,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ComputeVorticityConfinement.hlsl">
+    <None Include="ComputeVorticity.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
@@ -176,6 +176,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ComputeJacobi.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ComputeConfinement.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ComputeProjection.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

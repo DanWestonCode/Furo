@@ -199,13 +199,19 @@
     <None Include="ComputeBuoyancy.hlsl">
       <Filter>Shaders\Fluid</Filter>
     </None>
-    <None Include="ComputeVorticityConfinement.hlsl">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
     <None Include="ComputeDivergence.hlsl">
       <Filter>Shaders\Fluid</Filter>
     </None>
     <None Include="ComputeJacobi.hlsl">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="ComputeVorticity.hlsl">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="ComputeConfinement.hlsl">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="ComputeProjection.hlsl">
       <Filter>Shaders\Fluid</Filter>
     </None>
   </ItemGroup>

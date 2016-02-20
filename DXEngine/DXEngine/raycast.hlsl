@@ -100,7 +100,7 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 		float2 src = txVolume.Sample(samplerLinear, v).rr;
 
 		// Reduce alpha to have a more transparent result
-		src.y *= 0.25;
+		//src.y *= 0.25;
 
 		// Front to back blending
 		result += (1 - result.y)*src.y * src;

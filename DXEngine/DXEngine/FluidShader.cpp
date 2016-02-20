@@ -1,7 +1,7 @@
 #include "FluidShader.h"
 #define READ 0
 #define WRITE 1
-#define NUM_THREADS 8
+#define NUM_THREADS (UINT)8
 
 FluidShader::FluidShader()
 {
@@ -45,6 +45,9 @@ HRESULT FluidShader::Initialize(ID3D11Device* _device, ID3D11DeviceContext* _dev
 	//Buoyancy Buffer
 	bufferDesc.ByteWidth = sizeof(BuoyancyBuffer);
 	_device->CreateBuffer(&bufferDesc, NULL, &m_BuoyancyBuffer);
+
+	bufferDesc.ByteWidth = sizeof(ConfinementBuffer);
+	_device->CreateBuffer(&bufferDesc, NULL, &m_ConfinementBuffer);
 	#pragma endregion
 
 	#pragma region Create Sampler
@@ -66,13 +69,15 @@ HRESULT FluidShader::Initialize(ID3D11Device* _device, ID3D11DeviceContext* _dev
 	result = _device->CreateSamplerState(&samplerDesc, &m_Sampler);
 	#pragma endregion	
 
-	impulseRadius = 5.0f;
-	densityAmount = 1.0f;
+	m_impulseRadius = 2.0f;
+	m_densityAmount = 1.0f;
+	m_TemperatureAmount = 10.0f;
 	m_decay = 0.0f;
 	m_dissipation = 1.0f;
 	m_ambientTemperature = 0.99f;
 	m_buoyancy = 1.0f;
-	m_weight = 0.0125f;
+	m_weight = 0.0f;//0.013f;
+	m_VorticityStrength = 1.0f;
 
 	ComputeBoundaryConditions(_deviceContext);
 
@@ -112,11 +117,18 @@ void FluidShader::CompileShaders(ID3D11Device* _device)
 	result = _device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_ImpulseCS);
 	#pragma endregion
 
-	#pragma region Vorticity Confinement
+	#pragma region Vorticity
 	blob = nullptr;
 	// Compile and create the pixel shader
-	result = CompileShaderFromFile(L"../DXEngine/ComputeVorticityConfinement.hlsl", "ComputeVorticityConfinement", "cs_5_0", &blob);
-	result = _device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_VortConCS);
+	result = CompileShaderFromFile(L"../DXEngine/ComputeVorticity.hlsl", "ComputeVorticity", "cs_5_0", &blob);
+	result = _device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_VorticityCS);
+	#pragma endregion
+
+	#pragma region Confinement
+	blob = nullptr;
+	// Compile and create the pixel shader
+	result = CompileShaderFromFile(L"../DXEngine/ComputeConfinement.hlsl", "ComputeConfinement", "cs_5_0", &blob);
+	result = _device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_ConfinementCS);
 	#pragma endregion
 
 	#pragma region Divergence
@@ -133,6 +145,13 @@ void FluidShader::CompileShaders(ID3D11Device* _device)
 	result = _device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_JacobiCS);
 	#pragma endregion
 
+	#pragma region Projection
+	blob = nullptr;
+	// Compile and create the pixel shader
+	result = CompileShaderFromFile(L"../DXEngine/ComputeProjection.hlsl", "ComputeProjection", "cs_5_0", &blob);
+	result = _device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_ProjectionCS);
+	#pragma endregion
+
 	blob->Release();
 }
 
@@ -145,9 +164,9 @@ void FluidShader::CreateTextures(ID3D11Device* _device)
 	#pragma region Texture3DDesc
 	D3D11_TEXTURE3D_DESC textureDesc;
 	ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE3D_DESC));
-	textureDesc.Width = size;
-	textureDesc.Height = size;
-	textureDesc.Depth = size;
+	textureDesc.Width = (UINT) size;
+	textureDesc.Height = (UINT)size;
+	textureDesc.Depth = (UINT)size;
 	textureDesc.MipLevels = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
@@ -167,8 +186,9 @@ void FluidShader::CreateTextures(ID3D11Device* _device)
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE3D;
 	uavDesc.Texture3D.FirstWSlice = 0;
 	uavDesc.Texture3D.MipSlice = 0;
-	uavDesc.Texture3D.WSize = size;
+	uavDesc.Texture3D.WSize = (UINT)size;
 	#pragma endregion
+
 
 	#pragma region Boundary Conditions
 	textureDesc.Format = DXGI_FORMAT_R8_SINT;
@@ -183,6 +203,19 @@ void FluidShader::CreateTextures(ID3D11Device* _device)
 	result = (_device->CreateUnorderedAccessView(m_BoundaryConditions, NULL, &m_BoundaryConditionsUAV));
 	#pragma endregion
 
+	#pragma region Vorticity
+	textureDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	uavDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+
+	//Create Texture3D
+	result = (_device->CreateTexture3D(&textureDesc, NULL, &m_Vorticity));
+	//Create SRV
+	result = (_device->CreateShaderResourceView(m_Vorticity, NULL, &m_VorticitySRV));
+	//Create UAV
+	result = (_device->CreateUnorderedAccessView(m_Vorticity, NULL, &m_VorticityUAV));
+	#pragma endregion
+
 	#pragma region Divergence
 	textureDesc.Format = DXGI_FORMAT_R16_FLOAT;
 	srvDesc.Format = DXGI_FORMAT_R16_FLOAT;
@@ -190,9 +223,9 @@ void FluidShader::CreateTextures(ID3D11Device* _device)
 
 	result = (_device->CreateTexture3D(&textureDesc, NULL, &m_Divergence));
 	//Create SRV
-	result = (_device->CreateShaderResourceView(m_Divergence, &srvDesc, &m_DivergenceSRV));
+	result = (_device->CreateShaderResourceView(m_Divergence, NULL, &m_DivergenceSRV));
 	//Create UAV
-	result = (_device->CreateUnorderedAccessView(m_Divergence, &uavDesc, &m_DivergenceUAV));	
+	result = (_device->CreateUnorderedAccessView(m_Divergence, NULL, &m_DivergenceUAV));	
 	#pragma endregion
 
 	for (int i = 0; i < 2; i++)
@@ -216,9 +249,9 @@ void FluidShader::CreateTextures(ID3D11Device* _device)
 		//Create Texture3D
 		result = (_device->CreateTexture3D(&textureDesc, NULL, &m_Density[i]));
 		//Create SRV
-		result = (_device->CreateShaderResourceView(m_Density[i], &srvDesc, &m_DensitySRV[i]));
+		result = (_device->CreateShaderResourceView(m_Density[i], NULL, &m_DensitySRV[i]));
 		//Create UAV
-		result = (_device->CreateUnorderedAccessView(m_Density[i], &uavDesc, &m_DensityUAV[i]));
+		result = (_device->CreateUnorderedAccessView(m_Density[i], NULL, &m_DensityUAV[i]));
 		#pragma endregion
 
 		#pragma region Velocity
@@ -229,9 +262,9 @@ void FluidShader::CreateTextures(ID3D11Device* _device)
 		//Create Texture3D
 		result = (_device->CreateTexture3D(&textureDesc, NULL, &m_Velocity[i]));
 		//Create SRV
-		result = (_device->CreateShaderResourceView(m_Velocity[i], &srvDesc, &m_VelocitySRV[i]));
+		result = (_device->CreateShaderResourceView(m_Velocity[i], NULL, &m_VelocitySRV[i]));
 		//Create UAV
-		result = (_device->CreateUnorderedAccessView(m_Velocity[i], &uavDesc, &m_VelocityUAV[i]));
+		result = (_device->CreateUnorderedAccessView(m_Velocity[i], NULL, &m_VelocityUAV[i]));
 		#pragma endregion
 
 		#pragma region Temperature
@@ -242,22 +275,9 @@ void FluidShader::CreateTextures(ID3D11Device* _device)
 		//Create Texture3D
 		result = (_device->CreateTexture3D(&textureDesc, NULL, &m_Temperature[i]));
 		//Create SRV
-		result = (_device->CreateShaderResourceView(m_Temperature[i], &srvDesc, &m_TemperatureSRV[i]));
+		result = (_device->CreateShaderResourceView(m_Temperature[i], NULL, &m_TemperatureSRV[i]));
 		//Create UAV
-		result = (_device->CreateUnorderedAccessView(m_Temperature[i], &uavDesc, &m_TemperatureUAV[i]));
-		#pragma endregion
-
-		#pragma region Vorticity
-		textureDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-		srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-		uavDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-
-		//Create Texture3D
-		result = (_device->CreateTexture3D(&textureDesc, NULL, &m_Vorticity[i]));
-		//Create SRV
-		result = (_device->CreateShaderResourceView(m_Vorticity[i], &srvDesc, &m_VorticitySRV[i]));
-		//Create UAV
-		result = (_device->CreateUnorderedAccessView(m_Vorticity[i], &uavDesc, &m_VorticityUAV[i]));
+		result = (_device->CreateUnorderedAccessView(m_Temperature[i], NULL, &m_TemperatureUAV[i]));
 		#pragma endregion
 	}	
 }
@@ -282,7 +302,7 @@ void FluidShader::Shutdown()
 
 void FluidShader::Update(ID3D11DeviceContext* _deviceContext, float _dt)
 {
-	m_timeStep = _dt*10;
+	m_timeStep = 0.1f;//_dt;
 
 	ComputeAdvection(_deviceContext, m_TemperatureUAV[WRITE], m_TemperatureSRV[READ]);
 	std::swap(m_TemperatureUAV[READ], m_TemperatureUAV[WRITE]);
@@ -300,21 +320,24 @@ void FluidShader::Update(ID3D11DeviceContext* _deviceContext, float _dt)
 	std::swap(m_VelocityUAV[READ], m_VelocityUAV[WRITE]);
 	std::swap(m_VelocitySRV[READ], m_VelocitySRV[WRITE]);
 
-	ComputeImpulse(_deviceContext, m_DensityUAV[WRITE], m_DensitySRV[READ]);
+	ComputeImpulse(_deviceContext, m_DensityUAV[WRITE], m_DensitySRV[READ], m_densityAmount);
 	std::swap(m_DensityUAV[READ], m_DensityUAV[WRITE]);
 	std::swap(m_DensitySRV[READ], m_DensitySRV[WRITE]);
 
-	ComputeImpulse(_deviceContext, m_TemperatureUAV[WRITE], m_TemperatureSRV[READ]);
+	ComputeImpulse(_deviceContext, m_TemperatureUAV[WRITE], m_TemperatureSRV[READ], m_TemperatureAmount);
 	std::swap(m_TemperatureUAV[READ], m_TemperatureUAV[WRITE]);
 	std::swap(m_TemperatureSRV[READ], m_TemperatureSRV[WRITE]);
 
-	//ComputeVorticityConfinement(_deviceContext);
-	//std::swap(m_VelocityUAV[READ], m_VelocityUAV[WRITE]);
-	//std::swap(m_VelocitySRV[READ], m_VelocitySRV[WRITE]);
+	ComputeVorticity(_deviceContext);
+	ComputeConfinement(_deviceContext);
+	std::swap(m_VelocityUAV[READ], m_VelocityUAV[WRITE]);
+	std::swap(m_VelocitySRV[READ], m_VelocitySRV[WRITE]);
 
-	//ComputeDivergence(_deviceContext);
+	ComputeDivergence(_deviceContext);
 
-	//ComputeJacobi(_deviceContext);
+	ComputeJacobi(_deviceContext);
+
+	ComputeProjection(_deviceContext);
 }
 
 void FluidShader::ComputeBoundaryConditions(ID3D11DeviceContext* _deviceContext)
@@ -400,7 +423,7 @@ void FluidShader::ComputeBuoyancy(ID3D11DeviceContext* _deviceContext)
 	ID3D11ShaderResourceView *const SRV[3] = { m_VelocitySRV[READ], m_DensitySRV[READ], m_TemperatureSRV[READ] };
 	_deviceContext->CSSetShaderResources(0, 3, SRV);
 
-	_deviceContext->Dispatch((UINT)ceil(size / NUM_THREADS), (UINT)ceil(size / NUM_THREADS), (UINT)ceil(size / NUM_THREADS));
+	_deviceContext->Dispatch((UINT)size / NUM_THREADS, (UINT)size / NUM_THREADS, (UINT)size / NUM_THREADS);
 
 	ID3D11ShaderResourceView* nullSRV[3] = { NULL, NULL, NULL };
 	_deviceContext->CSSetShaderResources(0, 3, nullSRV);
@@ -413,7 +436,7 @@ void FluidShader::ComputeBuoyancy(ID3D11DeviceContext* _deviceContext)
 
 }
 
-void FluidShader::ComputeImpulse(ID3D11DeviceContext* _deviceContext, ID3D11UnorderedAccessView* _targetUAV, ID3D11ShaderResourceView* _targetSRV)
+void FluidShader::ComputeImpulse(ID3D11DeviceContext* _deviceContext, ID3D11UnorderedAccessView* _targetUAV, ID3D11ShaderResourceView* _targetSRV, float amount)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -421,10 +444,10 @@ void FluidShader::ComputeImpulse(ID3D11DeviceContext* _deviceContext, ID3D11Unor
 
 	result = _deviceContext->Map(m_DensityBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	dataPtr = (ImpulseBuffer*)mappedResource.pData;
-	dataPtr->amount = densityAmount;
+	dataPtr->amount = m_densityAmount;
 	dataPtr->dt = m_timeStep;
-	dataPtr->radius = impulseRadius;
-	dataPtr->sourcePos = XMFLOAT3(32, 2.0f, 32);
+	dataPtr->radius = m_impulseRadius;
+	dataPtr->sourcePos = XMFLOAT3(0.5f, 0.1f, 0.5f);
 	_deviceContext->Unmap(m_DensityBuffer, 0);
 
 	_deviceContext->CSSetConstantBuffers(0, 1, &m_DensityBuffer);
@@ -446,27 +469,56 @@ void FluidShader::ComputeImpulse(ID3D11DeviceContext* _deviceContext, ID3D11Unor
 	_deviceContext->CSSetShader(nullptr, nullptr, 0);
 }
 
-void FluidShader::ComputeVorticityConfinement(ID3D11DeviceContext* _deviceContext)
+void FluidShader::ComputeVorticity(ID3D11DeviceContext* _deviceContext)
 {
 	HRESULT result;
 
 	//set the Compute shader
-	_deviceContext->CSSetShader(m_VortConCS, nullptr, 0);
+	_deviceContext->CSSetShader(m_VorticityCS, nullptr, 0);
 	//bind the UAV to the shader 
 	_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_VelocityUAV[WRITE], 0);
-	ID3D11ShaderResourceView *const SRV[2] = { m_VelocitySRV[READ], m_BoundaryConditionsSRV };
-	_deviceContext->CSSetShaderResources(0, 2, SRV);
+	ID3D11ShaderResourceView *const SRV[1] = { m_VelocitySRV[READ]};
+	_deviceContext->CSSetShaderResources(0, 1, SRV);
+
+
 	_deviceContext->Dispatch((UINT)size / NUM_THREADS, (UINT)size / NUM_THREADS, (UINT)size / NUM_THREADS);
 
-	ID3D11ShaderResourceView* nullSRV[2] = { NULL, NULL };
-	_deviceContext->CSSetShaderResources(0, 2, nullSRV);
-
+	ID3D11ShaderResourceView* nullSRV[1] = { NULL };
+	_deviceContext->CSSetShaderResources(0, 1, nullSRV);
 	ID3D11UnorderedAccessView* nullUAV[] = { NULL };
 	_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
+	// Disable Compute Shader
+	_deviceContext->CSSetShader(nullptr, nullptr, 0);
+}
+
+void FluidShader::ComputeConfinement(ID3D11DeviceContext* _deviceContext)
+{
+	HRESULT result;
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	ConfinementBuffer* dataPtr;
+
+	result = _deviceContext->Map(m_ConfinementBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	dataPtr = (ConfinementBuffer*)mappedResource.pData;
+	dataPtr->dt = m_timeStep;
+	dataPtr->VorticityStrength = m_VorticityStrength;
+	_deviceContext->Unmap(m_ConfinementBuffer, 0);
+
+	_deviceContext->CSSetConstantBuffers(0, 1, &m_ConfinementBuffer);
+	//set the Compute shader
+	_deviceContext->CSSetShader(m_ConfinementCS, nullptr, 0);
+
+	_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_VelocityUAV[WRITE], 0);
+	ID3D11ShaderResourceView *const SRV[3] = { m_BoundaryConditionsSRV, m_VorticitySRV, m_VelocitySRV[READ] };
+	_deviceContext->CSSetShaderResources(0, 3, SRV);
+
+	ID3D11ShaderResourceView* nullSRV[3] = { NULL };
+	_deviceContext->CSSetShaderResources(0, 1, nullSRV);
+
+	ID3D11UnorderedAccessView* nullUAV[] = { NULL, NULL,NULL };
+	_deviceContext->CSSetUnorderedAccessViews(0, 3, nullUAV, 0);
 
 	// Disable Compute Shader
 	_deviceContext->CSSetShader(nullptr, nullptr, 0);
-
 }
 
 void FluidShader::ComputeDivergence(ID3D11DeviceContext* _deviceContext)
@@ -500,14 +552,33 @@ void FluidShader::ComputeJacobi(ID3D11DeviceContext* _deviceContext)
 		_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_PressureUAV[WRITE], 0);
 		ID3D11ShaderResourceView *const SRV[3] = { m_PressureSRV[READ], m_BoundaryConditionsSRV, m_DivergenceSRV };
 		_deviceContext->CSSetShaderResources(0, 3, SRV);
+		//_deviceContext->Dispatch((UINT)ceil(size / NUM_THREADS), (UINT)ceil(size / NUM_THREADS), (UINT)ceil(size / NUM_THREADS));
 		_deviceContext->Dispatch((UINT)size / NUM_THREADS, (UINT)size / NUM_THREADS, (UINT)size / NUM_THREADS);
-
 		std::swap(m_PressureUAV[READ], m_PressureUAV[WRITE]);
 		std::swap(m_PressureSRV[READ], m_PressureSRV[WRITE]);
 	}
 	
 	ID3D11ShaderResourceView* nullSRV[3] = { NULL, NULL, NULL };
 	_deviceContext->CSSetShaderResources(0, 3, nullSRV);
+
+	ID3D11UnorderedAccessView* nullUAV[] = { NULL };
+	_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
+
+	// Disable Compute Shader
+	_deviceContext->CSSetShader(nullptr, nullptr, 0);
+}
+
+void FluidShader::ComputeProjection(ID3D11DeviceContext* _deviceContext)
+{
+	//set the Compute shader
+	_deviceContext->CSSetShader(m_ProjectionCS, nullptr, 0);
+	//bind the UAV to the shader 
+	_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_VelocityUAV[WRITE], 0);
+	ID3D11ShaderResourceView *const SRV[2] = { m_VelocitySRV[READ], m_PressureSRV[READ] };
+	_deviceContext->CSSetShaderResources(0, 2, SRV);
+
+	ID3D11ShaderResourceView* nullSRV[2] = { NULL, NULL };
+	_deviceContext->CSSetShaderResources(0, 2, nullSRV);
 
 	ID3D11UnorderedAccessView* nullUAV[] = { NULL };
 	_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);

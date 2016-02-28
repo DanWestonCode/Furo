@@ -4,20 +4,20 @@ VolumeTexture::VolumeTexture()
 {
 	m_Texture3D = nullptr;
 	m_ShaderResourceView = nullptr;
-	m_furo = nullptr;
+	//m_furo = nullptr;
 
 	m_fluidShader = nullptr;
 }
 VolumeTexture::VolumeTexture(const VolumeTexture& other){}
 VolumeTexture::~VolumeTexture(){}
 
-HRESULT VolumeTexture::Initialize(ID3D11Device* _device, ID3D11DeviceContext* _deviceContext, int _volSize)
+HRESULT VolumeTexture::Initialize(D3D* _d3d, int _volSize)
 {
-	m_furo = new Furo;
-	m_furo->Initialize(Furo::ThreeDimensional, _volSize, 0);
+	/*m_furo = new Furo;
+	m_furo->Initialize(Furo::ThreeDimensional, _volSize, 0);*/
 
 	m_fluidShader = new FluidShader();
-	m_fluidShader->Initialize(_device, _deviceContext, _volSize);
+	m_fluidShader->Initialize(_d3d->GetDevice(), _d3d->GetDeviceContext(), _d3d->m_TwBar, _volSize);
 
 	HRESULT result = S_OK;
 	HANDLE hFile = CreateFileW(L"../DXEngine/foot.raw", GENERIC_READ, 0, NULL, OPEN_EXISTING, OPEN_EXISTING, NULL);
@@ -55,10 +55,10 @@ HRESULT VolumeTexture::Initialize(ID3D11Device* _device, ID3D11DeviceContext* _d
 	initData.SysMemSlicePitch = _volSize*_volSize;
 
 	// Create texture
-	result = (_device->CreateTexture3D(&descTex, &initData, &m_Texture3D));
+	result = (_d3d->GetDevice()->CreateTexture3D(&descTex, &initData, &m_Texture3D));
 
 	// Create a resource view of the texture
-	result = (_device->CreateShaderResourceView(m_Texture3D, NULL, &m_ShaderResourceView));
+	result = (_d3d->GetDevice()->CreateShaderResourceView(m_Texture3D, NULL, &m_ShaderResourceView));
 
 	free(buffer);
 
@@ -85,5 +85,5 @@ void VolumeTexture::Shutdown()
 	m_ShaderResourceView->Release();
 	m_ShaderResourceView = nullptr;
 
-	m_furo->Shutdown();
+	//m_furo->Shutdown();
 }

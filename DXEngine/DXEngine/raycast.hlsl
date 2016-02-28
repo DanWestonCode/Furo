@@ -33,6 +33,14 @@ cbuffer cbEveryFrame : register(b0)
 cbuffer cbImmutable : register(b0)
 {
 	float2 g_fInvWindowSize;
+	
+}
+
+cbuffer volumeRendererProps : register(b1)
+{
+	float iter;
+	float4 VolumeColor;
+	float3 buffer;
 }
 
 
@@ -100,7 +108,7 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 		float2 src = txVolume.Sample(samplerLinear, v).rr;
 
 		// Reduce alpha to have a more transparent result
-		//src.y *= 0.25;
+		src.y *= 0.25;
 
 		// Front to back blending
 		result += (1 - result.y)*src.y * src;
@@ -109,5 +117,5 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 		v += step;
 	}
  
-	return float4(result.r, 0.0f, result.r, result.y);
+	return float4(result.r, 0,0, result.y);
 }

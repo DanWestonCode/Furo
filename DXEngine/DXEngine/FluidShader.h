@@ -3,6 +3,8 @@
 
 #include "ShaderBase.h"
 #include "RenderTexture.h"
+#include "AntTweakBar.h"
+#include <stddef.h>
 
 __declspec(align(16)) class FluidShader : public ShaderBase
 {
@@ -42,6 +44,20 @@ protected:
 		float padding2;
 	};
 
+	struct SimulationVars
+	{
+		float m_impulseRadius,
+			m_densityAmount,
+			m_TemperatureAmount,
+			m_timeStep,
+			m_dissipation,
+			m_decay,
+			m_ambientTemperature,
+			m_buoyancy,
+			m_weight,
+			m_VorticityStrength;
+	};
+
 private:
 	void ComputeBoundaryConditions(ID3D11DeviceContext*);
 	void ComputeAdvection(ID3D11DeviceContext*, ID3D11UnorderedAccessView*, ID3D11ShaderResourceView*);
@@ -58,22 +74,17 @@ public:
 	FluidShader(const FluidShader&);
 	~FluidShader();
 
-	virtual HRESULT Initialize(ID3D11Device*, ID3D11DeviceContext*, int);
+	virtual HRESULT Initialize(ID3D11Device*, ID3D11DeviceContext*, TwBar*, int);
 	virtual void Shutdown();
 	void Update(ID3D11DeviceContext*, float);
 
 	int size;
-	float m_impulseRadius,
-		m_densityAmount,
-		m_TemperatureAmount,
-		m_timeStep,
-		m_dissipation,
-		m_decay,
-		m_ambientTemperature, 
-		m_buoyancy,
-		m_weight,
-		m_VorticityStrength;
+	float m_timeStep;
+
 public:
+	SimulationVars m_simVars;
+	TwType smokePropertiesStructMembers;
+
 	//shaders
 	ID3D11ComputeShader* m_BoundaryConditionsCS;
 	ID3D11ComputeShader* m_AdvectionCS;

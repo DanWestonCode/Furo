@@ -5,7 +5,7 @@
 #include "ColourShader.h"
 #include "FluidShader.h"
 #include "RenderTexture.h"
-#include "Furo.h"
+////#include "Furo.h"
 #include "D3D.h"
 
 __declspec(align(16)) class Quad : public VertexObject
@@ -38,7 +38,7 @@ public:
 	ColourShader* m_ColorShader;
 	FluidShader* m_FluidShader;
 	ColorVL* m_ColorVertLayout;
-	Furo* m_Furo;
+	//Furo* m_Furo;
 protected:
 	float veloMulti;
 	float densityMulti;

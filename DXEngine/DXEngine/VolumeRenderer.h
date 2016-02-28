@@ -8,6 +8,8 @@
 #include "Cube.h"
 #include "D3D.h"
 #include "VolumeRenderer.h"
+#include "AntTweakBar.h"
+#include <stddef.h>
 
 __declspec(align(16)) class VolumeRenderer
 {
@@ -16,6 +18,13 @@ protected:
 	{
 		XMMATRIX mWVP;
 	};
+	struct VolumeRendererProps
+	{
+		float g_iMaxIterations;
+		XMFLOAT4 VolumeColor;
+		XMFLOAT3 buffer;
+	};
+
 public:
 	VolumeRenderer();
 	VolumeRenderer(const VolumeRenderer&);
@@ -24,7 +33,7 @@ public:
 	void* operator new(size_t);
 	void operator delete(void*);
 
-	HRESULT Initialize(ID3D11Device*, ID3D11DeviceContext*, HWND, int, int);
+	HRESULT Initialize(D3D*, HWND, int, int);
 	void Shutdown();
 	void Update(float, D3D*);
 	void Render(D3D*);
@@ -44,5 +53,8 @@ protected:
 	ID3D11SamplerState* g_pSamplerLinear;
 
 	XMMATRIX viewProj;
+
+	VolumeRendererProps m_props;
+	ID3D11Buffer* m_VolumeRendererPropsBuffer;
 };
 #endif // VolumeRenderer_h__

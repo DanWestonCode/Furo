@@ -23,30 +23,49 @@ void VolumeRenderer::operator delete(void* memoryBlockPtr)
 VolumeRenderer::VolumeRenderer(const VolumeRenderer& other){}
 VolumeRenderer::~VolumeRenderer(){}
 
-HRESULT VolumeRenderer::Initialize(ID3D11Device* _device, ID3D11DeviceContext* _deviceContext, HWND _hWnd, int _width, int _height)
+HRESULT VolumeRenderer::Initialize(D3D* _d3d, HWND _hWnd, int _width, int _height)
 {
 	HRESULT result = S_OK;
 
 	m_ModelShader = new ModelShader;
-	m_ModelShader->Initialize(_device, _hWnd);
+	m_ModelShader->Initialize(_d3d->GetDevice(), _hWnd);
 
 	m_VolumeRaycastShader = new VolumeRaycastShader;
-	m_VolumeRaycastShader->Initialize(_device, _hWnd, _width, _height);
+	m_VolumeRaycastShader->Initialize(_d3d->GetDevice(), _hWnd, _width, _height);
 
 	m_ModelFront = new RenderTexture;
-	m_ModelFront->Initialize(_device, _width, _height);
+	m_ModelFront->Initialize(_d3d->GetDevice(), _width, _height);
 
 	m_ModelBack = new RenderTexture;
-	m_ModelBack->Initialize(_device, _width, _height);
+	m_ModelBack->Initialize(_d3d->GetDevice(), _width, _height);
 
 	m_VolumeTexture = new VolumeTexture;
-	m_VolumeTexture->Initialize(_device, _deviceContext, g_iVolumeSize);
+	m_VolumeTexture->Initialize(_d3d, g_iVolumeSize);
 
 	m_cube = new Cube;
-	m_cube->Initialise(_device);
+	m_cube->Initialise(_d3d->GetDevice());
 
-	CreateSampler(_device);
+	CreateSampler(_d3d->GetDevice());
 
+	m_props.g_iMaxIterations = 128;
+	m_props.VolumeColor = XMFLOAT4(1,0,1,1);
+
+	D3D11_BUFFER_DESC bufferDesc;
+	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
+	bufferDesc.ByteWidth = sizeof(VolumeRendererProps);
+	_d3d->GetDevice()->CreateBuffer(&bufferDesc, NULL, &m_VolumeRendererPropsBuffer);
+
+	/*TwStructMember _VolumeRendererProps[] = {
+		{ "Volume Render Iterations", TW_TYPE_FLOAT, offsetof(VolumeRendererProps, g_iMaxIterations), "min=1 max=1000 step=1" },
+		{ "Volume Colour", TW_TYPE_COLOR4F, offsetof(VolumeRendererProps, VolumeColor), "min=0.1 max=1 step=0.1" }
+		};
+
+		TwAddVarRW(_d3d->m_TwBar, "Volume Renderer Properties", TwDefineStruct("Simulation", _VolumeRendererProps, 2, sizeof(VolumeRendererProps), nullptr, nullptr), &m_props, NULL);
+		*/
 	return result;
 }
 
@@ -142,9 +161,21 @@ void VolumeRenderer::Render(D3D* m_D3D)
 	m_D3D->GetDeviceContext()->VSSetShader(m_VolumeRaycastShader->GetVertexShader(), NULL, 0);
 	m_D3D->GetDeviceContext()->VSSetConstantBuffers(0, 1, &m_ModelShader->m_MatrixBuffer);
 
+	HRESULT result;
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	VolumeRendererProps* dataPtr;
+
+	result = m_D3D->GetDeviceContext()->Map(m_VolumeRendererPropsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	dataPtr = (VolumeRendererProps*)mappedResource.pData;
+	dataPtr->g_iMaxIterations = m_props.g_iMaxIterations;
+	dataPtr->VolumeColor = m_props.VolumeColor;
+	m_D3D->GetDeviceContext()->Unmap(m_VolumeRendererPropsBuffer, 0);
+
 	// Set the pixel shader
 	m_D3D->GetDeviceContext()->PSSetShader(m_VolumeRaycastShader->GetPixelShader(), NULL, 0);
 	m_D3D->GetDeviceContext()->PSSetConstantBuffers(0, 1, &m_VolumeRaycastShader->m_WindowSizeCB);
+	m_D3D->GetDeviceContext()->PSSetConstantBuffers(1, 1, &m_VolumeRendererPropsBuffer);
+
 	//// Set texture sampler
 	m_D3D->GetDeviceContext()->PSSetSamplers(0, 1, &g_pSamplerLinear);
 

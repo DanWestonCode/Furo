@@ -36,6 +36,7 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	_hwnd = hwnd;
 
+
 	HRESULT result = S_OK;
 	// Create the Direct3D object.
 	m_D3D = new D3D;
@@ -52,14 +53,16 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return S_FALSE;
 	}
 
-	m_VolumeRenderer = new VolumeRenderer;
-	m_VolumeRenderer->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hwnd, m_D3D->m_ScreenWidth, m_D3D->m_ScreenHeight);
 	m_ClearBackBufferColor = new float;
 	std::memset(m_ClearBackBufferColor, 0, sizeof(float) * 4);
-	////TwAddSeparator(m_D3D->m_TwBar, "Engine", "");
+	TwAddSeparator(m_D3D->m_TwBar, "Engine", "");
 	TwAddVarRW(m_D3D->m_TwBar, "Camera Position", TW_TYPE_DIR3F, &Camera::Instance()->m_pos, "");
 	TwAddVarRW(m_D3D->m_TwBar, "Back Buffer", TW_TYPE_COLOR3F, &*m_ClearBackBufferColor, "");
 
+
+	m_VolumeRenderer = new VolumeRenderer;
+	m_VolumeRenderer->Initialize(m_D3D, hwnd, m_D3D->m_ScreenWidth, m_D3D->m_ScreenHeight);
+	
 	/*m_Quad = new Quad;
 	m_Quad->Initialise(m_D3D, hwnd);*/
 

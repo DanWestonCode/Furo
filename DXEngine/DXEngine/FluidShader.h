@@ -10,7 +10,7 @@ __declspec(align(16)) class FluidShader : public ShaderBase
 {
 protected:
 	void CompileShaders(ID3D11Device*);
-	void CreateTextures(ID3D11Device*);
+	void CreateResources(ID3D11Device*);
 
 protected:
 	struct AdvectionBuffer

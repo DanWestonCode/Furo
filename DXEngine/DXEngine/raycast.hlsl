@@ -56,6 +56,7 @@ struct VSInput
 struct PSInput
 {
 	float4 pos : SV_POSITION;
+	float4 worldPos : TEXCOORD0;
 };
 
 
@@ -111,11 +112,11 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 		src.y *= 0.25;
 
 		// Front to back blending
-		result += (1 - result.y)*src.y * src;
+		result += ((1 - result.y)*src.y * src)*64;
 
 		// Advance the current position
 		v += step;
 	}
  
-	return float4(result.r, 0,0, result.y);
+	return float4(result.r, 0,0, result.y)*(1 - result.y);
 }

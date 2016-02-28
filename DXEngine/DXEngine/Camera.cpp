@@ -4,8 +4,8 @@ Camera *Camera::m_Camera = nullptr;
 
 Camera::Camera()
 {
-	m_pos = XMFLOAT3(0.0f, 1.f, -5.f);
-	m_LookAt = XMFLOAT3(0.f, 0.0f, 0.f);
+	m_pos = XMFLOAT3(0.0f, -5.f, -15.f);
+	m_LookAt = XMFLOAT3(0.f, -5.0f, 0.0f);
 	m_Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 }
 Camera::Camera(const Camera& other){}

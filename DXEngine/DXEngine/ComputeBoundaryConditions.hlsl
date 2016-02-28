@@ -8,8 +8,7 @@ void ComputeBoundaryConditions(uint3 id : SV_DispatchThreadID)
 	uint3 _Size;
 	//get dimensions of texture
 	_BoundaryConditions.GetDimensions(_Size.x, _Size.y, _Size.z);
-	//calc current texel
-	uint3 idx = id.x + id.y*_Size.x + id.z*_Size.x*_Size.y;
+
     //default no obstacle
     float obstacle = 0;
     
@@ -41,5 +40,5 @@ void ComputeBoundaryConditions(uint3 id : SV_DispatchThreadID)
 	}
     
 	//set up obstacle
-	_BoundaryConditions[idx] = obstacle;
+	_BoundaryConditions[id] = obstacle;
 }

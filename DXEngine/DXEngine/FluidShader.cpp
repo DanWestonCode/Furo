@@ -19,12 +19,13 @@ FluidShader::~FluidShader(){}
 
 HRESULT FluidShader::Initialize(ID3D11Device* _device, ID3D11DeviceContext* _deviceContext, TwBar* _bar, int _size)
 {
-	size = _size;
-
-	CompileShaders(_device);
-	CreateTextures(_device);
-
 	HRESULT result;
+	//set up Fluid size
+	size = _size;
+	//compile all program shaders
+	CompileShaders(_device);
+	//create all SRVS/UAVs/Textures 
+	CreateResources(_device);
 
 	#pragma region Buffers
 	D3D11_BUFFER_DESC bufferDesc;
@@ -50,7 +51,6 @@ HRESULT FluidShader::Initialize(ID3D11Device* _device, ID3D11DeviceContext* _dev
 	_device->CreateBuffer(&bufferDesc, NULL, &m_ConfinementBuffer);
 	#pragma endregion
 
-
 	#pragma region Create Sampler
 	D3D11_SAMPLER_DESC samplerDesc;
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -70,30 +70,35 @@ HRESULT FluidShader::Initialize(ID3D11Device* _device, ID3D11DeviceContext* _dev
 	result = _device->CreateSamplerState(&samplerDesc, &m_Sampler);
 	#pragma endregion	
 	
-	m_simVars.m_impulseRadius = 2.0f;
+	#pragma region Default Vars for Fluid Simulation
+	m_simVars.m_impulseRadius = 4.0f;
 	m_simVars.m_densityAmount = 1.0f;
 	m_simVars.m_TemperatureAmount = 10.0f;
 	m_simVars.m_decay = 0.0f;
-	m_simVars.m_dissipation = 1.0f;
-	m_simVars.m_ambientTemperature = 0.99f;
+	m_simVars.m_dissipation = 0.995f;
+	m_simVars.m_ambientTemperature = 0.995f;
 	m_simVars.m_buoyancy = 1.0f;
-	m_simVars.m_weight = 0.013f;
-	m_simVars.m_VorticityStrength = 1.0f;
+	m_simVars.m_weight = 0.015f;
+	m_simVars.m_VorticityStrength = 0.5f;
+	#pragma endregion
 
+	#pragma region AnTweakBar vars
 	TwStructMember fluidProps[] = {
-		{ "Impulse Radius", TW_TYPE_FLOAT, offsetof(SimulationVars, m_impulseRadius), "min=0.4 max=2 step=0.1" },
-		{ "Density", TW_TYPE_FLOAT, offsetof(SimulationVars, m_densityAmount), "min=0.1 max=1 step=0.1" },
-		{ "Temperature", TW_TYPE_FLOAT, offsetof(SimulationVars, m_TemperatureAmount), "min=0.1 max=10 step=0.1" },
-		{ "Decay", TW_TYPE_FLOAT, offsetof(SimulationVars, m_decay), "min=0.1 max=10 step=0.1" },
-		{ "Dissipation", TW_TYPE_FLOAT, offsetof(SimulationVars, m_dissipation), "min=0.1 max=1 step=0.1" },
-		{ "Ambient Temperature", TW_TYPE_FLOAT, offsetof(SimulationVars, m_ambientTemperature), "min=0.1 max=1 step=0.1" },
-		{ "Buoyancy", TW_TYPE_FLOAT, offsetof(SimulationVars, m_buoyancy), "min=0.1 max=1 step=0.1" },
-		{ "Smoke Weight", TW_TYPE_FLOAT, offsetof(SimulationVars, m_buoyancy), "min=0.1 max=1 step=0.1" },
-		{ "Vorticity Strength", TW_TYPE_FLOAT, offsetof(SimulationVars, m_buoyancy), "min=0.1 max=1 step=0.1" }
+		{ "Impulse Radius", TW_TYPE_FLOAT, offsetof(SimulationVars, m_impulseRadius), "min=0.04 max=10 step=0.1" },
+		{ "Density", TW_TYPE_FLOAT, offsetof(SimulationVars, m_densityAmount), "min=0.1 max=10 step=0.1" },
+		{ "Temperature", TW_TYPE_FLOAT, offsetof(SimulationVars, m_TemperatureAmount), "min=0.1 max=100 step=0.1" },
+		{ "Decay", TW_TYPE_FLOAT, offsetof(SimulationVars, m_decay), "min=0.0 max=10 step=0.1" },
+		{ "Dissipation", TW_TYPE_FLOAT, offsetof(SimulationVars, m_dissipation), "min=0.99 max=10 step=0.1" },
+		{ "Ambient Temperature", TW_TYPE_FLOAT, offsetof(SimulationVars, m_ambientTemperature), "min=0.1 max=10 step=0.1" },
+		{ "Buoyancy", TW_TYPE_FLOAT, offsetof(SimulationVars, m_buoyancy), "min=0.1 max=10 step=0.1" },
+		{ "Smoke Weight", TW_TYPE_FLOAT, offsetof(SimulationVars, m_weight), "min=0.1 max=10 step=0.1" },
+		{ "Vorticity Strength", TW_TYPE_FLOAT, offsetof(SimulationVars, m_VorticityStrength), "min=0.1 max=10 step=0.1" }
 	};
 
 	TwAddVarRW(_bar, "Simulation Properties", TwDefineStruct("Simulation", fluidProps, 9, sizeof(SimulationVars), nullptr, nullptr), &m_simVars, NULL);
+	#pragma endregion
 
+	//compute boundary conditons once
 	ComputeBoundaryConditions(_deviceContext);
 
 	return S_OK;
@@ -170,7 +175,7 @@ void FluidShader::CompileShaders(ID3D11Device* _device)
 	blob->Release();
 }
 
-void FluidShader::CreateTextures(ID3D11Device* _device)
+void FluidShader::CreateResources(ID3D11Device* _device)
 {
 	HRESULT result;
 	D3D11_BUFFER_DESC outputDesc, inputDesc, sysOutputDesc;
@@ -180,7 +185,7 @@ void FluidShader::CreateTextures(ID3D11Device* _device)
 	D3D11_TEXTURE3D_DESC textureDesc;
 	ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE3D_DESC));
 	textureDesc.Width = (UINT) size;
-	textureDesc.Height = (UINT)size;
+	textureDesc.Height = (UINT)size*2;
 	textureDesc.Depth = (UINT)size;
 	textureDesc.MipLevels = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -317,7 +322,7 @@ void FluidShader::Shutdown()
 
 void FluidShader::Update(ID3D11DeviceContext* _deviceContext, float _dt)
 {
-	m_timeStep = 0.1f;//_dt;
+	m_timeStep = _dt;
 
 	ComputeAdvection(_deviceContext, m_TemperatureUAV[WRITE], m_TemperatureSRV[READ]);
 	std::swap(m_TemperatureUAV[READ], m_TemperatureUAV[WRITE]);
@@ -429,7 +434,6 @@ void FluidShader::ComputeBuoyancy(ID3D11DeviceContext* _deviceContext)
 	_deviceContext->CSSetShader(m_BuoyancyCS, nullptr, 0);
 
 	_deviceContext->CSSetConstantBuffers(0, 1, &m_BuoyancyBuffer);
-
 
 	//bind the target as the UAV for the advection shader
 	_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_VelocityUAV[WRITE], 0);

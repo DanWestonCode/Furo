@@ -78,7 +78,7 @@ public:
 	virtual void Shutdown();
 	void Update(ID3D11DeviceContext*, float);
 
-	int size;
+	int FluidSize;
 	float m_timeStep;
 
 public:

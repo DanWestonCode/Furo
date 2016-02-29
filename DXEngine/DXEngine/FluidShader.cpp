@@ -322,7 +322,7 @@ void FluidShader::Shutdown()
 
 void FluidShader::Update(ID3D11DeviceContext* _deviceContext, float _dt)
 {
-	m_timeStep = _dt;
+	m_timeStep = 0.1f;
 
 	ComputeAdvection(_deviceContext, m_TemperatureUAV[WRITE], m_TemperatureSRV[READ]);
 	std::swap(m_TemperatureUAV[READ], m_TemperatureUAV[WRITE]);
@@ -353,11 +353,11 @@ void FluidShader::Update(ID3D11DeviceContext* _deviceContext, float _dt)
 	std::swap(m_VelocityUAV[READ], m_VelocityUAV[WRITE]);
 	std::swap(m_VelocitySRV[READ], m_VelocitySRV[WRITE]);
 
-	ComputeDivergence(_deviceContext);
+	/*ComputeDivergence(_deviceContext);
 
 	ComputeJacobi(_deviceContext);
 
-	ComputeProjection(_deviceContext);
+	ComputeProjection(_deviceContext);*/
 }
 
 void FluidShader::ComputeBoundaryConditions(ID3D11DeviceContext* _deviceContext)
@@ -495,7 +495,7 @@ void FluidShader::ComputeVorticity(ID3D11DeviceContext* _deviceContext)
 	//set the Compute shader
 	_deviceContext->CSSetShader(m_VorticityCS, nullptr, 0);
 	//bind the UAV to the shader 
-	_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_VelocityUAV[WRITE], 0);
+	_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_VorticityUAV, 0);
 	ID3D11ShaderResourceView *const SRV[1] = { m_VelocitySRV[READ]};
 	_deviceContext->CSSetShaderResources(0, 1, SRV);
 

@@ -56,7 +56,7 @@ struct VSInput
 struct PSInput
 {
 	float4 pos : SV_POSITION;
-	float4 worldPos : TEXCOORD0;
+	float3 worldPos : TEXCOORD0;
 };
 
 
@@ -67,8 +67,11 @@ struct PSInput
 PSInput RayCastVS(VSInput input)
 {
 	PSInput output;
-	output.pos = mul(mWVP, input.pos);
 
+	input.pos.w = 1.0f;
+
+	output.pos = mul(mWVP, input.pos);
+	output.worldPos = mul(input.pos, mWVP).xyz;
 	return output;
 }
 
@@ -76,6 +79,10 @@ PSInput RayCastVS(VSInput input)
 //--------------------------------------------------------------------------------------
 // Pixel shaders
 //--------------------------------------------------------------------------------------
+//float4 RayCastPS(PSInput input) : SV_TARGET
+//{
+//
+//}
 
 float4 RayCastPS(PSInput input) : SV_TARGET
 {
@@ -112,11 +119,11 @@ float4 RayCastPS(PSInput input) : SV_TARGET
 		src.y *= 0.25;
 
 		// Front to back blending
-		result += ((1 - result.y)*src.y * src)*64;
+		result += ((1 - result.y)*src.y * src);
 
 		// Advance the current position
 		v += step;
 	}
  
-	return float4(result.r, 0,0, result.y)*(1 - result.y);
+	return float4(result.r, result.r, result.r, result.y);// *(1 - result.y);
 }

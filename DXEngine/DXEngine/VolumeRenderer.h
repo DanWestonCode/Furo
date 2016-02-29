@@ -18,11 +18,29 @@ protected:
 	{
 		XMMATRIX mWVP;
 	};
-	struct VolumeRendererProps
+
+	struct CamBuffer
 	{
-		float g_iMaxIterations;
-		XMFLOAT4 VolumeColor;
-		XMFLOAT3 buffer;
+		XMFLOAT3 CameraPos;
+		float padding1;
+	};
+
+	struct ObjectBuffer
+	{
+		XMFLOAT3 ObjectPos;
+		float padding2;
+
+		XMFLOAT3 ObjectScale;
+		float padding3;
+	};
+
+	struct FluidBuffer
+	{
+		float Absoprtion;
+		float padding4;
+
+		int Samples;
+		float padding5;
 	};
 
 public:
@@ -54,7 +72,8 @@ protected:
 
 	XMMATRIX viewProj;
 
-	VolumeRendererProps m_props;
-	ID3D11Buffer* m_VolumeRendererPropsBuffer;
+	ID3D11Buffer* m_CamBuffer;
+	ID3D11Buffer* m_ObjectBuffer;
+	ID3D11Buffer* m_FluidBuffer;
 };
 #endif // VolumeRenderer_h__

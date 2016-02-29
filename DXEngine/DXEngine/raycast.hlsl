@@ -77,6 +77,35 @@ struct PSInput
 	float3 worldPos : TEXCOORD0;
 };
 
+struct Ray 
+{
+	float3 origin;
+	float3 dir;
+};
+
+struct AABB 
+{
+	float3 Min;
+	float3 Max;
+};
+
+//--------------------------------------------------------------------------------------
+// Helper Functions
+//--------------------------------------------------------------------------------------
+
+bool IntersectBox(Ray r, AABB aabb, out float t0, out float t1)
+{
+	float3 invR = 1.0f / r.dir;
+		float3 tbot = invR * (aabb.Min - r.origin);
+		float3 ttop = invR * (aabb.Max - r.origin);
+		float3 tmin = min(ttop, tbot);
+		float3 tmax = max(ttop, tbot);
+		float2 t = max(tmin.xx, tmin.yz);
+		t0 = max(t.x, t.y);
+	t = min(tmax.xx, tmax.yz);
+	t1 = min(t.x, t.y);
+	return t0 <= t1;
+}
 
 //--------------------------------------------------------------------------------------
 // Vertex shaders
@@ -97,51 +126,51 @@ PSInput RayCastVS(VSInput input)
 //--------------------------------------------------------------------------------------
 // Pixel shaders
 //--------------------------------------------------------------------------------------
-//float4 RayCastPS(PSInput input) : SV_TARGET
-//{
-//
-//}
-
 float4 RayCastPS(PSInput input) : SV_TARGET
 {
-	// Current pixel location on screen, used to sample position texture
-	float2 tex = input.pos.xy * g_fInvWindowSize;
- 
-	// Read cube front and back face positions (in model coordinates) from texture
-	float3 pos_front = txPositionFront.Sample(samplerLinear, tex);
-	float3 pos_back  =  txPositionBack.Sample(samplerLinear, tex);
- 
-	// Direction vector
-	//float3 dir = pos_back - pos_front;
-	//float ray_length = length(dir);	// ray length
-	//dir /= ray_length;				// normalize direction
-	float3 dir = normalize(pos_back - pos_front);
-
-	// Number of iterations
-	//uint numIter = min(ceil(ray_length/g_fStepSize), g_iMaxIterations);
-
-	// Single step: direction times delta step
-	float3 step = g_fStepSize * dir;
-
-	// Current position
-	float3 v = pos_front;
-
-	// Accumulate result: value and transparency (alpha)
-	float2 result = float2(0, 0);
- 
-	for (uint i = 0; i < g_iMaxIterations; i++)
-	{
-		float2 src = txVolume.Sample(samplerLinear, v).rr;
-
-		// Reduce alpha to have a more transparent result
-		src.y *= 0.25;
-
-		// Front to back blending
-		result += ((1 - result.y)*src.y * src);
-
-		// Advance the current position
-		v += step;
-	}
- 
-	return float4(result.r, result.r, result.r, result.y);// *(1 - result.y);
+	return float4(1, 1, 1, 1);
 }
+
+//float4 RayCastPS(PSInput input) : SV_TARGET
+//{
+//	// Current pixel location on screen, used to sample position texture
+//	float2 tex = input.pos.xy * g_fInvWindowSize;
+// 
+//	// Read cube front and back face positions (in model coordinates) from texture
+//	float3 pos_front = txPositionFront.Sample(samplerLinear, tex);
+//	float3 pos_back  =  txPositionBack.Sample(samplerLinear, tex);
+// 
+//	// Direction vector
+//	//float3 dir = pos_back - pos_front;
+//	//float ray_length = length(dir);	// ray length
+//	//dir /= ray_length;				// normalize direction
+//	float3 dir = normalize(pos_back - pos_front);
+//
+//	// Number of iterations
+//	//uint numIter = min(ceil(ray_length/g_fStepSize), g_iMaxIterations);
+//
+//	// Single step: direction times delta step
+//	float3 step = g_fStepSize * dir;
+//
+//	// Current position
+//	float3 v = pos_front;
+//
+//	// Accumulate result: value and transparency (alpha)
+//	float2 result = float2(0, 0);
+// 
+//	for (uint i = 0; i < g_iMaxIterations; i++)
+//	{
+//		float2 src = txVolume.Sample(samplerLinear, v).rr;
+//
+//		// Reduce alpha to have a more transparent result
+//		src.y *= 0.25;
+//
+//		// Front to back blending
+//		result += ((1 - result.y)*src.y * src);
+//
+//		// Advance the current position
+//		v += step;
+//	}
+// 
+//	return float4(result.r, result.r, result.r, result.y);// *(1 - result.y);
+//}

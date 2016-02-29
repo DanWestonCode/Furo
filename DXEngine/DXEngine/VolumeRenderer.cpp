@@ -47,25 +47,50 @@ HRESULT VolumeRenderer::Initialize(D3D* _d3d, HWND _hWnd, int _width, int _heigh
 
 	CreateSampler(_d3d->GetDevice());
 
-	m_props.g_iMaxIterations = 128;
-	m_props.VolumeColor = XMFLOAT4(1,0,1,1);
-
 	D3D11_BUFFER_DESC bufferDesc;
 	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bufferDesc.MiscFlags = 0;
 	bufferDesc.StructureByteStride = 0;
-	bufferDesc.ByteWidth = sizeof(VolumeRendererProps);
-	_d3d->GetDevice()->CreateBuffer(&bufferDesc, NULL, &m_VolumeRendererPropsBuffer);
 
-	/*TwStructMember _VolumeRendererProps[] = {
-		{ "Volume Render Iterations", TW_TYPE_FLOAT, offsetof(VolumeRendererProps, g_iMaxIterations), "min=1 max=1000 step=1" },
-		{ "Volume Colour", TW_TYPE_COLOR4F, offsetof(VolumeRendererProps, VolumeColor), "min=0.1 max=1 step=0.1" }
-		};
+	//camera buffer
+	bufferDesc.ByteWidth = sizeof(CamBuffer);
+	result = _d3d->GetDevice()->CreateBuffer(&bufferDesc, NULL, &m_CamBuffer);
 
-		TwAddVarRW(_d3d->m_TwBar, "Volume Renderer Properties", TwDefineStruct("Simulation", _VolumeRendererProps, 2, sizeof(VolumeRendererProps), nullptr, nullptr), &m_props, NULL);
-		*/
+	//object buffer 
+	bufferDesc.ByteWidth = sizeof(ObjectBuffer);
+	result = _d3d->GetDevice()->CreateBuffer(&bufferDesc, NULL, &m_ObjectBuffer);
+
+	//Fluid buffer 
+	bufferDesc.ByteWidth = sizeof(FluidBuffer);
+	result = _d3d->GetDevice()->CreateBuffer(&bufferDesc, NULL, &m_FluidBuffer);
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	CamBuffer* camPtr;
+	ObjectBuffer* objPtr;
+	FluidBuffer* fluidPtr;
+
+	//Cam Buffer
+	result = _d3d->GetDeviceContext()->Map(m_CamBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	camPtr = (CamBuffer*)mappedResource.pData;
+	camPtr->CameraPos = Camera::Instance()->m_pos;
+	_d3d->GetDeviceContext()->Unmap(m_CamBuffer, 0);
+
+	//Object Buffer
+	result = _d3d->GetDeviceContext()->Map(m_ObjectBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	objPtr = (ObjectBuffer*)mappedResource.pData;
+	objPtr->ObjectPos = m_cube->m_pos;
+	objPtr->ObjectScale = m_cube->m_scale;
+	_d3d->GetDeviceContext()->Unmap(m_CamBuffer, 0);
+
+	//fluid buffer
+	result = _d3d->GetDeviceContext()->Map(m_ObjectBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	fluidPtr = (FluidBuffer*)mappedResource.pData;
+	fluidPtr->Absoprtion = 64;
+	fluidPtr->Samples = 128;
+	_d3d->GetDeviceContext()->Unmap(m_CamBuffer, 0);
+
 	return result;
 }
 
@@ -163,8 +188,8 @@ void VolumeRenderer::Render(D3D* m_D3D)
 
 	// Set the pixel shader
 	m_D3D->GetDeviceContext()->PSSetShader(m_VolumeRaycastShader->GetPixelShader(), NULL, 0);
-	m_D3D->GetDeviceContext()->PSSetConstantBuffers(0, 1, &m_VolumeRaycastShader->m_WindowSizeCB);
-	m_D3D->GetDeviceContext()->PSSetConstantBuffers(1, 1, &m_VolumeRendererPropsBuffer);
+	ID3D11Buffer *const Buffers[4] = { m_VolumeRaycastShader->m_WindowSizeCB, m_CamBuffer, m_ObjectBuffer, m_FluidBuffer };
+	m_D3D->GetDeviceContext()->PSSetConstantBuffers(0, 4, Buffers);
 
 	//// Set texture sampler
 	m_D3D->GetDeviceContext()->PSSetSamplers(0, 1, &g_pSamplerLinear);

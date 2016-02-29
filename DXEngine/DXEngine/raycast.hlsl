@@ -36,12 +36,30 @@ cbuffer cbImmutable : register(b0)
 	
 }
 
-cbuffer volumeRendererProps : register(b1)
+cbuffer CamBuffer : register(b1)
 {
-	float iter;
-	float4 VolumeColor;
-	float3 buffer;
+	float3 CameraPos;
+	float padding1;
 }
+
+cbuffer ObjectBuffer : register(b2)
+{
+	float3 ObjectPos;
+	float padding2;
+
+	float3 ObjectScale;
+	float padding3;
+}
+
+cbuffer FluidBuffer : register(b3)
+{
+	float Absoprtion;
+	float padding4;
+
+	int Samples;
+	float padding5;
+}
+
 
 
 //--------------------------------------------------------------------------------------

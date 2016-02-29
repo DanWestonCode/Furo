@@ -161,16 +161,6 @@ void VolumeRenderer::Render(D3D* m_D3D)
 	m_D3D->GetDeviceContext()->VSSetShader(m_VolumeRaycastShader->GetVertexShader(), NULL, 0);
 	m_D3D->GetDeviceContext()->VSSetConstantBuffers(0, 1, &m_ModelShader->m_MatrixBuffer);
 
-	HRESULT result;
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	VolumeRendererProps* dataPtr;
-
-	result = m_D3D->GetDeviceContext()->Map(m_VolumeRendererPropsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	dataPtr = (VolumeRendererProps*)mappedResource.pData;
-	dataPtr->g_iMaxIterations = m_props.g_iMaxIterations;
-	dataPtr->VolumeColor = m_props.VolumeColor;
-	m_D3D->GetDeviceContext()->Unmap(m_VolumeRendererPropsBuffer, 0);
-
 	// Set the pixel shader
 	m_D3D->GetDeviceContext()->PSSetShader(m_VolumeRaycastShader->GetPixelShader(), NULL, 0);
 	m_D3D->GetDeviceContext()->PSSetConstantBuffers(0, 1, &m_VolumeRaycastShader->m_WindowSizeCB);

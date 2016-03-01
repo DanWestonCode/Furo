@@ -1,6 +1,6 @@
 #define NUM_THREADS 8
 
-RWTexture3D<float4> _VorticityResult : register (u0);
+RWTexture3D<float3> _VorticityResult : register (u0);
 
 Texture3D<float3> _Velocity : register (t0);
 
@@ -30,6 +30,6 @@ void ComputeVorticity( uint3 id : SV_DispatchThreadID )
 								   (( vU.x - vD.x ) - ( vR.z - vL.z )) ,
 								   (( vR.y - vL.y ) - ( vT.x - vB.x )) );
 
-	float lresult = length(result);
-	_VorticityResult[id] = float4(result, lresult);
+	//float lresult = length(result);
+	_VorticityResult[id] = result;// float3(result, lresult);
 }

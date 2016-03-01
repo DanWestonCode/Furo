@@ -57,7 +57,7 @@ public:
 	
 	ID3D11RasterizerState* m_backFaceCull;
 	ID3D11RasterizerState* m_FrontFaceCull;
-
+	ID3D11BlendState* m_AlphaState;
 	ID3D11RenderTargetView* m_renderTargetView;
 	TwBar* m_TwBar;
 

@@ -1,6 +1,7 @@
 #define NUM_THREADS 8
 
 RWTexture3D<float> _pressureResult : register (u0);
+
 Texture3D<float> _Pressure : register (t0);
 Texture3D<int> _Obstacles : register (t1);
 Texture3D<float> _Divergence : register (t2);

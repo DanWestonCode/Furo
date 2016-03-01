@@ -18,7 +18,7 @@ protected:
 		float dissipation;
 		float dt;
 		float decay;
-		float padding;
+		float forward;
 	};
 	struct ImpulseBuffer
 	{
@@ -50,7 +50,9 @@ protected:
 			m_densityAmount,
 			m_TemperatureAmount,
 			m_timeStep,
-			m_dissipation,
+			m_densityDissipation,
+			m_velocityDissipation,
+			m_temperatureDissipation,
 			m_decay,
 			m_ambientTemperature,
 			m_buoyancy,
@@ -60,7 +62,7 @@ protected:
 
 private:
 	void ComputeBoundaryConditions(ID3D11DeviceContext*);
-	void ComputeAdvection(ID3D11DeviceContext*, ID3D11UnorderedAccessView*, ID3D11ShaderResourceView*);
+	void ComputeAdvection(ID3D11DeviceContext*, ID3D11UnorderedAccessView*, ID3D11ShaderResourceView*, float, float);
 	void ComputeImpulse(ID3D11DeviceContext*, ID3D11UnorderedAccessView*, ID3D11ShaderResourceView*, float);	
 	void ComputeBuoyancy(ID3D11DeviceContext*);
 	void ComputeVorticity(ID3D11DeviceContext*);

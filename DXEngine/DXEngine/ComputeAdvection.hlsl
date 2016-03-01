@@ -5,7 +5,7 @@ cbuffer AdvectionBuffer : register (b0)
     float dissipation;
 	float dt;
     float decay;
-    float padding;
+    float forward;
 }
 
 //SRVS
@@ -34,7 +34,7 @@ void ComputeAdvection(uint3 id : SV_DispatchThreadID)
 	_Velocity.GetDimensions(_Size.x, _Size.y, _Size.z);
 
     //back trace advection
-	float3 prevPos = id - 1 * dt * _Velocity[id];
+	float3 prevPos = id - (forward * dt * _Velocity[id]);
     prevPos = (prevPos+0.5f)/_Size;
 
     float3 result = _AdvectionTargetRead.SampleLevel(linearSampler, prevPos, 0);

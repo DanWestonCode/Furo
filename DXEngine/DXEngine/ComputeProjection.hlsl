@@ -11,7 +11,7 @@ void ComputeProjection(uint3 id : SV_DispatchThreadID)
 {
 	if (_BoundaryConditions[id] > 0)
 	{
-		_VelocityResult[id] = 0;
+		_VelocityResult[id] = float3(0,0,0);
 		return;
 	}
 

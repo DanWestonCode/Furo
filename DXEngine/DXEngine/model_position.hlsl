@@ -46,6 +46,9 @@ struct PSInput
 PSInput ModelPositionVS(VSInput input)
 {
 	PSInput output;
+
+	input.pos.w = 1.0f;
+
 	output.pos = mul(mWVP, input.pos);
 
 	// Pass position (in model coordinates) to texture coordinate register
@@ -61,6 +64,5 @@ PSInput ModelPositionVS(VSInput input)
 
 float4 ModelPositionPS(PSInput input) : SV_TARGET
 {
-	// Make use of linear interpolation
 	return input.tex;
 }

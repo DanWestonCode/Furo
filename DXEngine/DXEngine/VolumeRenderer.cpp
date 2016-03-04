@@ -208,6 +208,6 @@ void VolumeRenderer::Render(D3D* m_D3D)
 	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);
 
 	 //Un-bind textures
-	ID3D11ShaderResourceView *nullRV[1] = { NULL };
-	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 1, nullRV);
+	ID3D11ShaderResourceView *nullRV[3] = { NULL, NULL,NULL };
+	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 3, nullRV);
 }

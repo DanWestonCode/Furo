@@ -63,6 +63,7 @@ protected:
 private:
 	void ComputeBoundaryConditions(ID3D11DeviceContext*);
 	void ComputeAdvection(ID3D11DeviceContext*, ID3D11UnorderedAccessView*, ID3D11ShaderResourceView*, float, float);
+	void ComputeMacCormack(ID3D11DeviceContext*, ID3D11UnorderedAccessView*, ID3D11ShaderResourceView*, float, float);
 	void ComputeImpulse(ID3D11DeviceContext*, ID3D11UnorderedAccessView*, ID3D11ShaderResourceView*, float);	
 	void ComputeBuoyancy(ID3D11DeviceContext*);
 	void ComputeVorticity(ID3D11DeviceContext*);
@@ -90,6 +91,7 @@ public:
 	//shaders
 	ID3D11ComputeShader* m_BoundaryConditionsCS;
 	ID3D11ComputeShader* m_AdvectionCS;
+	ID3D11ComputeShader* m_MacCormackCS;
 	ID3D11ComputeShader* m_BuoyancyCS;
 	ID3D11ComputeShader* m_ImpulseCS;
 	ID3D11ComputeShader* m_VorticityCS;
@@ -106,6 +108,7 @@ public:
 	ID3D11Texture3D* m_Temperature[2];
 	ID3D11Texture3D* m_Divergence;
 	ID3D11Texture3D* m_Pressure[2];
+	ID3D11Texture3D* m_TempTexture[2];
 
 	//UAVs
 	ID3D11UnorderedAccessView* m_BoundaryConditionsUAV;
@@ -115,6 +118,7 @@ public:
 	ID3D11UnorderedAccessView* m_TemperatureUAV[2];
 	ID3D11UnorderedAccessView* m_DivergenceUAV;
 	ID3D11UnorderedAccessView* m_PressureUAV[2];
+	ID3D11UnorderedAccessView* m_TempUAV[2];
 
 	//SRVs
 	ID3D11ShaderResourceView* m_BoundaryConditionsSRV;
@@ -124,9 +128,11 @@ public:
 	ID3D11ShaderResourceView* m_TemperatureSRV[2];
 	ID3D11ShaderResourceView* m_DivergenceSRV;
 	ID3D11ShaderResourceView* m_PressureSRV[2];
+	ID3D11ShaderResourceView* m_TempSRV[2];
 
 	//buffer
 	ID3D11Buffer* m_DensityBuffer;
+	ID3D11Buffer* m_ImpulseBuffer;
 	ID3D11Buffer* m_AdvectionBuffer;
 	ID3D11Buffer* m_BuoyancyBuffer;
 	ID3D11Buffer* m_ConfinementBuffer;

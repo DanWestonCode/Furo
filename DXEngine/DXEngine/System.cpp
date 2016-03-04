@@ -225,17 +225,17 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 	// Hide the mouse cursor.
 	ShowCursor(true);
 
-	//REMEMBER YOU HAVE ADDED PREPROCESSOR TO 
-	//IGNORE DEPRECATION OF freopen
-	//DEBUG CONSOLE WINDOW
-	if (AllocConsole())
-	{
-		freopen("CONOUT$", "w", stdout);
-		//Might be required? Might not work. Who knows.
-		freopen("CONOUY$", "w", stderr);
-		SetConsoleTitle(L"Debug Console");
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
-	}
+	////REMEMBER YOU HAVE ADDED PREPROCESSOR TO 
+	////IGNORE DEPRECATION OF freopen
+	////DEBUG CONSOLE WINDOW
+	//if (AllocConsole())
+	//{
+	//	freopen("CONOUT$", "w", stdout);
+	//	//Might be required? Might not work. Who knows.
+	//	freopen("CONOUY$", "w", stderr);
+	//	SetConsoleTitle(L"Debug Console");
+	//	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
+	//}
 }
 
 //where windows messages are sent to

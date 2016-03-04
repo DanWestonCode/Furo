@@ -145,7 +145,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Impulse.hlsl">
+    <None Include="ComputeImpulse.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
@@ -186,6 +186,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ComputeProjection.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ComputeMacCormack.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

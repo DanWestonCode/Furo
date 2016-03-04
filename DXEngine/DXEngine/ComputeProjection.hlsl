@@ -46,5 +46,5 @@ void ComputeProjection(uint3 id : SV_DispatchThreadID)
 	float3 grad = float3(pR - pL, pT - pB, pU - pD) * 0.5f;
 	float3 oldV = _Velocity[id];
 	float3 newV = oldV - grad;
-	_VelocityResult[id] = newV * vMask + obstV;
+	_VelocityResult[id] = (newV * vMask) + obstV;
 }

@@ -4,7 +4,7 @@ Object::Object()
 {
 	m_pos = XMFLOAT3(0, 0, 0);
 	m_rot = XMFLOAT3(0, 0, 0);
-	m_scale = XMFLOAT3(4, 8, 4);
+	m_scale = XMFLOAT3(1, 1, 1);
 	m_worldMatrix = XMMatrixIdentity();
 	vel = 5.0f;
 };
@@ -38,5 +38,3 @@ void Object::Update(float dt)
 
 	m_worldMatrix = m_newWorld;
 }
-
-

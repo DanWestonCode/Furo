@@ -187,9 +187,6 @@
     <None Include="color.fx">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Impulse.hlsl">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
     <None Include="ComputeBoundaryConditions.hlsl">
       <Filter>Shaders\Fluid</Filter>
     </None>
@@ -212,6 +209,12 @@
       <Filter>Shaders\Fluid</Filter>
     </None>
     <None Include="ComputeProjection.hlsl">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="ComputeMacCormack.hlsl">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="ComputeImpulse.hlsl">
       <Filter>Shaders\Fluid</Filter>
     </None>
   </ItemGroup>

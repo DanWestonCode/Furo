@@ -194,7 +194,7 @@ void VolumeRenderer::Render(D3D* m_D3D)
 	m_D3D->GetDeviceContext()->PSSetSamplers(0, 1, &g_pSamplerLinear);
 
 	// Set textures
-	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 1, &m_VolumeTexture->m_fluidShader->m_BoundaryConditionsSRV);//
+	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 1, &m_VolumeTexture->m_fluidShader->m_DensitySRV[0]);//
 	m_D3D->GetDeviceContext()->PSSetShaderResources(1, 1, &m_ModelFront->m_SRV);
 	m_D3D->GetDeviceContext()->PSSetShaderResources(2, 1, &m_ModelBack->m_SRV);
 

@@ -42,7 +42,7 @@ void ComputeBuoyancy (int3 id : SV_DispatchThreadID)
 	if (temperatureVal > ambientTemp)
 	{
 		//implements http://http.developer.nvidia.com/GPUGems3/elementLinks/0659equ01.jpg
-        result += (dt * (temperatureVal - ambientTemp) * buoyancy - densityVal * weight) * float3(1, 0, 0).xyz;
+        result += (dt * (temperatureVal - ambientTemp) * buoyancy - densityVal * weight) * float3(0, 1, 0).xyz;
     }
 	//set result of the field
 	_buoyancyResult[id] = result;

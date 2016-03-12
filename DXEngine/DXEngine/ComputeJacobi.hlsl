@@ -2,8 +2,8 @@
 /// ComputeJacobi.hlsl
 ///
 /// About:
-/// ComputeDivergence - computes the divergence according to the finite difference formula http://http.developer.nvidia.com/GPUGems/elementLinks/tab38_1.jpg
-/// Divergence is the first part of the projection step. 
+/// ComputeJacobi - Solves the pressure poisson system
+/// Jacobi is the second part of the projection step. 
 ///
 /// Based from:
 /// cFluid3D.hlsl (BuoyancyComputeShader) - Valentin Hinov - https://github.com/Morji/Fluid-Simulation-DirectX11
@@ -13,15 +13,15 @@
 
 RWTexture3D<float> _pressureResult : register (u0);
 
-Texture3D<float> _Pressure : register (t0);
-Texture3D<int> _Obstacles : register (t1);
-Texture3D<float> _Divergence : register (t2);
+Texture3D<float> _Pressure : register(t0);
+Texture3D<int> _BoundaryConditions : register(t1);
+Texture3D<float> _Divergence : register(t2);
 
 [numthreads(NUM_THREADS, NUM_THREADS, NUM_THREADS)]
 void ComputeJacobi( uint3 id : SV_DispatchThreadID )
 {
+    //Get dimensions of the fluid field
 	uint3 dimensions;
-	//get dimensions of texture
 	_Pressure.GetDimensions(dimensions.x, dimensions.y, dimensions.z);
 
 	//For the current cell get neighbouring positions
@@ -34,34 +34,49 @@ void ComputeJacobi( uint3 id : SV_DispatchThreadID )
     uint3 UpCell = uint3(id.x, id.y, min(id.z + 1, dimensions.z - 1));
     uint3 DownCell = uint3(id.x, id.y, max(id.z - 1, 0));
 
-	float xC = _Pressure[id];
+    //Get the current pressure at the cell
+	float CurrentCellPressure = _Pressure[id];
 
-    float xT = _Pressure[TopCell];
-    float xB = _Pressure[BottomCell];
-    float xR = _Pressure[RightCell];
-    float xL = _Pressure[LeftCell];
-    float xU = _Pressure[UpCell];
-    float xD = _Pressure[DownCell];
+    //Get surrounding cell pressures
+    float TopCellPressure = _Pressure[TopCell];
+    float BottomCellPressure = _Pressure[BottomCell];
 
-    if (_Obstacles[TopCell] > 0.1)
-        xT = xC;
-    if (_Obstacles[BottomCell] > 0.1)
-        xB = xC;
+    float RightCellPressure = _Pressure[RightCell];
+    float LeftCellPressure = _Pressure[LeftCell];
+
+    float UpCellPressure = _Pressure[UpCell];
+    float DownCellPressure = _Pressure[DownCell];
+
+    //Check the boundary conditions to remove fields with collisions 
+    if (_BoundaryConditions[TopCell] > 0)
+    {
+        TopCellPressure = CurrentCellPressure;
+    }
+    if (_BoundaryConditions[BottomCell] > 0)
+    {
+        BottomCellPressure = CurrentCellPressure;
+    }
     
-    if (_Obstacles[RightCell] > 0.1)
-        xR = xC;
-    if (_Obstacles[LeftCell] > 0.1)
-        xL = xC;
+    if (_BoundaryConditions[RightCell] > 0)
+    {
+        RightCellPressure = CurrentCellPressure;
+    }
+    if (_BoundaryConditions[LeftCell] > 0)
+    {
+        LeftCellPressure = CurrentCellPressure;
+    }
     
-    if (_Obstacles[UpCell] > 0.1)
-        xU = xC;
-    if (_Obstacles[DownCell] > 0.1)
-        xD = xC;
+    if (_BoundaryConditions[UpCell] > 0)
+    {
+        UpCellPressure = CurrentCellPressure;
+    }
+    if (_BoundaryConditions[DownCell] > 0)
+    {
+        DownCellPressure = CurrentCellPressure;
+    }
 
-	// Sample divergence
-	float bC = _Divergence[id];
+	// Get the current divergence
+	float divergence = _Divergence[id];
 
-	float final = (xL + xR + xB + xT + xU + xD - bC ) / 6;
-
-	_pressureResult[id] = final;
+	_pressureResult[id] = (LeftCellPressure + RightCellPressure + BottomCellPressure + TopCellPressure + UpCellPressure + DownCellPressure - divergence) / 6;
 }

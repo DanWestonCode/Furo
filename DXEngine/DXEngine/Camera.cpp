@@ -4,8 +4,8 @@ Camera *Camera::m_Camera = nullptr;
 
 Camera::Camera()
 {
-	m_pos = XMFLOAT3(0.0f, -5.0f, -15.0f);
-	m_LookAt = XMFLOAT3(0.f, -5.0f, 0.0f);
+	m_pos = XMFLOAT3(0.0f, -0.0f, -5.0f);
+	m_LookAt = XMFLOAT3(0.f, -0.0f, 0.0f);
 	m_Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 }
 Camera::Camera(const Camera& other){}
@@ -19,10 +19,9 @@ void Camera::Render()
 	XMVECTOR up = XMLoadFloat3(&m_Up);//XMVectorSet(0.f, 1.f, 0.f, 0.f);
 	m_view = XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up));
 
-
 	float screenAspect = (float)800 / (float)600;
 
-	// Initialize the projection matrix ~ FoV/Screen Asepct/ Screen Near / Screen Far
+	// Initialize the projection matrix ~ FoV/Screen aspect/ Screen Near / Screen Far
 	m_projection = XMMatrixTranspose(XMMatrixPerspectiveFovLH(XM_PIDIV4, screenAspect, 0.1f, 1000.f));
 
 	// View-projection matrix

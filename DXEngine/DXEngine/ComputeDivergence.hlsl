@@ -23,7 +23,7 @@ void ComputeDivergence( uint3 id : SV_DispatchThreadID )
 	uint3 dimensions;
 	_Velocity.GetDimensions(dimensions.x, dimensions.y, dimensions.z);
 	
-	//For the current cell get neighbouring positions
+	//from the current cell get neighbouring positions
     uint3 LeftCell = uint3(max(0, id.x - 1), id.y, id.z);
 	uint3 RightCell = uint3(min(id.x+1,dimensions.x-1), id.y, id.z);
 	
@@ -36,8 +36,10 @@ void ComputeDivergence( uint3 id : SV_DispatchThreadID )
     //using nighbouring positions get the neighbouring velocity
     float3 RightVelocity = _Velocity[RightCell];
     float3 LeftVelocity = _Velocity[LeftCell];
+
     float3 TopVelocity = _Velocity[TopCell];
     float3 BottomVelocity = _Velocity[BottomCell];
+
     float3 UpVelocity = _Velocity[UpCell];
     float3 DownVelocity = _Velocity[DownCell];
 

@@ -63,7 +63,7 @@ HRESULT Cube::Initialise(ID3D11Device* _device)
 	hr = (_device->CreateBuffer(&bd, &initData, &m_IndexBuffer));
 
 
-	m_scale = XMFLOAT3(4, 8, 4);
+	m_scale = XMFLOAT3(1, 2, 1);
 
 	return hr;
 }

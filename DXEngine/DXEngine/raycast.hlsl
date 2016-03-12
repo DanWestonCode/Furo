@@ -54,17 +54,10 @@ cbuffer ObjectBuffer : register(b2)
 cbuffer FluidBuffer : register(b3)
 {
 	float Absoprtion;
-	float padding4;
-
+	float steps;
 	int Samples;
 	float padding5;
 }
-
-
-
-//--------------------------------------------------------------------------------------
-// Structures
-//--------------------------------------------------------------------------------------
 
 struct VSInput
 {
@@ -165,66 +158,60 @@ PSInput RayCastVS(VSInput input)
 //--------------------------------------------------------------------------------------
 // Pixel shaders
 //--------------------------------------------------------------------------------------
-//float4 RayCastPS(PSInput input) : SV_TARGET
-//{
-//	float3 start, ds;
-//	float stepSize;
-//	CalculateRay(input, start, ds, stepSize);
-//
-//	float alpha = 1.0f;
-//
-//	for (int i = 0; i < Samples; ++i, start += ds)
-//	{
-//		float D = txVolume.SampleLevel(samplerLinear, start, 0);
-//		alpha *= 1.0f - saturate(D * stepSize * Absoprtion);
-//
-//		if (alpha <= 0.01f) {
-//			break;
-//		}
-//	}
-//	return float4(1, 0, 1, 0.5) * (1.0f - alpha);
-//}
-
 float4 RayCastPS(PSInput input) : SV_TARGET
 {
-	// Current pixel location on screen, used to sample position texture
-	float2 tex = input.pos.xy * g_fInvWindowSize;
- 
-	// Read cube front and back face positions (in model coordinates) from texture
-	float3 pos_front = txPositionFront.Sample(samplerLinear, tex);
-	float3 pos_back  =  txPositionBack.Sample(samplerLinear, tex);
- 
-	// Direction vector
-	//float3 dir = pos_back - pos_front;
-	//float ray_length = length(dir);	// ray length
-	//dir /= ray_length;				// normalize direction
-	float3 dir = normalize(pos_back - pos_front);
+	float3 start, ds;
+	float stepSize;
+	CalculateRay(input, start, ds, stepSize);
 
-	// Number of iterations
-	//uint numIter = min(ceil(ray_length/g_fStepSize), g_iMaxIterations);
+	float alpha = 1.0f;
 
-	// Single step: direction times delta step
-	float3 step = g_fStepSize * dir;
-
-	// Current position
-	float3 v = pos_front;
-
-	// Accumulate result: value and transparency (alpha)
-	float2 result = float2(0, 0);
- 
-	for (uint i = 0; i < g_iMaxIterations; i++)
+	for (int i = 0; i < Samples; ++i, start += ds)
 	{
-		float2 src = txVolume.Sample(samplerLinear, v).rr;
+		float D = txVolume.SampleLevel(samplerLinear, start, 0);
+		alpha *= 1.0f - saturate(D * stepSize * Absoprtion);
 
-		// Reduce alpha to have a more transparent result
-		src.y *= 0.15;
-
-		// Front to back blending
-		result += ((1 - result.y)*src.y * src);
-
-		// Advance the current position
-		v += step;
+		if (alpha <= 0.01f) {
+			break;
+		}
 	}
- 
-	return float4(1,0,1, result.y);//(1 - result.y);
+	return float4(1, 0, 1, 0.5) * (1.0f - alpha);
 }
+
+//float4 RayCastPS(PSInput input) : SV_TARGET
+//{
+//	// Current pixel location on screen, used to sample position texture
+//	float2 tex = input.pos.xy * g_fInvWindowSize;
+ 
+//	// Read cube front and back face positions (in model coordinates) from texture
+//	float3 pos_front = txPositionFront.Sample(samplerLinear, tex);
+//	float3 pos_back  =  txPositionBack.Sample(samplerLinear, tex);
+ 
+
+//	float3 dir = normalize(pos_back - pos_front);
+
+//	// Single step: direction times delta step
+//	float3 step = g_fStepSize * dir;
+
+//	// Current position
+//	float3 v = pos_front;
+
+//	// Accumulate result: value and transparency (alpha)
+//	float2 result = float2(0, 0);
+ 
+//	for (uint i = 0; i < g_iMaxIterations; i++)
+//	{
+//		float2 src = txVolume.Sample(samplerLinear, v).rr;
+
+//		// Reduce alpha to have a more transparent result
+//		src.y *= 0.20f;
+
+//		// Front to back blending
+//		result += ((1 - result.y)*src.y * src);
+
+//		// Advance the current position
+//		v += step;
+//	}
+ 
+//    return float4(result.r, result.r, result.r, result.y); //* (1 - result.y);
+//}

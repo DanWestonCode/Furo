@@ -72,21 +72,21 @@ HRESULT FluidShader::Initialize(ID3D11Device* _device, ID3D11DeviceContext* _dev
 	#pragma endregion	
 	
 	#pragma region Default Vars for Fluid Simulation
-	m_simVars.m_impulseRadius = 0.01f;
+	m_simVars.m_impulseRadius = 0.04f;
 	m_simVars.m_densityAmount = 1.0f;
-	m_simVars.m_TemperatureAmount = 10.0f;
+	m_simVars.m_TemperatureAmount = 40.0f;
 	m_simVars.m_decay = 0.0f;
 	m_simVars.m_temperatureDissipation = 0.995f;
 	m_simVars.m_velocityDissipation = 0.995f;
 	m_simVars.m_densityDissipation = 0.995f;
 	m_simVars.m_ambientTemperature = 0.995f;
-	m_simVars.m_buoyancy = 18.0f;
+	m_simVars.m_buoyancy = 10.0f;
 	m_simVars.m_weight = 0.0125f;
-	m_simVars.m_VorticityStrength = 7.0f;
+	m_simVars.m_VorticityStrength = 10.0f;
 	#pragma endregion
 
 	#pragma region AnTweakBar vars
-	TwStructMember fluidProps[] = {
+	TwStructMember _TwFluidProps[] = {
 		{ "Impulse Radius", TW_TYPE_FLOAT, offsetof(SimulationVars, m_impulseRadius), "min=0.01 max=0.08 step=0.01" },
 		{ "Density", TW_TYPE_FLOAT, offsetof(SimulationVars, m_densityAmount), "min=0.1 max=1 step=0.1" },
 		{ "Temperature", TW_TYPE_FLOAT, offsetof(SimulationVars, m_TemperatureAmount), "min=0.1 max=1000 step=0.1" },
@@ -98,7 +98,7 @@ HRESULT FluidShader::Initialize(ID3D11Device* _device, ID3D11DeviceContext* _dev
 		{ "Vorticity Strength", TW_TYPE_FLOAT, offsetof(SimulationVars, m_VorticityStrength), "min=0.1 max=1000 step=0.1" }
 	};
 
-	TwAddVarRW(_bar, "Simulation Properties", TwDefineStruct("Simulation", fluidProps, 9, sizeof(SimulationVars), nullptr, nullptr), &m_simVars, NULL);
+	TwAddVarRW(_bar, "Simulation Properties", TwDefineStruct("Simulation", _TwFluidProps, 9, sizeof(SimulationVars), nullptr, nullptr), &m_simVars, NULL);
 	#pragma endregion
 
 	//compute boundary conditions once
@@ -197,7 +197,7 @@ void FluidShader::CreateResources(ID3D11Device* _device)
 	D3D11_TEXTURE3D_DESC textureDesc;
 	ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE3D_DESC));
 	textureDesc.Width = (UINT)FluidSize;
-	textureDesc.Height = (UINT)(FluidSize);
+	textureDesc.Height = (UINT)(FluidSize*2);
 	textureDesc.Depth = (UINT)FluidSize;
 	textureDesc.MipLevels = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -488,7 +488,7 @@ void FluidShader::ComputeBoundaryConditions(ID3D11DeviceContext* _deviceContext)
 	//bind the UAV to the shader 
 	_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_BoundaryConditionsUAV, 0);
 	//Dispatch Shader
-	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
+	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize*2) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
 
 	ID3D11UnorderedAccessView* nullUAV[] = { NULL };
 	_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
@@ -511,7 +511,7 @@ void FluidShader::ComputeAdvection(ID3D11DeviceContext* _deviceContext, ID3D11Un
 	HRESULT result = _deviceContext->Map(m_AdvectionBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	dataPtr = (AdvectionBuffer*)mappedResource.pData;
 	dataPtr->dissipation = _Dissipation;
-	dataPtr->decay = 0.0;
+	dataPtr->decay = 0.0f;
 	dataPtr->dt = m_timeStep;
 	dataPtr->forward = _Forward;
 	_deviceContext->Unmap(m_AdvectionBuffer, 0);
@@ -534,7 +534,7 @@ void FluidShader::ComputeAdvection(ID3D11DeviceContext* _deviceContext, ID3D11Un
 	_deviceContext->CSSetShaderResources(0, 3, SRV);
 
 	//Dispatch Compute shader to GPU
-	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
+	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize*2) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
 
 	//unbind SRVs
 	ID3D11ShaderResourceView* nullSRV[3] = { NULL, NULL, NULL };
@@ -580,7 +580,7 @@ void FluidShader::ComputeMacCormack(ID3D11DeviceContext* _deviceContext, ID3D11U
 	ID3D11ShaderResourceView *const SRV[5] = { m_TempSRV[0], m_TempSRV[1], _TargetRead, m_VelocitySRV[READ], m_BoundaryConditionsSRV };
 	_deviceContext->CSSetShaderResources(0, 5, SRV);
 
-	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
+	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize*2) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
 
 	ID3D11ShaderResourceView* nullSRV[3] = { NULL, NULL, NULL };
 	_deviceContext->CSSetShaderResources(0, 3, nullSRV);
@@ -621,7 +621,7 @@ void FluidShader::ComputeBuoyancy(ID3D11DeviceContext* _deviceContext)
 	_deviceContext->CSSetShaderResources(0, 3, SRV);
 
 	//Dispatch compute shader to GPU
-	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
+	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize*2) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
 
 	//unbind SRVs
 	ID3D11ShaderResourceView* nullSRV[3] = { NULL, NULL, NULL };
@@ -634,7 +634,7 @@ void FluidShader::ComputeBuoyancy(ID3D11DeviceContext* _deviceContext)
 
 }
 
-void FluidShader::ComputeImpulse(ID3D11DeviceContext* _deviceContext, ID3D11UnorderedAccessView* _targetUAV, ID3D11ShaderResourceView* _targetSRV, float amount)
+void FluidShader::ComputeImpulse(ID3D11DeviceContext* _deviceContext, ID3D11UnorderedAccessView* _targetUAV, ID3D11ShaderResourceView* _targetSRV, float _amount)
 {
 	#pragma region Update Impulse Buffer
 	HRESULT result;
@@ -643,11 +643,11 @@ void FluidShader::ComputeImpulse(ID3D11DeviceContext* _deviceContext, ID3D11Unor
 
 	result = _deviceContext->Map(m_DensityBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	dataPtr = (ImpulseBuffer*)mappedResource.pData;
-	dataPtr->amount = amount;
+	dataPtr->amount = _amount;
 	dataPtr->dt = m_timeStep;
-	float iSize = FluidSize + (FluidSize) + FluidSize;
+	float iSize = FluidSize + (FluidSize*2) + FluidSize;
 	dataPtr->radius = m_simVars.m_impulseRadius*iSize;
-	dataPtr->sourcePos = XMFLOAT3((0.5f*FluidSize), (0.1f*(FluidSize * 2)), (0.5f*FluidSize));
+	dataPtr->sourcePos = XMFLOAT3((0.5f*FluidSize), (0.1f*(FluidSize)), (0.5f*FluidSize));
 	_deviceContext->Unmap(m_DensityBuffer, 0);
 	#pragma endregion
 
@@ -663,7 +663,7 @@ void FluidShader::ComputeImpulse(ID3D11DeviceContext* _deviceContext, ID3D11Unor
 	_deviceContext->CSSetShaderResources(0, 1, &_targetSRV);
 
 	//Dispatch Shader to GPU
-	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
+	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize*2) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
 
 	//unbind SRV
 	ID3D11ShaderResourceView* nullSRV[1] = { NULL };
@@ -685,7 +685,7 @@ void FluidShader::ComputeVorticity(ID3D11DeviceContext* _deviceContext)
 	_deviceContext->CSSetShaderResources(0, 1, &m_VelocitySRV[READ]);
 
 	//Dispatch shader to th GPU
-	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
+	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize*2) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
 
 	//Unbind SRVs
 	ID3D11ShaderResourceView* nullSRV[1] = { NULL };
@@ -702,14 +702,12 @@ void FluidShader::ComputeConfinement(ID3D11DeviceContext* _deviceContext)
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	ConfinementBuffer* dataPtr;
-
 	result = _deviceContext->Map(m_ConfinementBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	dataPtr = (ConfinementBuffer*)mappedResource.pData;
 	dataPtr->dt = m_timeStep;
 	dataPtr->VorticityStrength = m_simVars.m_VorticityStrength;
 	_deviceContext->Unmap(m_ConfinementBuffer, 0);
 
-	
 	//set the Compute shader
 	_deviceContext->CSSetShader(m_ConfinementCS, nullptr, 0);
 
@@ -719,7 +717,7 @@ void FluidShader::ComputeConfinement(ID3D11DeviceContext* _deviceContext)
 	ID3D11ShaderResourceView *const SRV[3] = { m_BoundaryConditionsSRV, m_VorticitySRV, m_VelocitySRV[READ] };
 	_deviceContext->CSSetShaderResources(0, 3, SRV);
 
-	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
+	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize*2) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
 
 	ID3D11ShaderResourceView* nullSRV[3] = { NULL,NULL,NULL };
 	_deviceContext->CSSetShaderResources(0, 3, nullSRV);
@@ -739,7 +737,7 @@ void FluidShader::ComputeDivergence(ID3D11DeviceContext* _deviceContext)
 	_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_DivergenceUAV, 0);
 	ID3D11ShaderResourceView *const SRV[2] = { m_VelocitySRV[READ], m_BoundaryConditionsSRV };
 	_deviceContext->CSSetShaderResources(0, 2, SRV);
-	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
+	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize*2) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
 
 	ID3D11ShaderResourceView* nullSRV[2] = { NULL, NULL };
 	_deviceContext->CSSetShaderResources(0, 2, nullSRV);
@@ -765,7 +763,7 @@ void FluidShader::ComputeJacobi(ID3D11DeviceContext* _deviceContext)
 		ID3D11ShaderResourceView *const SRV[3] = { m_PressureSRV[READ], m_BoundaryConditionsSRV, m_DivergenceSRV };
 		_deviceContext->CSSetShaderResources(0, 3, SRV);
 		//Dispatch Shader to the GPU
-		_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
+		_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize*2) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
 		//unbind SRVs
 		ID3D11ShaderResourceView* nullSRV[3] = { NULL, NULL, NULL };
 		_deviceContext->CSSetShaderResources(0, 3, nullSRV);
@@ -790,7 +788,7 @@ void FluidShader::ComputeProjection(ID3D11DeviceContext* _deviceContext)
 	ID3D11ShaderResourceView *const SRV[3] = { m_VelocitySRV[READ], m_PressureSRV[READ], m_BoundaryConditionsSRV };
 	_deviceContext->CSSetShaderResources(0, 3, SRV);
 
-	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
+	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize*2) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
 
 	ID3D11ShaderResourceView* nullSRV[3] = { NULL, NULL, NULL };
 	_deviceContext->CSSetShaderResources(0, 2, nullSRV);

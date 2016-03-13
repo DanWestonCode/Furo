@@ -40,22 +40,23 @@ SamplerState linearSampler : register (s0);
 void ComputeAdvection(uint3 id : SV_DispatchThreadID)
 {
     //Check if current cell is within a boundary
-	if(_BoundaryConditions[id] > 0)
-	{
-		//if so kill advection for current cell
-        _AdvectionTargetWrite[id] = float3(0,0,0);
-        return;
-    }
+	//if(_BoundaryConditions[id] > 0)
+	//{
+	//	//if so kill advection for current cell
+ //       _AdvectionTargetWrite[id] = float3(0,0,0);
+ //       return;
+ //   }
 
 	//get dimensions of fluid field
 	uint3 _Size;
 	_Velocity.GetDimensions(_Size.x, _Size.y, _Size.z);
 
     //trace backwards through the velocity field
-	float3 prevPos = id - (forward * dt * _Velocity[id]);
+	float3 prevPos = id - forward * dt * _Velocity[id];
 	//ensure position is at cell centre
     prevPos = (prevPos+0.5f)/_Size;
 
 	//stop negative values entering the fluid field (max returns greater of two values)
-	_AdvectionTargetWrite[id] = max(0, _AdvectionTargetRead.SampleLevel(linearSampler, prevPos, 0) * dissipation);
+    _AdvectionTargetWrite[id] = _AdvectionTargetRead.SampleLevel(linearSampler, prevPos.xyz, 0) * dissipation; //max(0, _AdvectionTargetRead.SampleLevel(linearSampler, prevPos.xyz, 0) * dissipation);
+
 }

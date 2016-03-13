@@ -12,7 +12,7 @@
 /// ComputeVorticity.compute - Scrawk Blog - https://scrawkblog.com/2014/01/09/gpu-gems-to-unity-3d-fluid-simulation/
 /// </summary>
 #define NUM_THREADS 8
-RWTexture3D<float4> _VorticityResult : register (u0);//field to hold result
+RWTexture3D<float3> _VorticityResult : register (u0);//field to hold result
 
 Texture3D<float3> _Velocity : register (t0);
 
@@ -26,13 +26,13 @@ void ComputeVorticity( uint3 id : SV_DispatchThreadID )
     //from the current cell get neighbouring positions
     uint3 LeftCell = uint3(max(0, id.x - 1), id.y, id.z);
     uint3 RightCell = uint3(min(id.x + 1, dimensions.x - 1), id.y, id.z);
-	
-    uint3 TopCell = uint3(id.x, min(id.y + 1, dimensions.y - 1), id.z);
-    uint3 BottomCell = uint3(id.x, max(id.y - 1, 0), id.z);
 
-    uint3 UpCell = uint3(id.x, id.y, min(id.z + 1, dimensions.z - 1));
+	uint3 BottomCell = uint3(id.x, max(id.y - 1, 0), id.z);
+    uint3 TopCell = uint3(id.x, min(id.y + 1, dimensions.y - 1), id.z); 
+       
     uint3 DownCell = uint3(id.x, id.y, max(id.z - 1, 0));
-
+    uint3 UpCell = uint3(id.x, id.y, min(id.z + 1, dimensions.z - 1));
+    
     //using nighbouring positions get the neighbouring velocity
     float3 RightVelocity = _Velocity[RightCell];
     float3 LeftVelocity = _Velocity[LeftCell];
@@ -49,5 +49,5 @@ void ComputeVorticity( uint3 id : SV_DispatchThreadID )
 								   ((RightVelocity.y - LeftVelocity.y) - (TopVelocity.x - BottomVelocity.x)));
 
 	float lresult = length(result);
-	_VorticityResult[id] = float4(result, lresult);
+    _VorticityResult[id] = result; //float4(result, lresult);
 }

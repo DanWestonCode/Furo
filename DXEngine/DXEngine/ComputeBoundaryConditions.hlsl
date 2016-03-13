@@ -6,7 +6,7 @@
 /// to be solid. The shader enforces the "no-slip" boundary conditions, dictating all
 /// the boarders of the velocity field are not enterable by a fluid (http://http.developer.nvidia.com/GPUGems/gpugems_ch38.html)
 ///
-/// Based from:
+/// Created from a combinataion of:
 /// cFluid3D.hlsl (ObstaclesComputeShader) - Valentin Hinov - https://github.com/Morji/Fluid-Simulation-DirectX11
 /// ComputeObstacles.compute - Scrawk Blog - https://scrawkblog.com/2014/01/09/gpu-gems-to-unity-3d-fluid-simulation/
 /// </summary>

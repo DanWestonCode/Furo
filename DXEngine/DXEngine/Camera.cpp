@@ -4,7 +4,7 @@ Camera *Camera::m_Camera = nullptr;
 
 Camera::Camera()
 {
-	m_pos = XMFLOAT3(0.0f, -0.0f, -5.0f);
+	m_pos = XMFLOAT3(0.0f, -0.0f, -25.0f);//-300
 	m_LookAt = XMFLOAT3(0.f, -0.0f, 0.0f);
 	m_Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 }

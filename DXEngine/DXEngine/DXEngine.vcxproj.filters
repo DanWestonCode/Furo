@@ -114,6 +114,9 @@
     <ClCompile Include="VolumeRenderer.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="AABBVolumeRayCastShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="System.h">
@@ -176,6 +179,9 @@
     <ClInclude Include="Debug.h">
       <Filter>Header Files\SystemUtils</Filter>
     </ClInclude>
+    <ClInclude Include="AABBVolumeRayCastShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="model_position.hlsl">
@@ -216,6 +222,9 @@
     </None>
     <None Include="ComputeImpulse.hlsl">
       <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="AABBRayCast.hlsl">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

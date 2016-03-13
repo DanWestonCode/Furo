@@ -43,10 +43,3 @@ void FluidTwoDimensional::Clear()
 	std::memset(m_prevVelY, 0, sizeof(float)*size);
 	std::memset(m_prevDensity, 0, sizeof(float)*size);
 }
-
-
-
-
-
-
-

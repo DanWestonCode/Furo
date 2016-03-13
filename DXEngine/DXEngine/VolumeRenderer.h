@@ -3,6 +3,7 @@
 
 #include "ModelShader.h"
 #include "VolumeRaycastShader.h"
+#include "AABBVolumeRaycastShader.h"
 #include "RenderTexture.h"
 #include "VolumeTexture.h"
 #include "Cube.h"
@@ -18,29 +19,12 @@ protected:
 	{
 		XMMATRIX mWVP;
 	};
-
-	struct CamBuffer
+	struct RenderProps
 	{
-		XMFLOAT3 CameraPos;
-		float padding1;
-	};
-
-	struct ObjectBuffer
-	{
-		XMFLOAT3 ObjectPos;
-		float padding2;
-
-		XMFLOAT3 ObjectScale;
-		float padding3;
-	};
-
-	struct FluidBuffer
-	{
-		float Absoprtion;
-		float padding4;
-
-		int Samples;
-		float padding5;
+		XMFLOAT3 fluidCol;
+		int iterations;
+		float stepSize;
+		XMFLOAT3 buffer;
 	};
 
 public:
@@ -54,14 +38,19 @@ public:
 	HRESULT Initialize(D3D*, HWND, int, int);
 	void Shutdown();
 	void Update(float, D3D*);
+	void UpdateBuffers(D3D*);
 	void Render(D3D*);
 
 private:
 	void CreateSampler(ID3D11Device*);
+private:
+	RenderProps m_RenderProps;
+	RenderProps m_PrevProps;
 protected:
 	//objects
 	ModelShader* m_ModelShader;
 	VolumeRaycastShader* m_VolumeRaycastShader;
+	AABBVolumeRaycastShader* m_AABBVolumeRaycastShader;
 	RenderTexture* m_ModelFront;
 	RenderTexture* m_ModelBack;
 	VolumeTexture* m_VolumeTexture;
@@ -72,8 +61,7 @@ protected:
 
 	XMMATRIX viewProj;
 
-	ID3D11Buffer* m_CamBuffer;
-	ID3D11Buffer* m_ObjectBuffer;
-	ID3D11Buffer* m_FluidBuffer;
+	//buffers
+	ID3D11Buffer* m_RenderPropsBuffer;
 };
 #endif // VolumeRenderer_h__

@@ -4,7 +4,7 @@ Quad::Quad()
 {
 	m_ColorShader = nullptr;
 	m_ColorVertLayout = nullptr;
-	//m_Furo = nullptr;
+	m_Furo = nullptr;
 	m_FluidShader = nullptr;
 	m_TextureB = nullptr;
 	m_TextureA = nullptr;
@@ -111,15 +111,15 @@ HRESULT Quad::Initialise(D3D* _d3d, HWND hwnd)
 	BuildDynamicVB(_d3d->GetDevice(), m_VertexCount, m_ColorVertLayout, sizeof(ColorVL) * m_VertexCount);
 	BuildIndexBuffer(_d3d->GetDevice(), indices);
 
-	/*delete[] indices;
-	indices = 0;*/
+	delete[] indices;
+	indices = 0;
 
-	/*m_Furo = new Furo;
+	m_Furo = new Furo;
 	if (!m_Furo)
 	{
-	return S_FALSE;
+		return S_FALSE;
 	}
-	m_Furo->Initialize(Furo::FluidField::TwoDimensional, numTris, 0.1f);*/
+	m_Furo->Initialize(Furo::FluidField::TwoDimensional, numTris, 0.1f);
 
 	TwAddSeparator(_d3d->m_TwBar, "Furo", "");
 	/*TwAddVarRW(_d3d->m_TwBar, "Diffusion", TW_TYPE_FLOAT, &m_Furo->GetFluid()->m_diffusion, "");
@@ -157,23 +157,9 @@ void Quad::Render(D3D* _d3d)
 	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
 	_d3d->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	
-
-	// Render the model using the texture shader.
-	//m_ColorShader->Render(deviceContext, &m_worldMatrix, m_IndexCount, m_TextureB);
-	//m_FluidShader->Render(deviceContext, &m_worldMatrix, m_IndexCount, m_TextureA, m_TextureB, _d3d->m_renderTargetView);
-
-	//deviceContext->OMSetRenderTargets(1, &_d3d->m_renderTargetView, NULL);
-
+	//render shader
 	m_ColorShader->Render(_d3d->GetDeviceContext(), &m_worldMatrix, m_IndexCount, m_TextureB);
 	
-	/*RenderTexture* temp = new RenderTexture;
-	temp = m_TextureA;
-	m_TextureA = m_TextureB;
-	m_TextureB = temp;*/
-
-	//Un-bind textures
-	/*ID3D11ShaderResourceView *nullRV[2] = { NULL, NULL };
-	_d3d->GetDeviceContext()->PSSetShaderResources(0, 2, nullRV);*/
 }
 
 void Quad::Shutdown()
@@ -188,11 +174,11 @@ void Quad::Shutdown()
 		m_ColorVertLayout = nullptr;
 		delete m_ColorVertLayout;
 	}
-	/*if (m_Furo)
+	if (m_Furo)
 	{
 		m_Furo->Shutdown();
 		delete m_Furo;
-	}*/
+	}
 	if (m_FluidShader)
 	{
 		m_FluidShader->Shutdown();
@@ -214,32 +200,32 @@ void Quad::Shutdown()
 
 void Quad::Update(float dt, HWND hwnd)
 {
-	/*m_Furo->Run(dt);
+	m_Furo->Run(dt);
 
 	if (InputManager::Instance()->IsKeyDown(DIK_A))
-	m_rot.x += vel*dt;
+		m_rot.x += vel*dt;
 
 	m_Furo->m_textureFluid->Clear();
 	if (InputManager::Instance()->IsKeyDown(DIK_Q))
 	{
-	for (int i = 25; i < 26; i++)
+		for (int i = 15; i < 35; i++)
+		{
+			m_Furo->m_textureFluid->SetDensity(i, 2, densityMulti);
+
+		}
+	}
+	if (InputManager::Instance()->IsKeyDown(DIK_E))
 	{
-	m_Furo->m_textureFluid->SetDensity(i, 2, densityMulti);
+		for (int i = 15; i < 35; i++)
+		{
+
+			m_Furo->m_textureFluid->SetVelX(i, 2, veloMulti);
+			m_Furo->m_textureFluid->SetVelY(i, 2, veloMulti);
+		}
 
 	}
-	}*/
-	//if (InputManager::Instance()->IsKeyDown(DIK_E))
-	//{
-	//	for (int i = 25; i < 26; i++)
-	//	{
 
-	//		m_Furo->m_textureFluid->SetVelX(i, 2, veloMulti);
-	//		m_Furo->m_textureFluid->SetVelY(i, 2, veloMulti);
-	//	}
-
-	//}
-
-	//UpdateFluid(m_Furo->m_textureFluid->GetDensity());
+	UpdateFluid(m_Furo->m_textureFluid->GetDensity());
 
 	VertexObject::Update(dt);
 }
@@ -252,7 +238,7 @@ void Quad::UpdateFluid(float* dens)
 		for (int j = 0; j < (numTris - 1); j++)
 		{
 			float x = dens[i * (numTris + 2) + j];
-			//x *= 255;qe
+			x *= 255;
 
 			XMFLOAT4 colour = XMFLOAT4(x, x, x, x);
 

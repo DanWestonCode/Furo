@@ -51,7 +51,7 @@ PSInput ModelPositionVS(VSInput input)
 
 	output.pos = mul(mWVP, input.pos);
 
-	// Pass position (in model coordinates) to texture coordinate register
+	// Pass position (in model coordinates) to texture coordinates
 	output.tex = 0.5*(input.pos+1);
 
 	return output;

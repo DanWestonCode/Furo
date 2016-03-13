@@ -22,7 +22,7 @@ cbuffer ConfinementBuffer : register (b0)
 }
 
 Texture3D<int> _BoundaryConditions : register (t0);
-Texture3D<float4> _Vorticity : register (t1);
+Texture3D<float3> _Vorticity : register (t1);
 Texture3D<float3> _Velocity : register (t3);
 
 RWTexture3D<float3> _VelocityResult : register (u0);

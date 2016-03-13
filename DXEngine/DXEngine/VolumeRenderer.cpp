@@ -33,6 +33,9 @@ HRESULT VolumeRenderer::Initialize(D3D* _d3d, HWND _hWnd, int _width, int _heigh
 	m_VolumeRaycastShader = new VolumeRaycastShader;
 	m_VolumeRaycastShader->Initialize(_d3d->GetDevice(), _hWnd, _width, _height);
 
+	m_AABBVolumeRaycastShader = new AABBVolumeRaycastShader;
+	m_AABBVolumeRaycastShader->Initialize(_d3d->GetDevice(), _d3d->GetDeviceContext(), _hWnd);
+
 	m_ModelFront = new RenderTexture;
 	m_ModelFront->Initialize(_d3d->GetDevice(), _width, _height);
 
@@ -45,51 +48,48 @@ HRESULT VolumeRenderer::Initialize(D3D* _d3d, HWND _hWnd, int _width, int _heigh
 	m_cube = new Cube;
 	m_cube->Initialise(_d3d->GetDevice());
 
+	m_AABBVolumeRaycastShader->InitilializeBuffers(_d3d->GetDevice(), _d3d->GetDeviceContext(), m_cube);
+
 	CreateSampler(_d3d->GetDevice());
 
+#pragma region Constant Buffer
+	//set initial vars
+	m_RenderProps.iterations = 128;
+	m_RenderProps.stepSize = sqrt(3.f) / m_RenderProps.iterations;
+	m_RenderProps.fluidCol = XMFLOAT3(1.f, 0.05f, 0.f);
+	m_RenderPropsBuffer = nullptr;
+	//set prev vars up
+	m_PrevProps = m_RenderProps;
+	//create constant buffer 
 	D3D11_BUFFER_DESC bufferDesc;
 	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bufferDesc.MiscFlags = 0;
 	bufferDesc.StructureByteStride = 0;
-
-	//camera buffer
-	bufferDesc.ByteWidth = sizeof(CamBuffer);
-	result = _d3d->GetDevice()->CreateBuffer(&bufferDesc, NULL, &m_CamBuffer);
-
-	//object buffer 
-	bufferDesc.ByteWidth = sizeof(ObjectBuffer);
-	result = _d3d->GetDevice()->CreateBuffer(&bufferDesc, NULL, &m_ObjectBuffer);
-
-	//Fluid buffer 
-	bufferDesc.ByteWidth = sizeof(FluidBuffer);
-	result = _d3d->GetDevice()->CreateBuffer(&bufferDesc, NULL, &m_FluidBuffer);
-
+	//Render props buffer
+	bufferDesc.ByteWidth = sizeof(RenderProps);
+	result = _d3d->GetDevice()->CreateBuffer(&bufferDesc, NULL, &m_RenderPropsBuffer);
+	//map and unmap struct
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	CamBuffer* camPtr;
-	ObjectBuffer* objPtr;
-	FluidBuffer* fluidPtr;
+	RenderProps* propsBuffer;
+	//Props Buffer
+	result = _d3d->GetDeviceContext()->Map(m_RenderPropsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	propsBuffer = (RenderProps*)mappedResource.pData;
+	propsBuffer->fluidCol = m_RenderProps.fluidCol;
+	propsBuffer->iterations = m_RenderProps.iterations;
+	propsBuffer->stepSize = m_RenderProps.stepSize;
+	_d3d->GetDeviceContext()->Unmap(m_RenderPropsBuffer, 0);
+#pragma endregion
+	
+#pragma region AnTweakBar Renderer Vars
+	TwStructMember _TwFluidProps[] = {
+		{ "Fluid Colour", TW_TYPE_COLOR3F, offsetof(RenderProps, fluidCol), "min=0.01 max=0.08 step=0.01" },
+		{ "Iterations", TW_TYPE_INT32, offsetof(RenderProps, iterations), "min=1 max=129 step=1" },
+	};
 
-	//Cam Buffer
-	result = _d3d->GetDeviceContext()->Map(m_CamBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	camPtr = (CamBuffer*)mappedResource.pData;
-	camPtr->CameraPos = Camera::Instance()->m_pos;
-	_d3d->GetDeviceContext()->Unmap(m_CamBuffer, 0);
-
-	//Object Buffer
-	result = _d3d->GetDeviceContext()->Map(m_ObjectBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	objPtr = (ObjectBuffer*)mappedResource.pData;
-	objPtr->ObjectPos = m_cube->m_pos;
-	objPtr->ObjectScale = m_cube->m_scale;
-	_d3d->GetDeviceContext()->Unmap(m_ObjectBuffer, 0);
-
-	//fluid buffer
-	result = _d3d->GetDeviceContext()->Map(m_FluidBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	fluidPtr = (FluidBuffer*)mappedResource.pData;
-	fluidPtr->Absoprtion = 60;
-	fluidPtr->Samples = 64;
-	_d3d->GetDeviceContext()->Unmap(m_FluidBuffer, 0);
+	TwAddVarRW(_d3d->m_TwBar, "Renderer", TwDefineStruct("Renderer", _TwFluidProps, 2, sizeof(RenderProps), nullptr, nullptr), &m_RenderProps, NULL);
+#pragma endregion
 
 	return result;
 }
@@ -131,12 +131,39 @@ void VolumeRenderer::Shutdown()
 void VolumeRenderer::Update(float dt, D3D* _d3d)
 {
 	m_cube->Update(dt);
+	UpdateBuffers(_d3d);
 	m_VolumeTexture->Update(_d3d->GetDevice(), _d3d->GetDeviceContext(), g_iVolumeSize, dt);
+}
+
+void VolumeRenderer::UpdateBuffers(D3D* _d3d)
+{
+	HRESULT result;
+
+	//only update step size if iterations have changed
+	if (m_PrevProps.iterations != m_RenderProps.iterations)
+	{
+		m_RenderProps.stepSize = sqrt(3.f) / m_RenderProps.iterations;
+	}
+
+#pragma region Update Render Properties
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	RenderProps* propsBuffer;
+	//Props Buffer
+	result = _d3d->GetDeviceContext()->Map(m_RenderPropsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	propsBuffer = (RenderProps*)mappedResource.pData;
+	propsBuffer->fluidCol = m_RenderProps.fluidCol;
+	
+	propsBuffer->fluidCol = m_RenderProps.fluidCol;
+	propsBuffer->iterations = m_RenderProps.iterations;
+	propsBuffer->stepSize = m_RenderProps.stepSize;
+	_d3d->GetDeviceContext()->Unmap(m_RenderPropsBuffer, 0);
+#pragma endregion
+	m_PrevProps = m_RenderProps;
 }
 
 void VolumeRenderer::Render(D3D* m_D3D)
 {
-	float ClearRenderTarget[4] = { 0.f, 1.f, 0.f, 1.f };
+	float ClearRenderTarget[4] = { 0.f, 0.f, 0.f, 1.f };
 
 	// Render Cube
 	m_cube->Render(m_D3D->GetDeviceContext());
@@ -152,43 +179,50 @@ void VolumeRenderer::Render(D3D* m_D3D)
 
 	// Render to position textures
 	// Set the vertex shader
-	//m_D3D->GetDeviceContext()->VSSetShader(m_ModelShader->GetVertexShader(), NULL, 0);
-	//m_D3D->GetDeviceContext()->VSSetConstantBuffers(0, 1, &m_ModelShader->m_MatrixBuffer);
+	m_D3D->GetDeviceContext()->VSSetShader(m_ModelShader->GetVertexShader(), NULL, 0);
+	m_D3D->GetDeviceContext()->VSSetConstantBuffers(0, 1, &m_ModelShader->m_MatrixBuffer);
 
 	// Set the pixel shader
-	//m_D3D->GetDeviceContext()->PSSetShader(m_ModelShader->GetPixelShader(), NULL, 0);
+	m_D3D->GetDeviceContext()->PSSetShader(m_ModelShader->GetPixelShader(), NULL, 0);
 
 	// Back-face culling
 	m_D3D->GetDeviceContext()->RSSetState(m_D3D->m_backFaceCull);
-	//m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelBack->m_RTV, ClearRenderTarget);
-	//m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelBack->m_RTV, NULL);
-	//m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw back faces
+	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelBack->m_RTV, ClearRenderTarget);
+	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelBack->m_RTV, NULL);
+	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw back faces
 
-	// Front-face culling
-	//m_D3D->GetDeviceContext()->RSSetState(m_D3D->m_FrontFaceCull);
-	//m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelFront->m_RTV, ClearRenderTarget);
-	//m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelFront->m_RTV, NULL);
-	//m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw front faces
+	//// Front-face culling
+	m_D3D->GetDeviceContext()->RSSetState(m_D3D->m_FrontFaceCull);
+	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelFront->m_RTV, ClearRenderTarget);
+	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelFront->m_RTV, NULL);
+	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw front faces
 
 	// Ray-casting
-
 	// Turn on the alpha blending.
 	m_D3D->GetDeviceContext()->OMSetBlendState(m_D3D->m_AlphaState, nullptr, 0xffffffff);
 
 	// Set the input layout
-	//m_D3D->GetDeviceContext()->IASetInputLayout(m_ModelShader->GetInputLayout());
+	m_D3D->GetDeviceContext()->IASetInputLayout(m_ModelShader->GetInputLayout());
 
-	// Render to standard render target
-	//m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_D3D->m_renderTargetView, NULL);
+	//Render to standard render target
+	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_D3D->m_renderTargetView, NULL);
 
 	// Set the vertex shader
 	m_D3D->GetDeviceContext()->VSSetShader(m_VolumeRaycastShader->GetVertexShader(), NULL, 0);
 	m_D3D->GetDeviceContext()->VSSetConstantBuffers(0, 1, &m_ModelShader->m_MatrixBuffer);
 
+	//m_D3D->GetDeviceContext()->VSSetShader(m_AABBVolumeRaycastShader->GetVertexShader(), NULL, 0);
+	//m_D3D->GetDeviceContext()->VSSetConstantBuffers(0, 1, &m_ModelShader->m_MatrixBuffer);
+
 	// Set the pixel shader
 	m_D3D->GetDeviceContext()->PSSetShader(m_VolumeRaycastShader->GetPixelShader(), NULL, 0);
-	ID3D11Buffer *const Buffers[4] = { m_VolumeRaycastShader->m_WindowSizeCB, m_CamBuffer, m_ObjectBuffer, m_FluidBuffer };
-	m_D3D->GetDeviceContext()->PSSetConstantBuffers(0, 4, Buffers);
+	ID3D11Buffer *const Buffers[2] = { m_VolumeRaycastShader->m_WindowSizeCB, m_RenderPropsBuffer};
+	m_D3D->GetDeviceContext()->PSSetConstantBuffers(0, 2, Buffers);
+
+
+	//m_D3D->GetDeviceContext()->PSSetShader(m_AABBVolumeRaycastShader->GetPixelShader(), NULL, 0);
+	//ID3D11Buffer *const Buffers[4] = { m_AABBVolumeRaycastShader->m_CamBuffer, m_AABBVolumeRaycastShader->m_ObjectBuffer, m_AABBVolumeRaycastShader->m_FluidBuffer };
+	//m_D3D->GetDeviceContext()->PSSetConstantBuffers(0, 3, Buffers);
 
 	// Set texture sampler
 	m_D3D->GetDeviceContext()->PSSetSamplers(0, 1, &g_pSamplerLinear);

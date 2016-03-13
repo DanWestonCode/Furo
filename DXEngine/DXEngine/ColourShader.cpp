@@ -127,13 +127,12 @@ void ColourShader::Render(ID3D11DeviceContext* _deviceContext, XMMATRIX* _mWVM, 
 	UINT numGroupsX = (UINT)ceilf(800 / 256.0f);
 	_deviceContext->Dispatch(numGroupsX, 600, 1);
 
-
 	//Set SRV
 	_deviceContext->PSSetShaderResources(0, 1, &_texture->m_SRV);
 	//_deviceContext->PSSetSamplers(0, 1, &m_Sampler);
 
 	//// Render the triangle.
-	//_deviceContext->DrawIndexed(_indexCount, 0, 0);
+	_deviceContext->DrawIndexed(_indexCount, 0, 0);
 }
 
 void ColourShader::Shutdown()

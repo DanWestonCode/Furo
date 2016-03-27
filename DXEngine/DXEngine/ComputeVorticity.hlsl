@@ -12,13 +12,14 @@
 /// ComputeVorticity.compute - Scrawk Blog - https://scrawkblog.com/2014/01/09/gpu-gems-to-unity-3d-fluid-simulation/
 /// </summary>
 #define NUM_THREADS 8
-RWTexture3D<float3> _VorticityResult : register (u0);//field to hold result
+RWTexture3D<float4> _VorticityResult : register (u0);
 
 Texture3D<float3> _Velocity : register (t0);
 
 [numthreads(NUM_THREADS, NUM_THREADS, NUM_THREADS)]
 void ComputeVorticity( uint3 id : SV_DispatchThreadID )
  {
+
     //get dimensions of the fluid field
 	uint3 dimensions;	
 	_Velocity.GetDimensions(dimensions.x, dimensions.y, dimensions.z);
@@ -49,5 +50,6 @@ void ComputeVorticity( uint3 id : SV_DispatchThreadID )
 								   ((RightVelocity.y - LeftVelocity.y) - (TopVelocity.x - BottomVelocity.x)));
 
 	float lresult = length(result);
-    _VorticityResult[id] = result; //float4(result, lresult);
+    _VorticityResult[id] = float4(result, lresult);
+
 }

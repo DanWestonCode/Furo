@@ -1,3 +1,10 @@
+/// <summary>
+/// Object.cpp
+///
+/// About:
+/// Object is the base class for all Game objects created 
+/// within the engine
+/// </summary>
 #include "Object.h"
 
 Object::Object()

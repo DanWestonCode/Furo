@@ -24,7 +24,8 @@ protected:
 		XMFLOAT3 fluidCol;
 		int iterations;
 		float stepSize;
-		XMFLOAT3 buffer;
+		float absoprtion;
+		float padding[2];
 	};
 
 public:
@@ -50,10 +51,10 @@ protected:
 	//objects
 	ModelShader* m_ModelShader;
 	VolumeRaycastShader* m_VolumeRaycastShader;
-	AABBVolumeRaycastShader* m_AABBVolumeRaycastShader;
 	RenderTexture* m_ModelFront;
 	RenderTexture* m_ModelBack;
 	VolumeTexture* m_VolumeTexture;
+	FluidShader* m_fluidShader;
 	Cube* m_cube;
 	
 	//sampler 

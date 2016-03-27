@@ -1,3 +1,11 @@
+/// <summary>
+/// Object.h
+///
+/// About:
+/// Object is the base class for all Game objects created 
+/// within the engine
+/// </summary>
+
 #ifndef Object_h__
 #define Object_h__
 

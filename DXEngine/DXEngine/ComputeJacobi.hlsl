@@ -78,5 +78,5 @@ void ComputeJacobi( uint3 id : SV_DispatchThreadID )
 	// Get the current divergence
 	float divergence = _Divergence[id];
 
-	_pressureResult[id] = (LeftCellPressure + RightCellPressure + BottomCellPressure + TopCellPressure + UpCellPressure + DownCellPressure - divergence) / 6;
+	_pressureResult[id] = (LeftCellPressure + RightCellPressure + BottomCellPressure + TopCellPressure + UpCellPressure + DownCellPressure - divergence) / 6.0;
 }

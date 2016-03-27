@@ -1,3 +1,16 @@
+/// <summary>
+/// Camera.h
+///
+/// About:
+/// For the program only one camera is required within the scene.
+/// Because of this Camera.cpp is a singleton class. This class 
+/// is was initially based - from the CameraClass.cpp found 
+/// within RasterTek tutorial 04
+///
+/// RasterTek tutorial:
+/// http://www.rastertek.com/dx11s2tut04.html
+/// </summary>
+
 #ifndef Camera_h__
 #define Camera_h__
 

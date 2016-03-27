@@ -1,9 +1,15 @@
-/*******************************************************************/
-/* The D3D class encapsulates the set up stages for creating a     */
-/* DirectX Device. This class is based from RasterTek tutorials    */
-/*                                                                 */
-/* Created by Daniel Weston 21/12/2015                             */
-/*******************************************************************/
+/// <summary>
+/// D3D.cpp
+///
+/// About:
+/// D3D class encapsulates the set up stages for creating a DirectX Device,
+/// This class was created with Guidance from RasterTek tutorial 3: Initializing DirectX 11
+///
+/// RasterTek tutorial:
+/// http://www.rastertek.com/dx11s2tut03.html
+/// </summary>
+
+
 #include "D3D.h"
 
 #include "Debug.h"
@@ -34,6 +40,8 @@ D3D::~D3D()
 
 //Fix for 'warning C4316: object allocated on the heap may not be aligned 16'
 //This kept giving me access violation errors using XMMatrix calculations
+//functions discovered from:-
+//http://stackoverflow.com/questions/20104815/warning-c4316-object-allocated-on-the-heap-may-not-be-aligned-16
 void* D3D::operator new(size_t memorySize)
 {
 	return _aligned_malloc(memorySize, 16);
@@ -46,6 +54,9 @@ void D3D::operator delete(void* memoryBlockPtr)
 	return;
 }
 
+/// <summary>
+///	Initialize DirectX 11 Device
+/// </summary>
 bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, bool fullscreen,
 	float screenDepth, float screenNear)
 {
@@ -70,19 +81,20 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	// Store the vsync setting.
 	m_vsync_enabled = vsync;
 
-	// Create a DirectX graphics interface factory.
+	// Create a DirectX graphics interface factory. - get refresh rate from GPU
 	result = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Use the factory to create an adapter for the primary graphics interface (video card).
+	//Enumerate overy primary GPU
 	result = factory->EnumAdapters(0, &adapter);
 	if (FAILED(result))
 	{
 		return false;
 	}
+
 
 	//get graphics card desc
 	DXGI_ADAPTER_DESC adapterDescription; 
@@ -220,7 +232,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	swapChainDesc.Flags = 0;
 
 	// Set the feature level to DirectX 11.
-	featureLevel = D3D_FEATURE_LEVEL_11_1;//D3D_FEATURE_LEVEL_11_0
+	featureLevel = D3D_FEATURE_LEVEL_11_0;
 
 	// Create the swap chain, Direct3D device, and Direct3D device context.
 	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_DEBUG, &featureLevel, 1,
@@ -347,6 +359,9 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	return S_OK;
 }
 
+/// <summary>
+///	Releases all pointers
+/// </summary>
 void D3D::Shutdown()
 {
 	// Before shutting down set to windowed mode or when you release the swap chain it will throw an exception.
@@ -416,6 +431,9 @@ void D3D::Shutdown()
 	return;
 }
 
+/// <summary>
+///	Prepares the backbuffer for rendering
+/// </summary>
 void D3D::BeginScene(float* color)
 {
 	// Clear the back buffer.
@@ -427,6 +445,9 @@ void D3D::BeginScene(float* color)
 	return;
 }
 
+/// <summary>
+///	Presents the backbuffer
+/// </summary>
 void D3D::EndScene()
 {
 	// Present the back buffer to the screen since rendering is complete.

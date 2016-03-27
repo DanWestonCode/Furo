@@ -17,13 +17,12 @@ cbuffer ConfinementBuffer : register (b0)
 {
 	float dt;
 	float VorticityStrength;
-	float padding1;
-	float padding2;
+    float2 padding;
 }
 
 Texture3D<int> _BoundaryConditions : register (t0);
-Texture3D<float3> _Vorticity : register (t1);
-Texture3D<float3> _Velocity : register (t3);
+Texture3D<float4> _Vorticity : register (t1);
+Texture3D<float3> _Velocity : register (t2);
 
 RWTexture3D<float3> _VelocityResult : register (u0);
 
@@ -38,7 +37,7 @@ void ComputeConfinement(uint3 id : SV_DispatchThreadID)
 
     //get dimensions of the fluid filed
 	uint3 dimensions;
-	_Vorticity.GetDimensions(dimensions.x, dimensions.y, dimensions.z);
+	_Velocity.GetDimensions(dimensions.x, dimensions.y, dimensions.z);
 
     //from the current cell get neighbouring positions
     uint3 LeftCell = uint3(max(0, id.x - 1), id.y, id.z);
@@ -61,12 +60,12 @@ void ComputeConfinement(uint3 id : SV_DispatchThreadID)
     float omegaD = length(_Vorticity[DownCell]);
 
     //Get the current Cell vorticity value
-	float3 omega = _Vorticity[id];
+	float3 omega = _Vorticity[id].xyz;
 
 	float3 eta = 0.5f * float3(omegaR - omegaL, omegaT - omegaB, omegaU - omegaD);
 	eta = normalize(eta + float3(0.001f, 0.001f, 0.001f));
 
-	float3 force = dt * VorticityStrength * float3(eta.y * omega.z - eta.z * omega.y, eta.z * omega.x - eta.x * omega.z, eta.x * omega.y - eta.y * omega.x);
+    float3 force = dt * VorticityStrength * float3((eta.y * omega.z - eta.z * omega.y), (eta.z * omega.x - eta.x * omega.z), (eta.x * omega.y - eta.y * omega.x));
 	
 	_VelocityResult[id] = _Velocity[id] + force;
 }

@@ -13,10 +13,10 @@
 
 cbuffer ImpulseBuffer : register (b0) 
 {
+    float3 sourcePos;
     float radius;
 	float amount;
     float dt;
-	float3 sourcePos;
     float3 padding1;
 	float3 padding2;
 }
@@ -28,7 +28,7 @@ Texture3D<float3> impulseInitial : register(t0);
 void ComputeImpulse(uint3 id : SV_DispatchThreadID)
 {
 	//work out currnent pos
-    float3 pos = id - float3(32.0, 12.8, 32.0); //sourcePos for somereason placing fluid in weird place
+    float3 pos = id - sourcePos; //float3(32.0, 12.8, 32.0); //sourcePos for somereason placing fluid in weird place
 	float mag = pos.x*pos.x + pos.y*pos.y + pos.z*pos.z;
     float rad2 = radius * radius;
 	 

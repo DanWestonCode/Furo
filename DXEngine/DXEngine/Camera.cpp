@@ -1,9 +1,23 @@
+/// <summary>
+/// Camera.cpp
+///
+/// About:
+/// For the program only one camera is required within the scene.
+/// Because of this Camera.cpp is a singleton class. This class 
+/// is was initially based - from the CameraClass.cpp found 
+/// within RasterTek tutorial 04
+///
+/// RasterTek tutorial:
+/// http://www.rastertek.com/dx11s2tut04.html
+/// </summary>
+
 #include "Camera.h"
 
 Camera *Camera::m_Camera = nullptr;
 
 Camera::Camera()
 {
+	//inital props
 	m_pos = XMFLOAT3(0.0f, -0.0f, -25.0f);//-300
 	m_LookAt = XMFLOAT3(0.f, -0.0f, 0.0f);
 	m_Up = XMFLOAT3(0.0f, 1.0f, 0.0f);

@@ -1,9 +1,13 @@
-/*******************************************************************/
-/* The D3D class encapsulates the set up stages for creating a     */
-/* DirectX Device. This class is based from RasterTek tutorials    */
-/*                                                                 */
-/* Created by Daniel Weston 21/12/2015                             */
-/*******************************************************************/
+/// <summary>
+/// D3D.h
+///
+/// About:
+/// D3D class encapsulates the set up stages for creating a DirectX Device,
+/// This class was created with Guidance from RasterTek tutorial 3: Initializing DirectX 11
+///
+/// RasterTek tutorial:
+/// http://www.rastertek.com/dx11s2tut03.html
+/// </summary>
 
 #ifndef _D3D_H_
 #define  _D3D_H_
@@ -26,7 +30,10 @@ public:
 	D3D(const D3D&);
 	~D3D();
 
-
+	//Fix for 'warning C4316: object allocated on the heap may not be aligned 16'
+	//This kept giving me access violation errors using XMMatrix calculations
+	//functions discovered from:-
+	//http://stackoverflow.com/questions/20104815/warning-c4316-object-allocated-on-the-heap-may-not-be-aligned-16
 	void* operator new(size_t);
 	void operator delete(void*);
 

@@ -1,5 +1,14 @@
+/// <summary>
+/// VolumeRenderer.cpp
+///
+/// About:
+/// VolumeRenderer handles all the objects required for 
+/// thye volume rendering of the fluid. VolumeRenderer 
+/// also handles the 3D fluid simulation
+/// </summary>-
+
 #include "VolumeRenderer.h"
-const UINT							g_iVolumeSize = 64;
+const UINT							m_fluidSize = 64;
 VolumeRenderer::VolumeRenderer()
 {
 	m_ModelShader = nullptr;
@@ -10,6 +19,11 @@ VolumeRenderer::VolumeRenderer()
 	m_cube = nullptr;
 	g_pSamplerLinear = nullptr;
 }
+
+//Fix for 'warning C4316: object allocated on the heap may not be aligned 16'
+//This kept giving me access violation errors using XMMatrix calculations
+//functions discovered from:-
+//http://stackoverflow.com/questions/20104815/warning-c4316-object-allocated-on-the-heap-may-not-be-aligned-16
 void* VolumeRenderer::operator new(size_t memorySize)
 {
 	return _aligned_malloc(memorySize, 16);
@@ -33,30 +47,28 @@ HRESULT VolumeRenderer::Initialize(D3D* _d3d, HWND _hWnd, int _width, int _heigh
 	m_VolumeRaycastShader = new VolumeRaycastShader;
 	m_VolumeRaycastShader->Initialize(_d3d->GetDevice(), _hWnd, _width, _height);
 
-	m_AABBVolumeRaycastShader = new AABBVolumeRaycastShader;
-	m_AABBVolumeRaycastShader->Initialize(_d3d->GetDevice(), _d3d->GetDeviceContext(), _hWnd);
-
 	m_ModelFront = new RenderTexture;
 	m_ModelFront->Initialize(_d3d->GetDevice(), _width, _height);
 
 	m_ModelBack = new RenderTexture;
 	m_ModelBack->Initialize(_d3d->GetDevice(), _width, _height);
 
-	m_VolumeTexture = new VolumeTexture;
-	m_VolumeTexture->Initialize(_d3d, g_iVolumeSize);
+	m_fluidShader = new FluidShader();
+	m_fluidShader->Initialize(_d3d->GetDevice(), _d3d->GetDeviceContext(), _d3d->m_TwBar, m_fluidSize);
 
 	m_cube = new Cube;
 	m_cube->Initialise(_d3d->GetDevice());
 
-	m_AABBVolumeRaycastShader->InitilializeBuffers(_d3d->GetDevice(), _d3d->GetDeviceContext(), m_cube);
-
 	CreateSampler(_d3d->GetDevice());
-
-#pragma region Constant Buffer
+#pragma region Initial vars
 	//set initial vars
 	m_RenderProps.iterations = 128;
 	m_RenderProps.stepSize = sqrt(3.f) / m_RenderProps.iterations;
-	m_RenderProps.fluidCol = XMFLOAT3(1.f, 0.05f, 0.f);
+	m_RenderProps.fluidCol = XMFLOAT3(0.5f, 1.0f, 1.00f);
+	m_RenderProps.absoprtion = 0.05f;
+#pragma endregion
+
+#pragma region Constant Buffer
 	m_RenderPropsBuffer = nullptr;
 	//set prev vars up
 	m_PrevProps = m_RenderProps;
@@ -79,6 +91,7 @@ HRESULT VolumeRenderer::Initialize(D3D* _d3d, HWND _hWnd, int _width, int _heigh
 	propsBuffer->fluidCol = m_RenderProps.fluidCol;
 	propsBuffer->iterations = m_RenderProps.iterations;
 	propsBuffer->stepSize = m_RenderProps.stepSize;
+	propsBuffer->absoprtion = m_RenderProps.absoprtion;
 	_d3d->GetDeviceContext()->Unmap(m_RenderPropsBuffer, 0);
 #pragma endregion
 	
@@ -86,9 +99,10 @@ HRESULT VolumeRenderer::Initialize(D3D* _d3d, HWND _hWnd, int _width, int _heigh
 	TwStructMember _TwFluidProps[] = {
 		{ "Fluid Colour", TW_TYPE_COLOR3F, offsetof(RenderProps, fluidCol), "min=0.01 max=0.08 step=0.01" },
 		{ "Iterations", TW_TYPE_INT32, offsetof(RenderProps, iterations), "min=1 max=129 step=1" },
+		{ "Absoprtion", TW_TYPE_FLOAT, offsetof(RenderProps, absoprtion), "min=0.05 max=0.60 step=0.01" },
 	};
 
-	TwAddVarRW(_d3d->m_TwBar, "Renderer", TwDefineStruct("Renderer", _TwFluidProps, 2, sizeof(RenderProps), nullptr, nullptr), &m_RenderProps, NULL);
+	TwAddVarRW(_d3d->m_TwBar, "Renderer", TwDefineStruct("Renderer", _TwFluidProps, 3, sizeof(RenderProps), nullptr, nullptr), &m_RenderProps, NULL);
 #pragma endregion
 
 	return result;
@@ -132,7 +146,7 @@ void VolumeRenderer::Update(float dt, D3D* _d3d)
 {
 	m_cube->Update(dt);
 	UpdateBuffers(_d3d);
-	m_VolumeTexture->Update(_d3d->GetDevice(), _d3d->GetDeviceContext(), g_iVolumeSize, dt);
+	m_fluidShader->Update(_d3d-> GetDeviceContext(), dt);
 }
 
 void VolumeRenderer::UpdateBuffers(D3D* _d3d)
@@ -156,6 +170,7 @@ void VolumeRenderer::UpdateBuffers(D3D* _d3d)
 	propsBuffer->fluidCol = m_RenderProps.fluidCol;
 	propsBuffer->iterations = m_RenderProps.iterations;
 	propsBuffer->stepSize = m_RenderProps.stepSize;
+	propsBuffer->absoprtion = m_RenderProps.absoprtion;
 	_d3d->GetDeviceContext()->Unmap(m_RenderPropsBuffer, 0);
 #pragma endregion
 	m_PrevProps = m_RenderProps;
@@ -191,7 +206,7 @@ void VolumeRenderer::Render(D3D* m_D3D)
 	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelBack->m_RTV, NULL);
 	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw back faces
 
-	//// Front-face culling
+	// Front-face culling
 	m_D3D->GetDeviceContext()->RSSetState(m_D3D->m_FrontFaceCull);
 	m_D3D->GetDeviceContext()->ClearRenderTargetView(m_ModelFront->m_RTV, ClearRenderTarget);
 	m_D3D->GetDeviceContext()->OMSetRenderTargets(1, &m_ModelFront->m_RTV, NULL);
@@ -211,24 +226,16 @@ void VolumeRenderer::Render(D3D* m_D3D)
 	m_D3D->GetDeviceContext()->VSSetShader(m_VolumeRaycastShader->GetVertexShader(), NULL, 0);
 	m_D3D->GetDeviceContext()->VSSetConstantBuffers(0, 1, &m_ModelShader->m_MatrixBuffer);
 
-	//m_D3D->GetDeviceContext()->VSSetShader(m_AABBVolumeRaycastShader->GetVertexShader(), NULL, 0);
-	//m_D3D->GetDeviceContext()->VSSetConstantBuffers(0, 1, &m_ModelShader->m_MatrixBuffer);
-
 	// Set the pixel shader
 	m_D3D->GetDeviceContext()->PSSetShader(m_VolumeRaycastShader->GetPixelShader(), NULL, 0);
 	ID3D11Buffer *const Buffers[2] = { m_VolumeRaycastShader->m_WindowSizeCB, m_RenderPropsBuffer};
 	m_D3D->GetDeviceContext()->PSSetConstantBuffers(0, 2, Buffers);
 
-
-	//m_D3D->GetDeviceContext()->PSSetShader(m_AABBVolumeRaycastShader->GetPixelShader(), NULL, 0);
-	//ID3D11Buffer *const Buffers[4] = { m_AABBVolumeRaycastShader->m_CamBuffer, m_AABBVolumeRaycastShader->m_ObjectBuffer, m_AABBVolumeRaycastShader->m_FluidBuffer };
-	//m_D3D->GetDeviceContext()->PSSetConstantBuffers(0, 3, Buffers);
-
 	// Set texture sampler
 	m_D3D->GetDeviceContext()->PSSetSamplers(0, 1, &g_pSamplerLinear);
 
 	// Set textures
-	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 1, &m_VolumeTexture->m_fluidShader->m_DensitySRV[0]);//
+	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 1, &m_fluidShader->m_DensitySRV[0]);//
 	m_D3D->GetDeviceContext()->PSSetShaderResources(1, 1, &m_ModelFront->m_SRV);
 	m_D3D->GetDeviceContext()->PSSetShaderResources(2, 1, &m_ModelBack->m_SRV);
 

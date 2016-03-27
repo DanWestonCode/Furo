@@ -1,7 +1,15 @@
-/***************************************/
-/* System class encapsulates the app   */
-/* Created by Daniel Weston 18/12/2015 */
-/***************************************/
+/// <summary>
+/// System.h
+///
+/// About:
+/// System class encapsulates the application.
+/// This class was created with guidance from 
+/// RaserTek tutorial 02 - 'Creating a Framework and window'
+///
+/// RasterTek tutorial:
+/// http://www.rastertek.com/dx11s2tut02.html
+/// </summary>
+
 #ifndef _SYSTEM_H_
 #define _SYSTEM_H_
 //lean and mean preprocessor speeds up

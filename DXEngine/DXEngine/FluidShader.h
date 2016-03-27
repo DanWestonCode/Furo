@@ -22,12 +22,12 @@ protected:
 	};
 	struct ImpulseBuffer
 	{
+		XMFLOAT3 sourcePos;
 		float radius;
 		float amount;
 		float dt;
-		XMFLOAT3 sourcePos;
-		XMFLOAT3 padding1;
-		XMFLOAT3 padding2;
+		float padding1[3];
+		float padding2[3];
 	};
 	struct BuoyancyBuffer
 	{

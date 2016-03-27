@@ -26,32 +26,14 @@ void ComputeBoundaryConditions(uint3 id : SV_DispatchThreadID)
     int obstacle = 0;
     
 	//if current cell is edge of fluid field set to collision
-	if (id.x - 1 < 0)
-	{
-		obstacle = 1;
-	}
-	if (id.x + 1 > (int)_Size.x - 1)
-	{
-		obstacle = 1;
-	}
+	if(id.x-1 < 0) obstacle = 1;
+    if(id.x+1 > (int)_Size.x-1) obstacle = 1;
     
-	if (id.y - 1 < 0)
-	{
-		obstacle = 1;
-	}
-	if (id.y + 1 > (int)_Size.y - 1)
-	{
-		obstacle = 1;
-	}
+    if(id.y-1 < 0) obstacle = 1;
+    if(id.y+1 > (int)_Size.y-1) obstacle = 1;
     
-	if (id.z - 1 < 0)
-	{
-		obstacle = 1;
-	}
-	if (id.z + 1 > (int)_Size.z - 1)
-	{
-		obstacle = 1;
-	}
+    if(id.z-1 < 0) obstacle = 1;
+    if(id.z+1 > (int)_Size.z-1) obstacle = 1;
     
 	//Set the current cell in the field to the calculated obstacle
 	_BoundaryConditions[id] = obstacle;

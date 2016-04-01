@@ -4,7 +4,6 @@
 #include <d3d11.h>
 #include<cstring>
 #include <DirectXMath.h>
-//#include "Furo.h"
 #include "D3D.h"
 #include <iostream>
 #include "FluidShader.h"
@@ -27,7 +26,6 @@ public:
 	//volume texture
 	ID3D11Texture3D* m_Texture3D;
 	ID3D11ShaderResourceView* m_ShaderResourceView;
-	//Furo* m_furo;
 	FluidShader* m_fluidShader; 
 };
 

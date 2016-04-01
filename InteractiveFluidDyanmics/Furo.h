@@ -3,6 +3,11 @@
 
 #include "FluidTwoDimensional.h"
 #include "FluidThreeDimensional.h"
+
+#pragma comment(lib, "dxgi.lib") //D3D functionality
+#pragma comment(lib, "d3d11.lib") //Tools to interface the hardwares
+#pragma comment(lib, "d3dcompiler.lib") //used for compiling shaders
+
 class Furo
 {
 public:

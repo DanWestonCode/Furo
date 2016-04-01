@@ -2,8 +2,8 @@
 /// Graphics.cpp
 ///
 /// About:
-/// This class is where all GameObjects/renders/Simulations 
-/// are initialised and run. This class is based from the 
+/// This class is where all GameObjects/renderers/Simulations 
+/// are initialized and run. This class is based from the 
 /// GraphicsClass, class found in RasterTek tutorial 04.
 ///
 /// RasterTek tutorial:

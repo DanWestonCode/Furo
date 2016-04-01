@@ -4,7 +4,7 @@
 /* using Furo. The fluid base class contains base member var */
 /* -iables which are shared between both 3D and 2D based sim */
 /*                                                           */
-/* Created by Daniel Weston 19/12/2nullptr15                       */
+/* Created by Daniel Weston 19/12/15                         */
 /*************************************************************/
 
 #include "fluid.h"
@@ -28,11 +28,6 @@ Fluid::Fluid()
 }
 
 Fluid::~Fluid()
-{
-}
-
-//initialize fluid - set up all vars w/default 
-void Fluid::Initialize(int _size)
 {
 }
 
@@ -79,9 +74,4 @@ void Fluid::Shutdown()
 		delete m_fluidSolver2D;
 		m_fluidSolver2D = nullptr;
 	}
-}
-
-void Fluid::Clear()
-{
-
 }

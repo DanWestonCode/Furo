@@ -18,9 +18,9 @@ public:
 	Fluid();
 	~Fluid();
 
-	virtual void Initialize(int);
+	virtual void Initialize(int){};
 	virtual void Shutdown();
-	virtual void Clear();
+	virtual void Clear(){};
 
 	//Getters/Setters
 public:

@@ -4,7 +4,7 @@ Quad::Quad()
 {
 	m_ColorShader = nullptr;
 	m_ColorVertLayout = nullptr;
-	m_Furo = nullptr;
+	//m_Furo = nullptr;
 	m_FluidShader = nullptr;
 	m_TextureB = nullptr;
 	m_TextureA = nullptr;
@@ -114,18 +114,18 @@ HRESULT Quad::Initialise(D3D* _d3d, HWND hwnd)
 	delete[] indices;
 	indices = 0;
 
-	m_Furo = new Furo;
-	if (!m_Furo)
-	{
-		return S_FALSE;
-	}
-	m_Furo->Initialize(Furo::FluidField::TwoDimensional, numTris, 0.1f);
+	//m_Furo = new Furo;
+	//if (!m_Furo)
+	//{
+	//	return S_FALSE;
+	//}
+	//m_Furo->Initialize(Furo::FluidField::TwoDimensional, numTris, 0.1f);
 
-	TwAddSeparator(_d3d->m_TwBar, "Furo", "");
-	/*TwAddVarRW(_d3d->m_TwBar, "Diffusion", TW_TYPE_FLOAT, &m_Furo->GetFluid()->m_diffusion, "");
-	TwAddVarRW(_d3d->m_TwBar, "Viscosity", TW_TYPE_FLOAT, &m_Furo->GetFluid()->m_visc, "");*/
-	TwAddVarRW(_d3d->m_TwBar, "Density", TW_TYPE_FLOAT, &densityMulti, "");
-	TwAddVarRW(_d3d->m_TwBar, "Velocity", TW_TYPE_FLOAT, &veloMulti, "");
+	//TwAddSeparator(_d3d->m_TwBar, "Furo", "");
+	///*TwAddVarRW(_d3d->m_TwBar, "Diffusion", TW_TYPE_FLOAT, &m_Furo->GetFluid()->m_diffusion, "");
+	//TwAddVarRW(_d3d->m_TwBar, "Viscosity", TW_TYPE_FLOAT, &m_Furo->GetFluid()->m_visc, "");*/
+	//TwAddVarRW(_d3d->m_TwBar, "Density", TW_TYPE_FLOAT, &densityMulti, "");
+	//TwAddVarRW(_d3d->m_TwBar, "Velocity", TW_TYPE_FLOAT, &veloMulti, "");
 
 	return S_OK;
 }
@@ -163,6 +163,7 @@ void Quad::Render(D3D* _d3d)
 }
 
 void Quad::Shutdown()
+
 {
 	if (m_ColorShader)
 	{
@@ -174,11 +175,11 @@ void Quad::Shutdown()
 		m_ColorVertLayout = nullptr;
 		delete m_ColorVertLayout;
 	}
-	if (m_Furo)
+	/*if (m_Furo)
 	{
-		m_Furo->Shutdown();
-		delete m_Furo;
-	}
+	m_Furo->Shutdown();
+	delete m_Furo;
+	}*/
 	if (m_FluidShader)
 	{
 		m_FluidShader->Shutdown();
@@ -200,17 +201,17 @@ void Quad::Shutdown()
 
 void Quad::Update(float dt, HWND hwnd)
 {
-	m_Furo->Run(dt);
-
+	//Update the fluid simulation
+	//m_Furo->Run(dt);
 	if (InputManager::Instance()->IsKeyDown(DIK_A))
 		m_rot.x += vel*dt;
 
-	m_Furo->m_textureFluid->Clear();
+	//m_Furo->m_textureFluid->Clear();
 	if (InputManager::Instance()->IsKeyDown(DIK_Q))
 	{
 		for (int i = 15; i < 35; i++)
 		{
-			m_Furo->m_textureFluid->SetDensity(i, 2, densityMulti);
+			//m_Furo->m_textureFluid->SetDensity(i, 2, densityMulti);
 
 		}
 	}
@@ -219,14 +220,14 @@ void Quad::Update(float dt, HWND hwnd)
 		for (int i = 15; i < 35; i++)
 		{
 
-			m_Furo->m_textureFluid->SetVelX(i, 2, veloMulti);
-			m_Furo->m_textureFluid->SetVelY(i, 2, veloMulti);
+			/*m_Furo->m_textureFluid->SetVelX(i, 2, veloMulti);
+			m_Furo->m_textureFluid->SetVelY(i, 2, veloMulti);*/
 		}
 
 	}
-
-	UpdateFluid(m_Furo->m_textureFluid->GetDensity());
-
+	//Copy the fluid into the struct ready for rendering
+	//UpdateFluid(m_Furo->m_textureFluid->GetDensity());
+	//update base class
 	VertexObject::Update(dt);
 }
 

@@ -66,7 +66,7 @@
       <Filter>Source Files\Simulation</Filter>
     </ClCompile>
     <ClCompile Include="FluidTwoDimensional.cpp">
-      <Filter>Source Files\Simulation</Filter>
+      <Filter>Source Files\Fluids</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

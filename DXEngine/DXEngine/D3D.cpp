@@ -11,7 +11,6 @@
 
 
 #include "D3D.h"
-
 #include "Debug.h"
 #include <string>
 
@@ -45,7 +44,6 @@ D3D::~D3D()
 void* D3D::operator new(size_t memorySize)
 {
 	return _aligned_malloc(memorySize, 16);
-
 }
 
 void D3D::operator delete(void* memoryBlockPtr)
@@ -66,7 +64,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	IDXGIFactory* factory;
 	IDXGIAdapter* adapter;
 	IDXGIOutput* adapterOutput;
-	unsigned int numModes, i, numerator, denominator, stringLength;
+	unsigned int numModes, i, numerator, denominator;
 	DXGI_MODE_DESC* displayModeList;
 	DXGI_ADAPTER_DESC adapterDesc;
 	int error;
@@ -88,7 +86,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 		return false;
 	}
 
-	//Enumerate overy primary GPU
+	//Enumerate every primary GPU
 	result = factory->EnumAdapters(0, &adapter);
 	if (FAILED(result))
 	{
@@ -153,8 +151,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	m_videoCardMemory = (int)(adapterDesc.DedicatedVideoMemory / 1024 / 1024);
 
 
-	// Convert the name of the video card to a character array and store it.
-	error = wcstombs_s(&stringLength, m_videoCardDescription, 128, adapterDesc.Description, 128);
+	error = wcstombs_s(NULL, m_videoCardDescription, 128, adapterDesc.Description, 128);
 	if (error != 0)
 	{
 		return false;
@@ -235,7 +232,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	featureLevel = D3D_FEATURE_LEVEL_11_0;
 
 	// Create the swap chain, Direct3D device, and Direct3D device context.
-	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_DEBUG, &featureLevel, 1,
+	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_SINGLETHREADED, &featureLevel, 1,
 		D3D11_SDK_VERSION, &swapChainDesc, &m_swapChain, &m_device, NULL, &m_deviceContext);
 	if (FAILED(result))
 	{
@@ -260,7 +257,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	backBufferPtr->Release();
 	backBufferPtr = 0;
 
-	//Describe our Depth/Stencil Buffer
+	//Describe our Depth/Stencil Buffer5
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
 
 	depthStencilDesc.Width = m_ScreenWidth;
@@ -355,7 +352,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	//Init AnTweakBar
 	TwInit(TW_DIRECT3D11, m_device);
 	TwWindowSize((float)screenWidth, (float)screenHeight);
-	m_TwBar = TwNewBar("DXEngine");
+	m_TwBar = TwNewBar("Fluid Simulation");
 	return S_OK;
 }
 

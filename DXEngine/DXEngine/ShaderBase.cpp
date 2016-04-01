@@ -34,18 +34,18 @@ HRESULT ShaderBase::CompileShaderFromFile(WCHAR *ShaderFileName, LPCSTR ShaderEn
 {
 	HRESULT hr;
 
-	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-
 	ID3DBlob *pErrorBlob;
-	hr = D3DCompileFromFile(ShaderFileName, NULL, NULL, ShaderEntryPoint, ShaderModel, dwShaderFlags, 0,
+	hr = D3DCompileFromFile(ShaderFileName, NULL, NULL, ShaderEntryPoint, ShaderModel, D3D10_SHADER_ENABLE_STRICTNESS, 0,
 		ppBlobOut, &pErrorBlob);
 
+#ifdef _DEBUG
 	if (pErrorBlob && FAILED(hr))
 	{
 		char* _error = (char*)pErrorBlob->GetBufferPointer();
 
 		Debug::Instance()->Log(_error);
 	}
+#endif
 
 	return hr;
 }

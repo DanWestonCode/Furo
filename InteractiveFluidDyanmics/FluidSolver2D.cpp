@@ -1,3 +1,14 @@
+/// <summary>
+/// FluidSolver2D.cpp
+///
+/// About:
+/// This class is an implementation of Jos Stams solver
+/// highlighted within his 2003 GDC paper 'Real-Time Fluid Dynamics for Games'
+/// This solver solves a velocity and density field over time.
+/// GDC Paper:
+/// http://www.intpowertechcorp.com/GDC03.pdf
+/// </summary>
+
 #include "FluidSolver2D.h"
 #include <algorithm>    
 #define GetXY(N,i,j) ((i)+(N + 2)*(j))
@@ -14,7 +25,6 @@ FluidSolver2D::~FluidSolver2D()
 
 void FluidSolver2D::VelocityStep(int gridSize, float* velocityX, float* prevVelX, float* velocityY, float* prevVelY, float visc, float dt)
 {
-
 	AddSource(gridSize, velocityX, prevVelX, dt);
 	AddSource(gridSize, velocityY, prevVelY, dt);
 	std::swap(prevVelX, velocityX);

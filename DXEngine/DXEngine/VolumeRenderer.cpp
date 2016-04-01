@@ -64,7 +64,7 @@ HRESULT VolumeRenderer::Initialize(D3D* _d3d, HWND _hWnd, int _width, int _heigh
 	//set initial vars
 	m_RenderProps.iterations = 128;
 	m_RenderProps.stepSize = sqrt(3.f) / m_RenderProps.iterations;
-	m_RenderProps.fluidCol = XMFLOAT3(0.5f, 1.0f, 1.00f);
+	m_RenderProps.fluidCol = XMFLOAT3(0.1f, 1.0f, 1.0f);
 	m_RenderProps.absoprtion = 0.05f;
 #pragma endregion
 

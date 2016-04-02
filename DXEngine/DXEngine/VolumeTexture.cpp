@@ -4,23 +4,14 @@ VolumeTexture::VolumeTexture()
 {
 	m_Texture3D = nullptr;
 	m_ShaderResourceView = nullptr;
-	//m_furo = nullptr;
-
-	m_fluidShader = nullptr;
 }
 VolumeTexture::VolumeTexture(const VolumeTexture& other){}
 VolumeTexture::~VolumeTexture(){}
 
 HRESULT VolumeTexture::Initialize(D3D* _d3d, int _volSize)
 {
-	/*m_furo = new Furo;
-	m_furo->Initialize(Furo::ThreeDimensional, _volSize, 0);*/
-
-	m_fluidShader = new FluidShader();
-	m_fluidShader->Initialize(_d3d->GetDevice(), _d3d->GetDeviceContext(), _d3d->m_TwBar, _volSize);
-
 	HRESULT result = S_OK;
-	HANDLE hFile = CreateFileW(L"../DXEngine/foot.raw", GENERIC_READ, 0, NULL, OPEN_EXISTING, OPEN_EXISTING, NULL);
+	HANDLE hFile = CreateFileW(L"../Shaders/foot.raw", GENERIC_READ, 0, NULL, OPEN_EXISTING, OPEN_EXISTING, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
 		MessageBox(NULL, L"Opening volume data file failed.", L"Error", MB_ICONERROR | MB_OK);
@@ -68,14 +59,6 @@ HRESULT VolumeTexture::Initialize(D3D* _d3d, int _volSize)
 void VolumeTexture::Update(ID3D11Device* _device, ID3D11DeviceContext* _deviceContext, int _volSize, float dt)
 {	
 	D3D11_MAPPED_SUBRESOURCE mappedTex;
-	HRESULT result;
-	m_fluidShader->Update(_deviceContext, dt);
-	
-}
-
-void VolumeTexture::Render(ID3D11DeviceContext* _deviceContext)
-{
-	
 }
 
 void VolumeTexture::Shutdown()
@@ -84,6 +67,4 @@ void VolumeTexture::Shutdown()
 	m_Texture3D = nullptr;
 	m_ShaderResourceView->Release();
 	m_ShaderResourceView = nullptr;
-
-	//m_furo->Shutdown();
 }

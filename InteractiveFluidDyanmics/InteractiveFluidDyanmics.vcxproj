@@ -75,23 +75,76 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="fluid.h" />
+    <ClInclude Include="FluidBase.h" />
+    <ClInclude Include="FluidGPU.h" />
     <ClInclude Include="FluidSolver2D.h" />
     <ClInclude Include="FluidSolver3D.h" />
-    <ClInclude Include="FluidThreeDimensional.h" />
-    <ClInclude Include="Furo.h" />
-    <ClInclude Include="FluidTwoDimensional.h" />
+    <ClInclude Include="StamSolver.h" />
+    <ClInclude Include="StamSolver3D.h" />
+    <ClInclude Include="StamSolver2D.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="fluid.cpp" />
+    <ClCompile Include="FluidGPU.cpp" />
     <ClCompile Include="FluidSolver2D.cpp" />
     <ClCompile Include="FluidSolver3D.cpp" />
-    <ClCompile Include="FluidThreeDimensional.cpp" />
-    <ClCompile Include="Furo.cpp" />
-    <ClCompile Include="FluidTwoDimensional.cpp" />
+    <ClCompile Include="StamSolver.cpp" />
+    <ClCompile Include="StamSolver3D.cpp" />
+    <ClCompile Include="StamSolver2D.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
+    <None Include="..\DXEngine\Shaders\ComputeAdvection.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\DXEngine\Shaders\ComputeAdvectionMacCormack.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\DXEngine\Shaders\ComputeBoundaryConditions.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\DXEngine\Shaders\ComputeBuoyancy.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\DXEngine\Shaders\ComputeConfinement.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\DXEngine\Shaders\ComputeDivergence.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\DXEngine\Shaders\ComputeImpulse.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\DXEngine\Shaders\ComputeJacobi.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\DXEngine\Shaders\ComputeMacCormack.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\DXEngine\Shaders\ComputeProjection.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\DXEngine\Shaders\ComputeVorticity.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

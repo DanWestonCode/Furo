@@ -2,8 +2,6 @@
 #define RenderTexture_h__
 #include <d3d11.h>
 #include <string>
-
-
 class RenderTexture
 {
 public:

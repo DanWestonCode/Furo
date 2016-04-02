@@ -3,10 +3,9 @@
 
 #include "VertexObject.h"
 #include "ColourShader.h"
-#include "FluidShader.h"
-#include "RenderTexture.h"
-#include "Furo.h"
+#include "StamSolver2D.h"
 #include "D3D.h"
+using namespace Furo;
 
 __declspec(align(16)) class Quad : public VertexObject
 {
@@ -22,10 +21,10 @@ public:
 	Quad(const Quad&);
 	~Quad();
 
-	virtual HRESULT Initialise(D3D*, HWND);
-	virtual void Render(D3D*);
-	virtual void Shutdown();
-	virtual void Update(float, HWND);
+	HRESULT Initialise(D3D*, HWND);
+	void Render(D3D*);
+	void Shutdown();
+	void Update(float, HWND);
 
 
 private:
@@ -33,12 +32,10 @@ private:
 	int numTris;
 	unsigned long* indices;
 public:
-	RenderTexture* m_TextureB;
-	RenderTexture* m_TextureA;
 	ColourShader* m_ColorShader;
-	FluidShader* m_FluidShader;
 	ColorVL* m_ColorVertLayout;
-	Furo* m_Furo;
+
+	StamSolver2D* m_fluid;
 protected:
 	float veloMulti;
 	float densityMulti;

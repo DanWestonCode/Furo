@@ -1,16 +1,14 @@
 #ifndef VolumeRenderer_h__
 #define VolumeRenderer_h__
 
+#include <stddef.h>
 #include "ModelShader.h"
 #include "VolumeRaycastShader.h"
-#include "AABBVolumeRaycastShader.h"
 #include "RenderTexture.h"
 #include "VolumeTexture.h"
 #include "Cube.h"
 #include "D3D.h"
-#include "VolumeRenderer.h"
 #include "AntTweakBar.h"
-#include <stddef.h>
 
 __declspec(align(16)) class VolumeRenderer
 {
@@ -40,7 +38,7 @@ public:
 	void Shutdown();
 	void Update(float, D3D*);
 	void UpdateBuffers(D3D*);
-	void Render(D3D*);
+	void Render(D3D*, ID3D11ShaderResourceView*);
 
 private:
 	void CreateSampler(ID3D11Device*);
@@ -54,7 +52,6 @@ protected:
 	RenderTexture* m_ModelFront;
 	RenderTexture* m_ModelBack;
 	VolumeTexture* m_VolumeTexture;
-	FluidShader* m_fluidShader;
 	Cube* m_cube;
 	
 	//sampler 

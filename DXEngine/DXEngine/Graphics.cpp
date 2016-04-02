@@ -9,7 +9,9 @@
 /// RasterTek tutorial:
 /// http://www.rastertek.com/dx11s2tut04.html
 /// </summary>
+
 #include "Graphics.h"
+const UINT							m_fluidSize = 64;
 
 Graphics::Graphics()
 {
@@ -46,7 +48,6 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	_hwnd = hwnd;
 
-
 	HRESULT result = S_OK;
 	// Create the Direct3D object.
 	m_D3D = new D3D;
@@ -70,12 +71,30 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	TwAddVarRW(m_D3D->m_TwBar, "Camera Position", TW_TYPE_DIR3F, &Camera::Instance()->m_pos, "");
 	TwAddVarRW(m_D3D->m_TwBar, "Back Buffer", TW_TYPE_COLOR3F, &*m_ClearBackBufferColor, "");
 
-
 	m_VolumeRenderer = new VolumeRenderer;
 	m_VolumeRenderer->Initialize(m_D3D, hwnd, m_D3D->m_ScreenWidth, m_D3D->m_ScreenHeight);
-	
-	//m_Quad = new Quad;
-	//m_Quad->Initialise(m_D3D, hwnd);
+#pragma region GPU Fluid
+	m_fluidGPU = new FluidGPU;
+	m_fluidGPU->Initialize(m_fluidSize, m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hwnd);
+
+#pragma region AnTweak Bar vars
+	TwStructMember _GPUFluidVars[] = {
+		{ "Impulse Radius", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_impulseRadius), "min=0.01 max=0.08 step=0.01" },
+		{ "Density", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_densityAmount), "min=0.1 max=1 step=0.1" },
+		{ "Temperature", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_TemperatureAmount), "min=0.1 max=1000 step=0.1" },
+		{ "Decay", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_decay), "min=0.0 max=1 step=0.1" },
+		{ "Dissipation", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_densityDissipation), "min=0.995 max=10 step=0.1" },
+		{ "Ambient Temperature", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_ambientTemperature), "min=0.995 max=1000 step=0.1" },
+		{ "Buoyancy", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_buoyancy), "min=0.995 max=100 step=0.1" },
+		{ "Smoke Weight", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_weight), "min=0.0125 max=10 step=0.1" },
+		{ "Vorticity Strength", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_VorticityStrength), "min=0.1 max=1000 step=0.1" }
+	};
+	TwAddVarRW(m_D3D->m_TwBar, "Simulation Properties", TwDefineStruct("Simulation", _GPUFluidVars, 9, sizeof(FluidGPU::SimulationVars), nullptr, nullptr), &m_fluidGPU->m_GPUFluidVars, NULL);
+#pragma endregion
+#pragma endregion
+
+	/*m_Quad = new Quad;
+	m_Quad->Initialise(m_D3D, hwnd);*/
 
 	return S_OK;
 }
@@ -89,13 +108,29 @@ void Graphics::Shutdown()
 		m_D3D = 0;
 	}	
 
-	m_VolumeRenderer->Shutdown();
-	delete m_VolumeRenderer;
-	m_VolumeRenderer = nullptr;
+	if (m_fluid){
+		m_fluid->ShutDown();
+		delete m_fluid;
+		m_fluid = nullptr;
+	}
 
-	m_Quad->Shutdown();
-	delete m_Quad;
-	m_Quad = nullptr;
+	if (m_fluidGPU){
+		m_fluidGPU->Shutdown();
+		delete m_fluidGPU;
+		m_fluidGPU = nullptr;
+	}
+
+	if (m_VolumeRenderer){
+		m_VolumeRenderer->Shutdown();
+		delete m_VolumeRenderer;
+		m_VolumeRenderer = nullptr;
+	}
+
+	if (m_Quad){
+		m_Quad->Shutdown();
+		delete m_Quad;
+		m_Quad = nullptr;
+	}
 
 	Camera::Instance()->DeleteInstance();
 
@@ -125,6 +160,7 @@ void Graphics::Update(float dt)
 	Camera::Instance()->Update(dt);
 	//m_Quad->Update(dt, _hwnd);
 
+	m_fluidGPU->Run(dt, m_D3D->GetDeviceContext());
 	m_VolumeRenderer->Update(dt, m_D3D);
 }
 
@@ -133,8 +169,8 @@ bool Graphics::Render(float dt)
 	m_D3D->BeginScene(m_ClearBackBufferColor);
 
 	Camera::Instance()->Render();
-	
-	m_VolumeRenderer->Render(m_D3D);
+
+	m_VolumeRenderer->Render(m_D3D, m_fluidGPU->m_DensitySRV[0]);
 
 	//m_Quad->Render(m_D3D);		
 

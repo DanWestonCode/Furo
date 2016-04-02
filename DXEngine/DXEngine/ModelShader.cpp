@@ -21,7 +21,7 @@ HRESULT ModelShader::Initialize(ID3D11Device* _device, HWND _hwn)
 	ID3DBlob* blob = nullptr;
 
 	#pragma region Vertex Shader
-	result = CompileShaderFromFile(L"../DXEngine/model_position.hlsl", "ModelPositionVS", "vs_5_0", &blob);
+	result = CompileShaderFromFile(L"../Shaders/model_position.hlsl", "ModelPositionVS", "vs_5_0", &blob);
 	result = _device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_VertexShader);
 	#pragma endregion	
 
@@ -45,7 +45,7 @@ HRESULT ModelShader::Initialize(ID3D11Device* _device, HWND _hwn)
 	#pragma region Pixel Shader
 	blob = nullptr;
 	// Compile and create the pixel shader
-	result = CompileShaderFromFile(L"../DXEngine/model_position.hlsl", "ModelPositionPS", "ps_5_0", &blob);
+	result = CompileShaderFromFile(L"../Shaders/model_position.hlsl", "ModelPositionPS", "ps_5_0", &blob);
 	result = _device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_PixelShader);
 	blob->Release();
 	#pragma  endregion	

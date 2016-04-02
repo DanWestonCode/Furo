@@ -25,16 +25,18 @@
 
 #include <windows.h>
 #include "D3D.h"
-
-#include "RenderTexture.h"
 #include "Quad.h"
 #include "VolumeRenderer.h"
+#include "FluidGPU.h"
+#include "StamSolver3D.h"
 #include "Camera.h"
 
 const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.1f;
+
+using namespace Furo;
 
 __declspec(align(16)) class Graphics
 {
@@ -66,6 +68,12 @@ private:
 	//engine objects
 	D3D* m_D3D;
 	VolumeRenderer* m_VolumeRenderer;
+	FluidGPU* m_fluidGPU;
+	StamSolver3D* m_fluid;
+	ID3D11Texture3D* m_Texture3D;
+	ID3D11ShaderResourceView* m_ShaderResourceView;
+
+
 	float* m_ClearBackBufferColor;
 	Quad* m_Quad;
 };

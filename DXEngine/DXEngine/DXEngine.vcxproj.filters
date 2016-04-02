@@ -49,9 +49,6 @@
     <Filter Include="Source Files\Objects">
       <UniqueIdentifier>{6d482e65-d6c7-4289-86af-cbeb03d461d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\Fluid">
-      <UniqueIdentifier>{71e266b0-dc39-4749-a25d-3e8b293389c6}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InputManager.cpp">
@@ -104,9 +101,6 @@
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="FluidShader.cpp">
-      <Filter>Source Files\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="Debug.cpp">
       <Filter>Source Files\SystemUtil</Filter>
@@ -164,9 +158,6 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="FluidShader.h">
-      <Filter>Header Files\Shaders</Filter>
-    </ClInclude>
     <ClInclude Include="AntTweakBar.h">
       <Filter>Header Files\SystemUtils</Filter>
     </ClInclude>
@@ -178,44 +169,14 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="model_position.hlsl">
+    <FxCompile Include="..\Shaders\color.hlsl">
       <Filter>Shaders</Filter>
-    </None>
-    <None Include="raycast.hlsl">
+    </FxCompile>
+    <FxCompile Include="..\Shaders\model_position.hlsl">
       <Filter>Shaders</Filter>
-    </None>
-    <None Include="color.fx">
+    </FxCompile>
+    <FxCompile Include="..\Shaders\raycast.hlsl">
       <Filter>Shaders</Filter>
-    </None>
-    <None Include="ComputeBoundaryConditions.hlsl">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
-    <None Include="ComputeAdvection.hlsl">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
-    <None Include="ComputeBuoyancy.hlsl">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
-    <None Include="ComputeDivergence.hlsl">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
-    <None Include="ComputeJacobi.hlsl">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
-    <None Include="ComputeVorticity.hlsl">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
-    <None Include="ComputeConfinement.hlsl">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
-    <None Include="ComputeProjection.hlsl">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
-    <None Include="ComputeMacCormack.hlsl">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
-    <None Include="ComputeImpulse.hlsl">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
+    </FxCompile>
   </ItemGroup>
 </Project>

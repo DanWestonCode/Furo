@@ -8,7 +8,6 @@
 /// </summary>-
 
 #include "VolumeRenderer.h"
-const UINT							m_fluidSize = 64;
 VolumeRenderer::VolumeRenderer()
 {
 	m_ModelShader = nullptr;
@@ -52,9 +51,6 @@ HRESULT VolumeRenderer::Initialize(D3D* _d3d, HWND _hWnd, int _width, int _heigh
 
 	m_ModelBack = new RenderTexture;
 	m_ModelBack->Initialize(_d3d->GetDevice(), _width, _height);
-
-	m_fluidShader = new FluidShader();
-	m_fluidShader->Initialize(_d3d->GetDevice(), _d3d->GetDeviceContext(), _d3d->m_TwBar, m_fluidSize);
 
 	m_cube = new Cube;
 	m_cube->Initialise(_d3d->GetDevice());
@@ -146,7 +142,6 @@ void VolumeRenderer::Update(float dt, D3D* _d3d)
 {
 	m_cube->Update(dt);
 	UpdateBuffers(_d3d);
-	m_fluidShader->Update(_d3d-> GetDeviceContext(), dt);
 }
 
 void VolumeRenderer::UpdateBuffers(D3D* _d3d)
@@ -176,7 +171,7 @@ void VolumeRenderer::UpdateBuffers(D3D* _d3d)
 	m_PrevProps = m_RenderProps;
 }
 
-void VolumeRenderer::Render(D3D* m_D3D)
+void VolumeRenderer::Render(D3D* m_D3D, ID3D11ShaderResourceView* _vol)
 {
 	float ClearRenderTarget[4] = { 0.f, 0.f, 0.f, 1.f };
 
@@ -213,6 +208,7 @@ void VolumeRenderer::Render(D3D* m_D3D)
 	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw front faces
 
 	// Ray-casting
+
 	// Turn on the alpha blending.
 	m_D3D->GetDeviceContext()->OMSetBlendState(m_D3D->m_AlphaState, nullptr, 0xffffffff);
 
@@ -235,7 +231,7 @@ void VolumeRenderer::Render(D3D* m_D3D)
 	m_D3D->GetDeviceContext()->PSSetSamplers(0, 1, &g_pSamplerLinear);
 
 	// Set textures
-	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 1, &m_fluidShader->m_DensitySRV[0]);//
+	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 1, &_vol);//
 	m_D3D->GetDeviceContext()->PSSetShaderResources(1, 1, &m_ModelFront->m_SRV);
 	m_D3D->GetDeviceContext()->PSSetShaderResources(2, 1, &m_ModelBack->m_SRV);
 

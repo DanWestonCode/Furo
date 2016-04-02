@@ -138,6 +138,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>D:\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -162,7 +163,6 @@
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="D3D.cpp" />
     <ClCompile Include="Debug.cpp" />
-    <ClCompile Include="FluidShader.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ModelShader.cpp" />
@@ -185,7 +185,6 @@
     <ClInclude Include="Cube.h" />
     <ClInclude Include="D3D.h" />
     <ClInclude Include="Debug.h" />
-    <ClInclude Include="FluidShader.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="ModelShader.h" />
@@ -202,70 +201,18 @@
     <ClInclude Include="VolumeTexture.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="model_position.hlsl">
-      <FileType>Document</FileType>
-    </None>
-    <None Include="raycast.hlsl">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="color.fx">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\InteractiveFluidDyanmics\InteractiveFluidDyanmics.vcxproj">
       <Project>{1db8c053-3bc0-4878-81da-64aeeaea63b5}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ComputeImpulse.hlsl">
+    <None Include="..\Shaders\color.hlsl">
       <FileType>Document</FileType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ComputeBoundaryConditions.hlsl">
+    <None Include="..\Shaders\model_position.hlsl">
       <FileType>Document</FileType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ComputeAdvection.hlsl">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ComputeBuoyancy.hlsl">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ComputeVorticity.hlsl">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ComputeDivergence.hlsl">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ComputeJacobi.hlsl">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ComputeConfinement.hlsl">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ComputeProjection.hlsl">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ComputeMacCormack.hlsl">
+    <None Include="..\Shaders\raycast.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

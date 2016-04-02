@@ -159,7 +159,7 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 	m_hinstance = GetModuleHandle(NULL);
 
 	// Give the application a name.
-	m_applicationName = L"DXEngine";
+	m_applicationName = L"Furo - Fluid Simulation";
 
 	// Setup the windows class with default settings.
 	wc.style = CS_HREDRAW | CS_VREDRAW;

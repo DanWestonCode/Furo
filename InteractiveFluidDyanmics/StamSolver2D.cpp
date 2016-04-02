@@ -1,8 +1,10 @@
-#include "FluidTwoDimensional.h"
+#include "StamSolver2D.h"
 #include <cstring>
-
-void FluidTwoDimensional::Initialize(int _size)
+using namespace Furo;
+void StamSolver2D::Initialize(int _size)
 {
+	StamSolver::Initialize();
+
 	//set up fluid props
 	m_gridSize = _size;
 	m_diffusion = 0.0f;
@@ -26,16 +28,16 @@ void FluidTwoDimensional::Initialize(int _size)
 	std::memset(m_density, 0, sizeof(float)*size);
 	std::memset(m_prevDensity, 0, sizeof(float)*size);
 
-	m_fluidSolver2D = new FluidSolver2D;
+	m_solver = new FluidSolver2D;
 }
 
-void FluidTwoDimensional::Update(float _dt)
+void StamSolver2D::Run(float _dt)
 {
-	m_fluidSolver2D->VelocityStep(m_gridSize, m_velocityX, m_prevVelX, m_velocityY, m_prevVelY, m_visc, _dt);
-	m_fluidSolver2D->DensityStep(m_gridSize, m_density, m_prevDensity, m_velocityX, m_velocityY, m_diffusion, _dt);
+	m_solver->VelocityStep(m_gridSize, m_velocityX, m_prevVelX, m_velocityY, m_prevVelY, m_visc, _dt);
+	m_solver->DensityStep(m_gridSize, m_density, m_prevDensity, m_velocityX, m_velocityY, m_diffusion, _dt);
 }
 
-void FluidTwoDimensional::Clear()
+void StamSolver2D::Clear()
 {
 	int size = (m_gridSize + 2) * (m_gridSize + 2);
 	//change to memset

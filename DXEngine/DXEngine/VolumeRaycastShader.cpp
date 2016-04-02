@@ -13,7 +13,7 @@ HRESULT VolumeRaycastShader::Initialize(ID3D11Device* _device, HWND _hwn, int _w
 	ID3DBlob* blob = nullptr;
 
 	#pragma region Vertex Shader
-	result = CompileShaderFromFile(L"../DXEngine/raycast.hlsl", "RayCastVS", "vs_5_0", &blob);
+	result = CompileShaderFromFile(L"../Shaders/raycast.hlsl", "RayCastVS", "vs_5_0", &blob);
 	result = _device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_VertexShader);
 	#pragma endregion	
 
@@ -37,7 +37,7 @@ HRESULT VolumeRaycastShader::Initialize(ID3D11Device* _device, HWND _hwn, int _w
 	#pragma region Pixel Shader
 	blob = nullptr;
 	// Compile and create the pixel shader
-	result = CompileShaderFromFile(L"../DXEngine/raycast.hlsl", "RayCastPS", "ps_5_0", &blob);
+	result = CompileShaderFromFile(L"../Shaders/raycast.hlsl", "RayCastPS", "ps_5_0", &blob);
 	result = _device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_PixelShader);
 	blob->Release();
 	#pragma  endregion	

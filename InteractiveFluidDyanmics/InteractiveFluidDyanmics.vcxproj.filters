@@ -25,51 +25,89 @@
     <Filter Include="Source Files\Simulation">
       <UniqueIdentifier>{e5f5aa47-e90f-42d3-8077-6ee93f41d28d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{834db177-b6e0-4067-a09f-df61bede513f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Furo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fluid.h">
-      <Filter>Header Files\Fluids</Filter>
-    </ClInclude>
     <ClInclude Include="FluidSolver2D.h">
       <Filter>Header Files\Simulation</Filter>
     </ClInclude>
     <ClInclude Include="FluidSolver3D.h">
       <Filter>Header Files\Simulation</Filter>
     </ClInclude>
-    <ClInclude Include="FluidTwoDimensional.h">
+    <ClInclude Include="StamSolver3D.h">
       <Filter>Header Files\Fluids</Filter>
     </ClInclude>
-    <ClInclude Include="FluidThreeDimensional.h">
+    <ClInclude Include="StamSolver2D.h">
+      <Filter>Header Files\Fluids</Filter>
+    </ClInclude>
+    <ClInclude Include="FluidBase.h">
+      <Filter>Header Files\Fluids</Filter>
+    </ClInclude>
+    <ClInclude Include="StamSolver.h">
+      <Filter>Header Files\Fluids</Filter>
+    </ClInclude>
+    <ClInclude Include="FluidGPU.h">
       <Filter>Header Files\Fluids</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Furo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fluid.cpp">
-      <Filter>Source Files\Fluids</Filter>
-    </ClCompile>
     <ClCompile Include="FluidSolver2D.cpp">
       <Filter>Source Files\Simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="FluidThreeDimensional.cpp">
-      <Filter>Source Files\Fluids</Filter>
     </ClCompile>
     <ClCompile Include="FluidSolver3D.cpp">
       <Filter>Source Files\Simulation</Filter>
     </ClCompile>
-    <ClCompile Include="FluidTwoDimensional.cpp">
+    <ClCompile Include="StamSolver3D.cpp">
+      <Filter>Source Files\Fluids</Filter>
+    </ClCompile>
+    <ClCompile Include="StamSolver2D.cpp">
+      <Filter>Source Files\Fluids</Filter>
+    </ClCompile>
+    <ClCompile Include="StamSolver.cpp">
+      <Filter>Source Files\Fluids</Filter>
+    </ClCompile>
+    <ClCompile Include="FluidGPU.cpp">
       <Filter>Source Files\Fluids</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
+    <None Include="..\DXEngine\Shaders\ComputeAdvection.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\DXEngine\Shaders\ComputeAdvectionMacCormack.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\DXEngine\Shaders\ComputeBoundaryConditions.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\DXEngine\Shaders\ComputeBuoyancy.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\DXEngine\Shaders\ComputeConfinement.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\DXEngine\Shaders\ComputeDivergence.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\DXEngine\Shaders\ComputeImpulse.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\DXEngine\Shaders\ComputeJacobi.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\DXEngine\Shaders\ComputeMacCormack.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\DXEngine\Shaders\ComputeProjection.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\DXEngine\Shaders\ComputeVorticity.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,11 +1,18 @@
-#include "FluidThreeDimensional.h"
+#include "StamSolver3D.h"
 #include <cstring>
-void FluidThreeDimensional::Initialize(int _size)
+using namespace Furo;
+
+void StamSolver3D::Initialize(int _size)
 {
+	StamSolver::Initialize();
+
 	//set up fluid props
 	m_gridSize = _size;
 	m_diffusion = 0.0f;
 	m_visc = 0.0f;
+
+	m_velocityZ = nullptr;
+	m_prevVelZ = nullptr;
 
 	int size = (_size) * (_size) * (_size);
 
@@ -33,14 +40,15 @@ void FluidThreeDimensional::Initialize(int _size)
 	std::memset(m_density, 0, sizeof(float)*size);
 	std::memset(m_prevDensity, 0, sizeof(float)*size);
 
-	m_fluidSolver3D = new FluidSolver3D;
-}
-void FluidThreeDimensional::Update(float dt)
-{
-	m_fluidSolver3D->SimStep(m_prevVelX, m_prevVelY, m_prevVelZ, m_velocityX, m_velocityY, m_velocityZ, m_visc, dt, m_density, m_diffusion, m_prevDensity, m_gridSize);
+	m_solver = new FluidSolver3D;
 }
 
-void FluidThreeDimensional::Clear()
+void StamSolver3D::Update(float dt)
+{
+	m_solver->SimStep(m_prevVelX, m_prevVelY, m_prevVelZ, m_velocityX, m_velocityY, m_velocityZ, m_visc, dt, m_density, m_diffusion, m_prevDensity, m_gridSize);
+}
+
+void StamSolver3D::Clear()
 {
 	int size = (m_gridSize)* (m_gridSize)* (m_gridSize);
 	//change to memset
@@ -48,4 +56,11 @@ void FluidThreeDimensional::Clear()
 	std::memset(m_prevVelY, 0, sizeof(float)*size);
 	std::memset(m_prevVelZ, 0, sizeof(float)*size);
 	std::memset(m_prevDensity, 0, sizeof(float)*size);
+}
+
+void StamSolver3D::ShutDown()
+{
+	StamSolver::Shutdown();
+	delete m_prevVelY;
+	m_prevVelY = nullptr;
 }

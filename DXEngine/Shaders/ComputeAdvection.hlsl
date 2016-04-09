@@ -11,8 +11,8 @@
 /// Based from:
 /// cFluid3D.hlsl (AdvectComputeShader) - Valentin Hinov - https://github.com/Morji/Fluid-Simulation-DirectX11
 /// ApplyAdvection.compute - Scrawk Blog - https://scrawkblog.com/2014/01/09/gpu-gems-to-unity-3d-fluid-simulation/
-/// Example 30-3. Modified Simulation Kernels to Account for Boundary Conditions - Keenan Crane - http://http.developer.nvidia.com/GPUGems3/gpugems3_ch30.html
-/// </summary>
+/// Example 30-3. Modified Simulation Kernels to Account for Boundary Conditions - Keenan Crane - http://http.developer.nvidia.com/GPUGems3/gpugems3_ch30.html/// 
+///</summary>
 
 #define NUM_THREADS 8
 
@@ -58,5 +58,4 @@ void ComputeAdvection(uint3 id : SV_DispatchThreadID)
 
 	//stop negative values entering the fluid field (max returns greater of two values)
     _AdvectionTargetWrite[id] = _AdvectionTargetRead.SampleLevel(linearSampler, prevPos.xyz, 0) * dissipation; //max(0, _AdvectionTargetRead.SampleLevel(linearSampler, prevPos.xyz, 0) * dissipation);
-
 }

@@ -1,5 +1,15 @@
+/// <summary>
+/// raycast.hlsl
+///
+/// About:
+/// raycast is a DirectX 11 specific implementation of the RayCast shader discussed by Kyle Hayward in Volume Rendering 101.
+/// This implementation is copied from Dr.Christian B Mendl implementation found within his adaptation of the raycastshader
+///
+/// References:
+/// Dr.Christian B Mendl: http://christian.mendl.net/pages/software.html - See 'raycast.hlsl' shader in 'Volume Ray-Casting Renderer project'
+/// Volume Rendering 101: http://graphicsrunner.blogspot.co.uk/2009/01/volume-rendering-101.html 
+///</summary>
 #pragma pack_matrix(row_major)
-
 //--------------------------------------------------------------------------------------
 // Textures
 //--------------------------------------------------------------------------------------

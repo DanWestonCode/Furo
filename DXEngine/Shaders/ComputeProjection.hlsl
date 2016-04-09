@@ -4,8 +4,8 @@
 /// About:
 ///
 /// Based from:
-/// cFluid3D.hlsl (SubtractGradientComputeShader) - Valentin Hinov - https://github.com/Morji/Fluid-Simulation-DirectX11
-/// ComputeVorticity.compute - Scrawk Blog - https://scrawkblog.com/2014/01/09/gpu-gems-to-unity-3d-fluid-simulation/
+/// cFluid3D.hlsl (Projection) - Valentin Hinov - https://github.com/Morji/Fluid-Simulation-DirectX11
+/// ComputeProjection.compute - Scrawk Blog - https://scrawkblog.com/2014/01/09/gpu-gems-to-unity-3d-fluid-simulation/
 /// </summary>
 #define NUM_THREADS 8
 
@@ -52,13 +52,6 @@ void ComputeProjection(uint3 id : SV_DispatchThreadID)
     float3 mask = float3(1, 1, 1);
 	float3 obstV = float3(0, 0, 0);
 
-	//if (_BoundaryConditions[coordT]) { pT = pC; obstV.y = _Velocity[coordT].y; vMask.y = 0; }
-	//if (_BoundaryConditions[coordB]) { pB = pC; obstV.y = _Velocity[coordB].y; vMask.y = 0; }
-	//if (_BoundaryConditions[coordR]) { pR = pC; obstV.x = _Velocity[coordR].x; vMask.x = 0; }
-	//if (_BoundaryConditions[coordL]) { pL = pC; obstV.x = _Velocity[coordL].x; vMask.x = 0; }
-	//if (_BoundaryConditions[coordU]) { pU = pC; obstV.z = _Velocity[coordU].z; vMask.z = 0; }
-	//if (_BoundaryConditions[coordD]) { pD = pC; obstV.z = _Velocity[coordD].z; vMask.z = 0; }
-
     if (_BoundaryConditions[LeftCell] > 0.1)
     {
         L = C;
@@ -92,11 +85,7 @@ void ComputeProjection(uint3 id : SV_DispatchThreadID)
         mask.z = 0;
     }
 
-	//float3 grad = float3(pR - pL, pT - pB, pU - pD) * 0.5f;
-	//float3 oldV = _Velocity[id];
-	//float3 newV = oldV - grad;
-
     float3 v = _Velocity[id] - float3(R - L, T - B, U - D) * 0.5;
 
-    _VelocityResult[id] = v * mask; //(newV * vMask) + obstV;
+    _VelocityResult[id] = v * mask;
 }

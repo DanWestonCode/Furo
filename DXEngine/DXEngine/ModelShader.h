@@ -1,10 +1,10 @@
-/***********************************
-* ModelShader.h
-* Created by Daniel 14 11/01/16
-*
-* ModelShader encapsulates the 
-* ModelShader.hlsl shaders
-* *********************************/
+/// <summary>
+/// ModelShader.h
+///
+/// About:
+/// ModelShader.h interfaces the model_position.hlsl shader and derives 
+/// from the shader base class. 
+/// </summary>
 
 #ifndef ModelShader_h__
 #define ModelShader_h__
@@ -13,7 +13,6 @@
 
 __declspec(align(16)) class ModelShader : public ShaderBase
 {
-protected:
 	struct MatrixBuffer
 	{
 		XMMATRIX mWVP;

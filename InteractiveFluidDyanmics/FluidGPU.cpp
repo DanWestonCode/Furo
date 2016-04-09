@@ -206,7 +206,7 @@ void FluidGPU::CreateResources(ID3D11Device* _device)
 	D3D11_BUFFER_DESC inputDesc;
 	D3D11_SUBRESOURCE_DATA vinitData;
 
-#pragma region Texture3DDesc
+#pragma region Texture3D Desc
 	D3D11_TEXTURE3D_DESC textureDesc;
 	ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE3D_DESC));
 	textureDesc.Width = (UINT)FluidSize;
@@ -219,26 +219,8 @@ void FluidGPU::CreateResources(ID3D11Device* _device)
 	textureDesc.MiscFlags = 0;
 #pragma endregion
 
-#pragma region SRVDesc
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE3D;
-	srvDesc.Texture3D.MostDetailedMip = 0;
-	srvDesc.Texture3D.MipLevels = 1;
-#pragma endregion
-
-#pragma region UAVDesc
-	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
-	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE3D;
-	uavDesc.Texture3D.FirstWSlice = 0;
-	uavDesc.Texture3D.MipSlice = 0;
-	uavDesc.Texture3D.WSize = (UINT)FluidSize;
-#pragma endregion
-
 #pragma region Boundary Conditions
 	textureDesc.Format = DXGI_FORMAT_R8_SINT;
-	srvDesc.Format = DXGI_FORMAT_R8_SINT;
-	uavDesc.Format = DXGI_FORMAT_R8_SINT;
-
 	//Create Texture3D
 	result = (_device->CreateTexture3D(&textureDesc, NULL, &m_BoundaryConditions));
 	//Create SRV
@@ -249,8 +231,6 @@ void FluidGPU::CreateResources(ID3D11Device* _device)
 
 #pragma region Vorticity
 	textureDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-	srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-	uavDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 
 	//Create Texture3D
 	result = (_device->CreateTexture3D(&textureDesc, NULL, &m_Vorticity));
@@ -262,8 +242,6 @@ void FluidGPU::CreateResources(ID3D11Device* _device)
 
 #pragma region Divergence
 	textureDesc.Format = DXGI_FORMAT_R16_FLOAT;
-	srvDesc.Format = DXGI_FORMAT_R16_FLOAT;
-	uavDesc.Format = DXGI_FORMAT_R16_FLOAT;
 
 	result = (_device->CreateTexture3D(&textureDesc, NULL, &m_Divergence));
 	//Create SRV
@@ -276,8 +254,7 @@ void FluidGPU::CreateResources(ID3D11Device* _device)
 	{
 #pragma region Pressure
 		textureDesc.Format = DXGI_FORMAT_R16_FLOAT;
-		srvDesc.Format = DXGI_FORMAT_R16_FLOAT;
-		uavDesc.Format = DXGI_FORMAT_R16_FLOAT;
+
 		//Create Texture3D
 		result = (_device->CreateTexture3D(&textureDesc, NULL, &m_Pressure[i]));
 		//Create SRV
@@ -288,8 +265,7 @@ void FluidGPU::CreateResources(ID3D11Device* _device)
 
 #pragma region Density
 		textureDesc.Format = DXGI_FORMAT_R16_FLOAT;
-		srvDesc.Format = DXGI_FORMAT_R16_FLOAT;
-		uavDesc.Format = DXGI_FORMAT_R16_FLOAT;
+
 		//Create Texture3D
 		result = (_device->CreateTexture3D(&textureDesc, NULL, &m_Density[i]));
 		//Create SRV
@@ -300,8 +276,6 @@ void FluidGPU::CreateResources(ID3D11Device* _device)
 
 #pragma region Velocity
 		textureDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-		srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-		uavDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 
 		//Create Texture3D
 		result = (_device->CreateTexture3D(&textureDesc, NULL, &m_Velocity[i]));
@@ -313,8 +287,6 @@ void FluidGPU::CreateResources(ID3D11Device* _device)
 
 #pragma region Temperature
 		textureDesc.Format = DXGI_FORMAT_R16_FLOAT;
-		srvDesc.Format = DXGI_FORMAT_R16_FLOAT;
-		uavDesc.Format = DXGI_FORMAT_R16_FLOAT;
 
 		//Create Texture3D
 		result = (_device->CreateTexture3D(&textureDesc, NULL, &m_Temperature[i]));
@@ -326,8 +298,6 @@ void FluidGPU::CreateResources(ID3D11Device* _device)
 
 #pragma region Temp
 		textureDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-		srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-		uavDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 
 		//Create Texture3D
 		result = (_device->CreateTexture3D(&textureDesc, NULL, &m_TempTexture[i]));

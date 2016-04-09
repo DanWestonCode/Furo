@@ -1,11 +1,10 @@
-/***********************************
-* ShaderBase.h
-* Created by Daniel 14 11/01/16
-*
-* ShaderBase is intended as a base 
-* class for all classes encapsulating
-* shaders.
-* *********************************/
+/// <summary>
+/// ShaderBase.h
+///
+/// About:
+/// ShaderBase.h is a base class for all classes which 
+/// interface hlsl shaders within the engine 
+/// </summary>
 #ifndef ShaderBase_h__
 #define ShaderBase_h__
 
@@ -38,7 +37,6 @@ public:
 	ID3D11InputLayout* GetInputLayout(){ return m_InputLayout; }
 
 protected:
-
 	ID3D11VertexShader* m_VertexShader;
 	ID3D11InputLayout* m_InputLayout;
 	ID3D11PixelShader* m_PixelShader;

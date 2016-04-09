@@ -1,10 +1,10 @@
-/***********************************
-* ModelShader.cpp
-* Created by Daniel 14 11/01/16
-*
-* ModelShader encapsulates the
-* ModelShader.hlsl shaders
-* *********************************/
+/// <summary>
+/// ModelShader.cpp
+///
+/// About:
+/// ModelShader.cpp interfaces the model_position.hlsl shader and derives 
+/// from the shader base class. 
+/// </summary>
 
 #include "ModelShader.h"
 

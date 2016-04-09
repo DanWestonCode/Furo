@@ -1,3 +1,15 @@
+/// <summary>
+/// RenderTexture.h
+///
+/// About:
+/// Creates render texture objects for use within 
+/// the engine, implementation was partially guided
+/// by RasterTek tutorial 22
+///
+/// RasterTek tutorial:
+/// http://www.rastertek.com/dx11tut22.html
+/// </summary>
+
 #include "RenderTexture.h"
 
 RenderTexture::RenderTexture()
@@ -26,11 +38,6 @@ HRESULT RenderTexture::Initialize(ID3D11Device* _device, int _windowWidth, int _
 	descTex.SampleDesc.Count = 1;
 	descTex.CPUAccessFlags = 0;
 
-	/*D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
-	uavDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
-	uavDesc.Texture2D.MipSlice = 0*/;
-
 	result = _device->CreateTexture2D(&descTex, NULL, &m_Texture2D);
 	// Create resource view
 	result = _device->CreateShaderResourceView(m_Texture2D, NULL, &m_SRV);
@@ -56,4 +63,3 @@ void RenderTexture::SetRenderTarget(ID3D11DeviceContext* _deviceContext)
 {
 	_deviceContext->OMSetRenderTargets(1, &m_RTV, NULL);
 }
-

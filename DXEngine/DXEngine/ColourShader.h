@@ -1,3 +1,14 @@
+/// <summary>
+/// ColourShader.h
+///
+/// About:
+/// ColourShader.h interfaces the Colour.hlsl shader and derives 
+/// from the shader base class. The implementation iss based from 
+/// the ColorShaderClass found in RasterTek tutorials
+///
+/// Based from:
+/// ColourShaderClass.h - http://www.rastertek.com/dx11tut04.html
+/// </summary>
 #ifndef ColourShader_h__
 #define ColourShader_h__
 

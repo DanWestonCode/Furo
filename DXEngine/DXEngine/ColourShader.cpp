@@ -1,3 +1,15 @@
+/// <summary>
+/// ColourShader.cpp
+///
+/// About:
+/// ColourShader.h interfaces the Colour.hlsl shader and derives 
+/// from the shader base class. The implementation iss based from 
+/// the ColorShaderClass found in RasterTek tutorials
+///
+/// Based from:
+/// ColourShaderClass.h - http://www.rastertek.com/dx11tut04.html
+/// </summary>
+
 #include "ColourShader.h"
 
 ColourShader::ColourShader()
@@ -13,7 +25,7 @@ HRESULT ColourShader::Initialize(ID3D11Device* _device, HWND _hwn)
 	ID3DBlob* blob = nullptr;
 
 #pragma region Vertex Shader
-	result = CompileShaderFromFile(L"../Shaders/color.fx", "ColorVertexShader", "vs_5_0", &blob);
+	result = CompileShaderFromFile(L"../DXEngine/color.hlsl", "ColorVertexShader", "vs_5_0", &blob);
 	result = _device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_VertexShader);
 #pragma endregion	
 
@@ -45,7 +57,7 @@ HRESULT ColourShader::Initialize(ID3D11Device* _device, HWND _hwn)
 #pragma region Pixel Shader
 	blob = nullptr;
 	// Compile and create the pixel shader
-	result = CompileShaderFromFile(L"../Shaders/color.fx", "ColorPixelShader", "ps_5_0", &blob);
+	result = CompileShaderFromFile(L"../DXEngine/color.hlsl", "ColorPixelShader", "ps_5_0", &blob);
 	result = _device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_PixelShader);
 	blob->Release();
 #pragma  endregion	
@@ -98,7 +110,7 @@ void ColourShader::Render(ID3D11DeviceContext* _deviceContext, XMMATRIX* _mWVM, 
 	_deviceContext->VSSetShader(m_VertexShader, NULL, 0);
 	_deviceContext->PSSetShader(m_PixelShader, NULL, 0);
 
-	//// Render the triangle.
+	// Render the triangle.
 	_deviceContext->DrawIndexed(_indexCount, 0, 0);
 }
 

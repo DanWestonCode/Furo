@@ -1,3 +1,13 @@
+/// <summary>
+/// VolumeRanycastShader.h
+///
+/// About:
+/// VolumeRanycastShader.h interfaces the raycast.hlsl shader and derives 
+/// from the shader base class. The implementation is based from Dr.Christian B Mendl
+/// Implementation found within the InitDevice() function
+///
+/// Dr.Christian B Mendl: http://christian.mendl.net/pages/software.html - See 'InitDevice' function in 'Volume Ray-Casting Renderer project'
+/// </summary>
 #ifndef VolumeRaycastShader_h__
 #define VolumeRaycastShader_h__
 

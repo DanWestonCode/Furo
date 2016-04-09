@@ -1,11 +1,10 @@
-/***********************************
-* ShaderBase.cpp
-* Created by Daniel 14 11/01/16
-*
-* ShaderBase is intended as a base
-* class for all classes encapsulating
-* shaders.
-* *********************************/
+/// <summary>
+/// ModelShader.h
+///
+/// About:
+/// ModelShader.h interfaces the model_position.hlsl shader and derives 
+/// from the shader base class. 
+/// </summary>
 #include "ShaderBase.h"
 #include "Camera.h"
 ShaderBase::ShaderBase()
@@ -30,6 +29,7 @@ void ShaderBase::operator delete(void* memoryBlockPtr)
 	return;
 }
 
+//Shader compilation helper function - Christian B. Mendl, 2012 - editied by Daniel Weston 
 HRESULT ShaderBase::CompileShaderFromFile(WCHAR *ShaderFileName, LPCSTR ShaderEntryPoint, LPCSTR ShaderModel, ID3DBlob **ppBlobOut)
 {
 	HRESULT hr;
@@ -63,4 +63,3 @@ void ShaderBase::Shutdown()
 	m_ComputeShader->Release();
 	delete m_ComputeShader;
 }
-

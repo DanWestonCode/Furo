@@ -39,11 +39,8 @@ public:
 
 	bool Initialize(int, int, bool, HWND, bool, float, float);
 	void Shutdown();
-
 	void BeginScene(float*);
 	void EndScene();
-
-
 	ID3D11Device* GetDevice(){ return m_device;	}
 	ID3D11DeviceContext* GetDeviceContext(){ return m_deviceContext; }
 	ID3D11DepthStencilView* GetDepthStencilView(){ return m_depthStencilView; }
@@ -60,8 +57,7 @@ public:
 		return;
 	}
 
-public:
-	
+public:	
 	ID3D11RasterizerState* m_backFaceCull;
 	ID3D11RasterizerState* m_FrontFaceCull;
 	ID3D11BlendState* m_AlphaState;
@@ -86,6 +82,5 @@ private:
 	int m_videoCardMemory;
 	char m_videoCardDescription[128];
 	IDXGISwapChain* m_swapChain;
-
 };
 #endif // !_D3D_H_

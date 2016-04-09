@@ -206,13 +206,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Shaders\color.hlsl">
-      <FileType>Document</FileType>
-    </None>
     <None Include="..\Shaders\model_position.hlsl">
       <FileType>Document</FileType>
     </None>
     <None Include="..\Shaders\raycast.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="color.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

@@ -9,7 +9,6 @@
 /// http://www.rastertek.com/dx11s2tut03.html
 /// </summary>
 
-
 #include "D3D.h"
 #include "Debug.h"
 #include <string>
@@ -92,8 +91,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	{
 		return false;
 	}
-
-
+	
 	//get graphics card desc
 	DXGI_ADAPTER_DESC adapterDescription; 
 	adapter->GetDesc(&adapterDescription);
@@ -149,7 +147,6 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 
 	// Store the dedicated video card memory in megabytes.
 	m_videoCardMemory = (int)(adapterDesc.DedicatedVideoMemory / 1024 / 1024);
-
 
 	error = wcstombs_s(NULL, m_videoCardDescription, 128, adapterDesc.Description, 128);
 	if (error != 0)
@@ -353,7 +350,7 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	TwInit(TW_DIRECT3D11, m_device);
 	TwWindowSize((float)screenWidth, (float)screenHeight);
 	m_TwBar = TwNewBar("Fluid Simulation");
-	return S_OK;
+	return result;
 }
 
 /// <summary>

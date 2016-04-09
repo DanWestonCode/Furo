@@ -1,3 +1,15 @@
+/// <summary>
+/// RenderTexture.h
+///
+/// About:
+/// Creates render texture objects for use within 
+/// the engine, implementation was partially guided
+/// by RasterTek tutorial 22
+///
+/// RasterTek tutorial:
+/// http://www.rastertek.com/dx11tut22.html
+/// </summary>
+
 #ifndef RenderTexture_h__
 #define RenderTexture_h__
 #include <d3d11.h>

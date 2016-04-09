@@ -1,3 +1,15 @@
+/// <summary>
+/// InputManager.h
+///
+/// About:
+/// InputManager.h handles all keyboard and mouse 
+/// input for the application. The implementation was 
+/// guided by RasterTek tutorial 13 and was adapted as 
+/// a singleton
+///
+/// RasterTek tutorial:
+/// http://www.rastertek.com/dx11tut13.html
+/// </summary>
 #ifndef InputManager_h__
 #define InputManager_h__
 

@@ -49,6 +49,9 @@
     <Filter Include="Source Files\Objects">
       <UniqueIdentifier>{6d482e65-d6c7-4289-86af-cbeb03d461d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Main">
+      <UniqueIdentifier>{44e0652b-d4f5-40d0-9b58-42e09dfaac49}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InputManager.cpp">
@@ -110,9 +113,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="System.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
@@ -167,16 +167,19 @@
     <ClInclude Include="Debug.h">
       <Filter>Header Files\SystemUtils</Filter>
     </ClInclude>
+    <ClInclude Include="System.h">
+      <Filter>Header Files\Main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Shaders\color.hlsl">
+    <None Include="color.hlsl">
       <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Shaders\model_position.hlsl">
+    </None>
+    <None Include="..\Shaders\model_position.hlsl">
       <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Shaders\raycast.hlsl">
+    </None>
+    <None Include="..\Shaders\raycast.hlsl">
       <Filter>Shaders</Filter>
-    </FxCompile>
+    </None>
   </ItemGroup>
 </Project>

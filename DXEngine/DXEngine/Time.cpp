@@ -26,5 +26,3 @@ float Time::PlayTime()const
 {
 	return (float)m_PlayTime;
 }
-
-

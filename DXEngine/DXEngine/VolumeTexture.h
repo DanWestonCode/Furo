@@ -1,3 +1,14 @@
+/// <summary>
+/// VolumeTexture.h
+///
+/// About:
+/// VolumeTexture.h loads a RAW file into a ID3D11Texture3D object 
+/// The implementation was guided by Dr.Christian B Mendl adaptation 
+/// of volume rendering 101's implementation of the functionality
+///
+/// Dr.Christian B Mendl: http://christian.mendl.net/pages/software.html - See 'InitDevice' function in 'Volume Ray-Casting Renderer project'
+/// Volume Rendering 101: http://graphicsrunner.blogspot.co.uk/2009/01/volume-rendering-101.html
+/// </summary>
 #ifndef VolumeTexture_h__
 #define VolumeTexture_h__
 
@@ -18,8 +29,6 @@ public:
 
 	HRESULT Initialize(D3D*, int);
 	void Shutdown();
-	void Update(ID3D11Device*, ID3D11DeviceContext*, int, float);
-	void Render(ID3D11DeviceContext*);
 
 public:
 	//volume texture

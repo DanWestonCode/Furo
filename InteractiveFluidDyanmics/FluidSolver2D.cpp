@@ -50,7 +50,6 @@ void FluidSolver2D::DensityStep(int gridSize, float* density, float* prevDensity
 
 }
 
-//gridSize, 0, dens, prevDens, xVel, yVel, dt
 void FluidSolver2D::Advect(int gridSize, int b, float* currentField, float* prevField, float* xVel, float* yVel, float dt)
 {
 	int i, j, i0, j0, i1, j1;
@@ -177,7 +176,6 @@ void FluidSolver2D::Diffuse(int gridSize, int b, float* dens, float* prevDens, f
 					(prevDens[GetXY(gridSize, x, y)] + diffusionRate * (dens[GetXY(gridSize, x - 1, y)] +
 					dens[GetXY(gridSize, x + 1, y)] + dens[GetXY(gridSize, x, y - 1)] +
 					dens[GetXY(gridSize, x, y + 1)])) / (1 + 4 * diffusionRate);
-
 			}
 		}
 	}

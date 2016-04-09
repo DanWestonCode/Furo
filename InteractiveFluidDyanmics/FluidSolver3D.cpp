@@ -13,7 +13,6 @@ FluidSolver3D::~FluidSolver3D()
 
 }
 
-
 void FluidSolver3D::SimStep(float* Vx0, float * Vy0, float* Vz0, float* Vx, float* Vy, float* Vz, float visc, float dt, float* density, float diff, float* s, int N)
 {
 
@@ -32,7 +31,6 @@ void FluidSolver3D::SimStep(float* Vx0, float * Vy0, float* Vz0, float* Vx, floa
 	diffuse(0, s, density, diff, dt, 4, N);
 	advect(0, density, s, Vx, Vy, Vz, dt, N);
 }
-
 
 void FluidSolver3D::set_bnd(int b, float *x, int N)
 {

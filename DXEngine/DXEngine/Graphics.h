@@ -2,24 +2,14 @@
 /// Graphics.cpp
 ///
 /// About:
-/// This class is where all GameObjects/renderes/Simulations 
-/// are initalized and run. This class is based from the 
+/// This class is where all GameObjects/renderers/Simulations 
+/// are initialized and run. This class is based from the 
 /// GraphicsClass, class found in RasterTek tutorial 04.
 ///
 /// RasterTek tutorial:
 /// http://www.rastertek.com/dx11s2tut04.html
 /// </summary>
-/// <summary>
-/// Graphics.cpp
-///
-/// About:
-/// This class is where all GameObjects/renders/Simulations 
-/// are initialised and run. This class is based from the 
-/// GraphicsClass, class found in RasterTek tutorial 04.
-///
-/// RasterTek tutorial:
-/// http://www.rastertek.com/dx11s2tut04.html
-/// </summary>
+
 #ifndef _GRAPHICS_H_
 #define _GRAPHICS_H_
 
@@ -46,7 +36,6 @@ public:
 	Graphics(const Graphics&);
 	~Graphics();
 
-
 	//Fix for 'warning C4316: object allocated on the heap may not be aligned 16'
 	//This kept giving me access violation errors using XMMatrix calculations
 	//functions discovered from:-
@@ -59,23 +48,19 @@ public:
 	bool Frame(float);
 
 	HWND _hwnd;
-
 private:
 	void Update(float);
 	bool Render(float);
-
 private:
 	//engine objects
 	D3D* m_D3D;
 	VolumeRenderer* m_VolumeRenderer;
+	Quad* m_Quad;
+	//Furo Objects
 	FluidGPU* m_fluidGPU;
 	StamSolver3D* m_fluid;
-	ID3D11Texture3D* m_Texture3D;
-	ID3D11ShaderResourceView* m_ShaderResourceView;
-
-
+	//vars
 	float* m_ClearBackBufferColor;
-	Quad* m_Quad;
 };
 
 #endif

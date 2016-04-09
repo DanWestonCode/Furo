@@ -1,4 +1,15 @@
-//class based on Rastertek tutorial
+/// <summary>
+/// InputManager.cpp
+///
+/// About:
+/// InputManager.cpp handles all keyboard and mouse 
+/// input for the application. The implementation was 
+/// guided by RasterTek tutorial 13 and was adapted as 
+/// a singleton
+///
+/// RasterTek tutorial:
+/// http://www.rastertek.com/dx11tut13.html
+/// </summary>
 
 #include "InputManager.h"
 

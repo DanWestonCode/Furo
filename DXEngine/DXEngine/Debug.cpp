@@ -1,3 +1,11 @@
+/// <summary>
+/// Debug.cpp
+///
+/// About:
+/// Debug.cpp is a singleton intended for use when running the engine in 
+/// debug mode. The class contains one function 'Log' which prints
+/// messages to the console window
+/// </summary>
 #include "Debug.h"
 #include <iostream>
 #include <string>

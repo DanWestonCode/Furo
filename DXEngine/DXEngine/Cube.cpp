@@ -1,14 +1,10 @@
 #include "Cube.h"
 
 Cube::Cube(){}
-Cube::~Cube()
-{
-
-}
+Cube::~Cube(){}
 
 HRESULT Cube::Initialise(ID3D11Device* _device)
 {
-	// Create ray-cast vertex and index buffers
 	HRESULT hr = S_OK;
 	XMFLOAT3 vertices[] =
 	{
@@ -53,6 +49,7 @@ HRESULT Cube::Initialise(ID3D11Device* _device)
 		5, 4, 7,
 		7, 4, 6,
 	};
+
 	ZeroMemory(&bd, sizeof(bd));
 	bd.Usage = D3D11_USAGE_IMMUTABLE;
 	bd.ByteWidth = sizeof(WORD) * ARRAYSIZE(indices);
@@ -61,7 +58,6 @@ HRESULT Cube::Initialise(ID3D11Device* _device)
 	ZeroMemory(&initData, sizeof(initData));
 	initData.pSysMem = indices;
 	hr = (_device->CreateBuffer(&bd, &initData, &m_IndexBuffer));
-
 
 	m_scale = XMFLOAT3(4, 8, 4);
 
@@ -76,7 +72,6 @@ void Cube::Render(ID3D11DeviceContext* _device)
 	_device->IASetVertexBuffers(0, 1, &m_VertexBuffer, &stride, &offset);
 	// Set index buffer
 	_device->IASetIndexBuffer(m_IndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-
 	// Set primitive topology
 	_device->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }

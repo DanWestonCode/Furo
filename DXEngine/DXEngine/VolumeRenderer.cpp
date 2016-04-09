@@ -1,11 +1,14 @@
 /// <summary>
-/// VolumeRenderer.cpp
+/// VolumeRenderer.h
 ///
 /// About:
-/// VolumeRenderer handles all the objects required for 
-/// thye volume rendering of the fluid. VolumeRenderer 
-/// also handles the 3D fluid simulation
-/// </summary>-
+/// VolumeRenderer.h handles all the objects required 
+/// rendering ID3D11Texture3D's. 
+/// Implementation was guided by Dr.Christian B Mendl implementation of the Volume Rendering 101 article
+///
+/// Dr.Christian B Mendl: http://christian.mendl.net/pages/software.html - See 'Render' function in 'Volume Ray-Casting Renderer project'
+/// Volume Rendering 101: http://graphicsrunner.blogspot.co.uk/2009/01/volume-rendering-101.html
+/// </summary>
 
 #include "VolumeRenderer.h"
 VolumeRenderer::VolumeRenderer()

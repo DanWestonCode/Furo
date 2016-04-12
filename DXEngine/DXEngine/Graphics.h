@@ -15,9 +15,10 @@
 
 #include <windows.h>
 #include "D3D.h"
-#include "Quad.h"
 #include "VolumeRenderer.h"
+#include "Quad.h"
 #include "FluidGPU.h"
+#include "VolumeTexture.h"
 #include "StamSolver3D.h"
 #include "Camera.h"
 
@@ -62,6 +63,7 @@ private:
 	//engine objects
 	D3D* m_D3D;
 	VolumeRenderer* m_VolumeRenderer;
+	VolumeTexture* m_VolumeTexture;
 	Quad* m_Quad;
 	//Furo Objects
 	FluidGPU* m_fluidGPU;

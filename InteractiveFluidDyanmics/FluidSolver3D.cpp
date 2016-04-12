@@ -25,6 +25,7 @@ FluidSolver3D::~FluidSolver3D()
 
 void FluidSolver3D::SimStep(float* Vx0, float * Vy0, float* Vz0, float* Vx, float* Vy, float* Vz, float visc, float dt, float* density, float diff, float* s, int N)
 {
+
 	diffuse(1, Vx0, Vx, visc, dt, 4, N);
 	diffuse(2, Vy0, Vy, visc, dt, 4, N);
 	diffuse(3, Vz0, Vz, visc, dt, 4, N);

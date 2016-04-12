@@ -15,7 +15,7 @@ namespace Furo
 	class StamSolver3D : public StamSolver
 	{
 	public:
-		void Update(float);
+		void Run(float);
 		void Clear();
 		void Initialize(int);
 		void ShutDown();

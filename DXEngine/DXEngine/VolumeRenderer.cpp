@@ -39,7 +39,7 @@ void VolumeRenderer::operator delete(void* memoryBlockPtr)
 VolumeRenderer::VolumeRenderer(const VolumeRenderer& other){}
 VolumeRenderer::~VolumeRenderer(){}
 
-HRESULT VolumeRenderer::Initialize(D3D* _d3d, HWND _hWnd, int _width, int _height)
+HRESULT VolumeRenderer::Initialize(D3D* _d3d, HWND _hWnd, int _width, int _height, bool _alpha)
 {
 	HRESULT result = S_OK;
 
@@ -103,6 +103,12 @@ HRESULT VolumeRenderer::Initialize(D3D* _d3d, HWND _hWnd, int _width, int _heigh
 
 	TwAddVarRW(_d3d->m_TwBar, "Renderer", TwDefineStruct("Renderer", _TwFluidProps, 3, sizeof(RenderProps), nullptr, nullptr), &m_RenderProps, NULL);
 #pragma endregion
+
+	//// Turn on the alpha blending?
+	if (_alpha)
+	{	
+		_d3d->GetDeviceContext()->OMSetBlendState(_d3d->m_AlphaState, nullptr, 0xffffffff);
+	}
 
 	return result;
 }
@@ -211,10 +217,6 @@ void VolumeRenderer::Render(D3D* m_D3D, ID3D11ShaderResourceView* _vol)
 	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);		// Draw front faces
 
 	// Ray-casting
-
-	// Turn on the alpha blending.
-	m_D3D->GetDeviceContext()->OMSetBlendState(m_D3D->m_AlphaState, nullptr, 0xffffffff);
-
 	// Set the input layout
 	m_D3D->GetDeviceContext()->IASetInputLayout(m_ModelShader->GetInputLayout());
 

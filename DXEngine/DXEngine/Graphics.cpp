@@ -75,6 +75,7 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	/*USE THIS TO CHANGE SIMULATION TYPE*/
 	/************************************/
 	m_simType = GPU3D;
+
 	#pragma region FURO SIM INIT
 	switch (m_simType)
 	{
@@ -84,10 +85,17 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		Camera::Instance()->m_pos = XMFLOAT3(0.0f, 25.0f, -200);
 		Camera::Instance()->m_LookAt = XMFLOAT3(50.f, 25.0f, 0.0f);
 		break;
+	case CPU3D:
+		//Create new Volume Renderer and Initialize 
+		m_VolumeRenderer = new VolumeRenderer;
+		m_VolumeRenderer->Initialize(m_D3D, hwnd, m_D3D->m_ScreenWidth, m_D3D->m_ScreenHeight, false);
+		m_VolumeTexture = new VolumeTexture;
+		m_VolumeTexture->Initialize(m_D3D, m_fluidSize);
+		break;
 	case GPU3D:
 		//Create new Volume Renderer and Initialize 
 		m_VolumeRenderer = new VolumeRenderer;
-		m_VolumeRenderer->Initialize(m_D3D, hwnd, m_D3D->m_ScreenWidth, m_D3D->m_ScreenHeight);
+		m_VolumeRenderer->Initialize(m_D3D, hwnd, m_D3D->m_ScreenWidth, m_D3D->m_ScreenHeight, true);
 		#pragma region GPU Fluid
 		m_fluidGPU = new FluidGPU;
 		m_fluidGPU->Initialize(m_fluidSize, m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hwnd);
@@ -183,6 +191,11 @@ void Graphics::Update(float dt)
 		//RUN FURO 2D CPU SIM
 		m_Quad->Update(dt, _hwnd);
 		break;
+	case CPU3D:
+		//UPATE VOLTEXT/RUN FURO 3D CPU
+		m_VolumeTexture->Update(m_D3D->GetDevice(), m_fluidSize, dt);
+		m_VolumeRenderer->Update(dt, m_D3D);
+		break;
 	case GPU3D:
 		//RUN FURO GPU SIM
 		m_fluidGPU->Run(dt, m_D3D->GetDeviceContext());
@@ -207,6 +220,10 @@ bool Graphics::Render(float dt)
 	case CPU2D:
 		//RENDER QUAD/FURO 2D CPU SIM 
 		m_Quad->Render(m_D3D);
+		break;
+	case CPU3D:
+		//RENDER FURO 3D CPU
+		m_VolumeRenderer->Render(m_D3D, m_VolumeTexture->m_ShaderResourceView);//pass SRV reference 
 		break;
 	case GPU3D:
 		//RENDER FURO GPU SIM USING VOL RENDERER

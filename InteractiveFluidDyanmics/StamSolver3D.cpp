@@ -51,7 +51,7 @@ void StamSolver3D::Initialize(int _size)
 	m_solver = new FluidSolver3D;
 }
 
-void StamSolver3D::Update(float dt)
+void StamSolver3D::Run(float dt)
 {
 	m_solver->SimStep(m_prevVelX, m_prevVelY, m_prevVelZ, m_velocityX, m_velocityY, m_velocityZ, m_visc, dt, m_density, m_diffusion, m_prevDensity, m_gridSize);
 }
@@ -59,7 +59,6 @@ void StamSolver3D::Update(float dt)
 void StamSolver3D::Clear()
 {
 	int size = (m_gridSize)* (m_gridSize)* (m_gridSize);
-	//change to memset
 	std::memset(m_prevVelX, 0, sizeof(float)*size);
 	std::memset(m_prevVelY, 0, sizeof(float)*size);
 	std::memset(m_prevVelZ, 0, sizeof(float)*size);

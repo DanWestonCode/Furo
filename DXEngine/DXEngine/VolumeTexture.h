@@ -17,8 +17,10 @@
 #include <DirectXMath.h>
 #include "D3D.h"
 #include <iostream>
+#include "StamSolver3D.h"
 
 using namespace DirectX;
+using namespace Furo;
 class VolumeTexture
 {
 public:
@@ -30,10 +32,13 @@ public:
 	HRESULT Initialize(D3D*, int);
 	void Shutdown();
 
+	void Update(ID3D11Device*, int, float);
+
 public:
 	//volume texture
 	ID3D11Texture3D* m_Texture3D;
 	ID3D11ShaderResourceView* m_ShaderResourceView;
+	StamSolver3D* m_CPUFluid3D;
 };
 
 #endif // VolumeTexture_h__

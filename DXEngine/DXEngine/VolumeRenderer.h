@@ -43,7 +43,7 @@ public:
 	void* operator new(size_t);
 	void operator delete(void*);
 
-	HRESULT Initialize(D3D*, HWND, int, int);
+	HRESULT Initialize(D3D*, HWND, int, int, bool);
 	void Shutdown();
 	void Update(float, D3D*);
 	void UpdateBuffers(D3D*);

@@ -1,3 +1,15 @@
+/// <summary>
+/// cube.h
+///
+/// About:
+/// Cube.h derives from VertexObject. The class creates a cube VO object.
+/// The implementation of the vertices and indicies for the cube was 
+/// guided by a similar implementation within Dr.Christian B Mendl project - 
+/// 'Volume Ray-Casting Renderer project'
+///
+/// References:
+/// Dr.Christian B Mendl: http://christian.mendl.net/pages/software.html - See 'volume_raycast.cpp' in 'Volume Ray-Casting Renderer project'
+///</summary>
 #ifndef Cube_h__
 #define Cube_h__
 

@@ -1,3 +1,11 @@
+/// <summary>
+/// StamSolver2D.cpp
+///
+/// About:
+/// StamSolver2D.cpp wraps the functionality of FluidSovler2D.
+/// The class is intended as FluidSolver2D's point of access
+/// for external use
+/// </summary>
 #include "StamSolver2D.h"
 #include <cstring>
 using namespace Furo;
@@ -28,11 +36,13 @@ void StamSolver2D::Initialize(int _size)
 	std::memset(m_density, 0, sizeof(float)*size);
 	std::memset(m_prevDensity, 0, sizeof(float)*size);
 
+	//create a new solver
 	m_solver = new FluidSolver2D;
 }
 
 void StamSolver2D::Run(float _dt)
 {
+	//run the solver 
 	m_solver->VelocityStep(m_gridSize, m_velocityX, m_prevVelX, m_velocityY, m_prevVelY, m_visc, _dt);
 	m_solver->DensityStep(m_gridSize, m_density, m_prevDensity, m_velocityX, m_velocityY, m_diffusion, _dt);
 }

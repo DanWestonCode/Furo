@@ -1,5 +1,15 @@
+/// <summary>
+/// FluidSolver3D.cpp
+///
+/// About:
+/// FluidSolver3D.cpp is a 3D adaptation of Stams solver seem within 
+/// FluidSolver2D.cpp. The implementation contained within this 
+/// class was guided by Mike Ash's article'Fluid Simulation for Dummies'
+///
+/// References:
+/// All functions guided by Mike Ash - https://mikeash.com/pyblog/fluid-simulation-for-dummies.html
+/// </summary>
 #include "FluidSolver3D.h"
-
 #include <algorithm>    
 #define GetXYZ(gridSize,x,y,z) ((x) + (y)* gridSize + (z) * gridSize * gridSize)
 
@@ -15,7 +25,6 @@ FluidSolver3D::~FluidSolver3D()
 
 void FluidSolver3D::SimStep(float* Vx0, float * Vy0, float* Vz0, float* Vx, float* Vy, float* Vz, float visc, float dt, float* density, float diff, float* s, int N)
 {
-
 	diffuse(1, Vx0, Vx, visc, dt, 4, N);
 	diffuse(2, Vy0, Vy, visc, dt, 4, N);
 	diffuse(3, Vz0, Vz, visc, dt, 4, N);

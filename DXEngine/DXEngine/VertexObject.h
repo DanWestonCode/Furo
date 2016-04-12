@@ -1,3 +1,10 @@
+/// <summary>
+/// VertexObject.h
+///
+/// About:
+/// VertexObject.h derives from Object. The class is intended 
+/// as a base class for all Vertex objects (quads ect)
+///</summary>
 #ifndef VertexObject_h__
 #define VertexObject_h__
 

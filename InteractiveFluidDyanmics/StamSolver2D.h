@@ -1,11 +1,11 @@
-/*************************************************************/
-/*                                                           */
-/* TextureFluid is the two dimensional fluid simulation      */
-/* in Furo. TextureFluid returns a velocity field for use in */
-/* synthesizing 2D textures expressing fluid flows           */
-/*                                                           */
-/* Created by Daniel Weston 19/12/2015                       */
-/*************************************************************/
+/// <summary>
+/// StamSolver2D.h
+///
+/// About:
+/// StamSolver2D.h wraps the functionality of FluidSovler2D.
+/// The class is intended as FluidSolver2D's point of access
+/// for external use
+/// </summary>
 #ifndef FluidTwoDimensional_h__
 #define FluidTwoDimensional_h__
 #include "StamSolver.h"

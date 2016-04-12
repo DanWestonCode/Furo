@@ -44,15 +44,15 @@ void Graphics::operator delete(void* memoryBlockPtr)
 HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	_hwnd = hwnd;
-
 	HRESULT result = S_OK;
+	
+	#pragma region Create D3D Object/Device
 	// Create the Direct3D object.
 	m_D3D = new D3D;
 	if (!m_D3D)
 	{
 		return S_FALSE;
 	}
-
 	// Initialize the Direct3D object.
 	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
 	if (FAILED(result))
@@ -60,42 +60,55 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
 		return S_FALSE;
 	}
+	#pragma endregion
 
-	//Set up engine AnTweak vars
+	#pragma region DXEngine AnTweak Vars
 	m_ClearBackBufferColor = new float;
 	std::memset(m_ClearBackBufferColor, 0, sizeof(float) * 4);
 	float ClearBackBuffer[4] = { 0.f, 0.f, 0.f, 1.f };
 	TwAddSeparator(m_D3D->m_TwBar, "Engine", "");
 	TwAddVarRW(m_D3D->m_TwBar, "Camera Position", TW_TYPE_DIR3F, &Camera::Instance()->m_pos, "");
 	TwAddVarRW(m_D3D->m_TwBar, "Back Buffer", TW_TYPE_COLOR3F, &*m_ClearBackBufferColor, "");
-
-	//Create new Volume Renderer and Initialize 
-	m_VolumeRenderer = new VolumeRenderer;
-	m_VolumeRenderer->Initialize(m_D3D, hwnd, m_D3D->m_ScreenWidth, m_D3D->m_ScreenHeight);
-
-	#pragma region GPU Fluid
-
-	m_fluidGPU = new FluidGPU;
-	m_fluidGPU->Initialize(m_fluidSize, m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hwnd);
-
-	#pragma region AnTweak Bar vars
-	TwStructMember _GPUFluidVars[] = {
-		{ "Impulse Radius", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_impulseRadius), "min=0.01 max=0.08 step=0.01" },
-		{ "Density", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_densityAmount), "min=0.1 max=10 step=0.1" },
-		{ "Temperature", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_TemperatureAmount), "min=0.1 max=1000 step=0.1" },
-		{ "Decay", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_decay), "min=0.0 max=100 step=0.1" },
-		{ "Dissipation", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_densityDissipation), "min=0.995 max=100 step=0.1" },
-		{ "Ambient Temperature", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_ambientTemperature), "min=0.995 max=1000 step=0.1" },
-		{ "Buoyancy", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_buoyancy), "min=0.995 max=100 step=0.1" },
-		{ "Smoke Weight", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_weight), "min=0.0125 max=100 step=0.1" },
-		{ "Vorticity Strength", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_VorticityStrength), "min=0.1 max=1000 step=0.1" }
-	};
-	TwAddVarRW(m_D3D->m_TwBar, "Simulation Properties", TwDefineStruct("Simulation", _GPUFluidVars, 9, sizeof(FluidGPU::SimulationVars), nullptr, nullptr), &m_fluidGPU->m_GPUFluidVars, NULL);
-#pragma endregion
 	#pragma endregion
 
-	/*m_Quad = new Quad;
-	m_Quad->Initialise(m_D3D, hwnd);*/
+	/************************************/
+	/*USE THIS TO CHANGE SIMULATION TYPE*/
+	/************************************/
+	m_simType = GPU3D;
+	#pragma region FURO SIM INIT
+	switch (m_simType)
+	{
+	case CPU2D:
+		m_Quad = new Quad;
+		m_Quad->Initialise(m_D3D, hwnd);
+		Camera::Instance()->m_pos = XMFLOAT3(0.0f, 25.0f, -200);
+		Camera::Instance()->m_LookAt = XMFLOAT3(50.f, 25.0f, 0.0f);
+		break;
+	case GPU3D:
+		//Create new Volume Renderer and Initialize 
+		m_VolumeRenderer = new VolumeRenderer;
+		m_VolumeRenderer->Initialize(m_D3D, hwnd, m_D3D->m_ScreenWidth, m_D3D->m_ScreenHeight);
+		#pragma region GPU Fluid
+		m_fluidGPU = new FluidGPU;
+		m_fluidGPU->Initialize(m_fluidSize, m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hwnd);
+		#pragma region AnTweak Bar vars
+		TwStructMember _GPUFluidVars[] = {
+			{ "Impulse Radius", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_impulseRadius), "min=0.01 max=0.08 step=0.01" },
+			{ "Density", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_densityAmount), "min=0.1 max=10 step=0.1" },
+			{ "Temperature", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_TemperatureAmount), "min=1.0 max=1000 step=0.1" },
+			{ "Decay", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_decay), "min=0.0 max=100 step=0.1" },
+			{ "Dissipation", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_densityDissipation), "min=0.995 max=100 step=0.1" },
+			{ "Ambient Temperature", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_ambientTemperature), "min=0.995 max=1000 step=0.1" },
+			{ "Buoyancy", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_buoyancy), "min=0.995 max=100 step=0.1" },
+			{ "Smoke Weight", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_weight), "min=0.0125 max=100 step=0.1" },
+			{ "Vorticity Strength", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_VorticityStrength), "min=0.1 max=1000 step=0.1" }
+		};
+		TwAddVarRW(m_D3D->m_TwBar, "Simulation Properties", TwDefineStruct("Simulation", _GPUFluidVars, 9, sizeof(FluidGPU::SimulationVars), nullptr, nullptr), &m_fluidGPU->m_GPUFluidVars, NULL);
+		#pragma endregion
+		#pragma endregion
+		break;
+	}
+	#pragma endregion
 
 	return result;
 }
@@ -161,10 +174,23 @@ void Graphics::Update(float dt)
 {
 	//update scene camera
 	Camera::Instance()->Update(dt);
-	//RUN FURO GPU SIM
-	m_fluidGPU->Run(dt, m_D3D->GetDeviceContext());
-	//UPDATE Volume Renderer
-	m_VolumeRenderer->Update(dt, m_D3D);
+
+	#pragma region FURO SIM UPDATE 
+	//update pending on simulation type
+	switch (m_simType)
+	{
+	case CPU2D:
+		//RUN FURO 2D CPU SIM
+		m_Quad->Update(dt, _hwnd);
+		break;
+	case GPU3D:
+		//RUN FURO GPU SIM
+		m_fluidGPU->Run(dt, m_D3D->GetDeviceContext());
+		//UPDATE Volume Renderer
+		m_VolumeRenderer->Update(dt, m_D3D);
+		break;
+	}
+	#pragma endregion
 }
 
 bool Graphics::Render(float dt)
@@ -173,8 +199,22 @@ bool Graphics::Render(float dt)
 	m_D3D->BeginScene(m_ClearBackBufferColor);
 	//Render scene camera
 	Camera::Instance()->Render();
-	//RENDER FURO GPU SIM USING VOL RENDERER
-	m_VolumeRenderer->Render(m_D3D, m_fluidGPU->m_DensitySRV[0]);//pass SRV reference 
+
+	#pragma region FURO SIM RENDER
+	//render pending on simulation type
+	switch (m_simType)
+	{
+	case CPU2D:
+		//RENDER QUAD/FURO 2D CPU SIM 
+		m_Quad->Render(m_D3D);
+		break;
+	case GPU3D:
+		//RENDER FURO GPU SIM USING VOL RENDERER
+		m_VolumeRenderer->Render(m_D3D, m_fluidGPU->m_DensitySRV[0]);//pass SRV reference 
+		break;
+	}
+	#pragma endregion
+		
 	//Draw AnTweak
 	TwDraw();
 	//present the scene

@@ -1,3 +1,11 @@
+/// <summary>
+/// StamSolver3D.cpp
+///
+/// About:
+/// StamSolver3D.cpp wraps the functionality of FluidSovler3D.
+/// The class is intended as FluidSolver3D's point of access
+/// for external use
+/// </summary>
 #include "StamSolver3D.h"
 #include <cstring>
 using namespace Furo;

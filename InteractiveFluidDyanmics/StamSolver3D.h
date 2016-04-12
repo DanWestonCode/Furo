@@ -1,3 +1,11 @@
+/// <summary>
+/// StamSolver3D.h
+///
+/// About:
+/// StamSolver3D.h wraps the functionality of FluidSovler3D.
+/// The class is intended as FluidSolver3D's point of access
+/// for external use
+/// </summary>
 #ifndef FluidThreeDimensional_h__
 #define FluidThreeDimensional_h__
 #include "StamSolver.h"

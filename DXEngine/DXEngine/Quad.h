@@ -1,3 +1,11 @@
+/// <summary>
+/// Quad.h
+///
+/// About:
+/// Quad.h derives from VertexObject. The class creates a Quad VO object.
+/// Within the Quad class the implementation for the 
+/// 2D CPU Fluid is also found
+///</summary>
 #ifndef Quad_h__
 #define Quad_h__
 

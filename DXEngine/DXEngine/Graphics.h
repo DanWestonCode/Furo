@@ -51,6 +51,13 @@ public:
 private:
 	void Update(float);
 	bool Render(float);
+
+	enum Simulation{
+		CPU2D,
+		CPU3D,
+		GPU3D
+	};
+
 private:
 	//engine objects
 	D3D* m_D3D;
@@ -61,6 +68,7 @@ private:
 	StamSolver3D* m_fluid;
 	//vars
 	float* m_ClearBackBufferColor;
+	Simulation m_simType;
 };
 
 #endif

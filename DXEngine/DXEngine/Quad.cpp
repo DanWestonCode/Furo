@@ -1,3 +1,11 @@
+/// <summary>
+/// Quad.h
+///
+/// About:
+/// Quad.h derives from VertexObject. The class creates a Quad VO object.
+/// Within the Quad class the implementation for the 
+/// 2D CPU Fluid is also found
+///</summary>
 #include "Quad.h"
 #include "Camera.h"
 Quad::Quad()
@@ -10,14 +18,9 @@ Quad::Quad()
 	densityMulti = 10.0f;
 }
 
-Quad::Quad(const Quad& other)
-{
-}
+Quad::Quad(const Quad& other){}
 
-Quad::~Quad()
-{
-
-}
+Quad::~Quad(){}
 
 HRESULT Quad::Initialise(D3D* _d3d, HWND hwnd)
 {

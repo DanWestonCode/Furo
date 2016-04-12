@@ -1,6 +1,15 @@
+/// <summary>
+/// FluidSolver2D.cpp
+///
+/// About:
+/// This class is an implementation of Jos Stams solver
+/// highlighted within his 2003 GDC paper 'Real-Time Fluid Dynamics for Games'
+/// This solver solves a velocity and density field over time.
+/// GDC Paper:
+/// http://www.intpowertechcorp.com/GDC03.pdf
+/// </summary>
 #ifndef FluidSolver_h__
 #define FluidSolver_h__
-
 class FluidSolver2D
 {
 public:
@@ -17,6 +26,4 @@ public:
 
 	void Swap(float*_x, float* _y);
 };
-
-
 #endif // FluidSolver_h__

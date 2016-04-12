@@ -1,3 +1,11 @@
+/// <summary>
+/// StamSolver.h
+///
+/// About:
+/// StamSolver.h is the base class for both the 2D and 3D CPU 
+/// methods within Furo. The class is utilized as a base class,
+/// containing variables common between the two simulations
+/// </summary>
 #ifndef StamSolver_h__
 #define StamSolver_h__
 

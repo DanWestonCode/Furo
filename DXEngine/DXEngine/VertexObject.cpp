@@ -1,5 +1,11 @@
+/// <summary>
+/// VertexObject.cpp
+///
+/// About:
+/// VertexObject.cpp derives from Object. The class is intended 
+/// as a base class for all Vertex objects (quads ect)
+///</summary>
 #include "VertexObject.h"
-
 VertexObject::VertexObject()
 {
 	m_VertexBuffer = nullptr;

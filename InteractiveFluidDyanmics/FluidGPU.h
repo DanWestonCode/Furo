@@ -1,6 +1,22 @@
+/// <summary>
+/// FluidGPU.h
+///
+/// About:
+/// FluidGPU.h contains the implementation for compiling and running
+/// the shader based (GPU) fluid simulation. The implementation found within this
+/// class was partially guided by Scrawks 'SmokeFluidSim.cs' class and  Valentin Hinov 'Fluid3DCalculator.cpp' 
+/// class. Valentin Hinov's creation of Textures, UAV's and SRV's within 'FluidResource.cpp was
+/// utilized with the creation of resources within this class. The Update function containing the simulation steps 
+/// was taken from Keenan Crane GPU gems chapter.
+///
+/// Based from:
+/// Fluid3DCalculator.cpp - Valentin Hinov - https://github.com/Morji/Fluid-Simulation-DirectX11
+/// FluidResources.cpp - Valentin Hinov - https://github.com/Morji/Fluid-Simulation-DirectX11
+/// SmokeFluidSim.cs - Scrawk Blog - https://scrawkblog.com/2014/01/09/gpu-gems-to-unity-3d-fluid-simulation/
+/// GPU Gems update step - Keenan Crane - http://http.developer.nvidia.com/GPUGems3/gpugems3_ch30.html
+/// </summary>
 #ifndef FluidGPU_h__
 #define FluidGPU_h__
-
 #pragma comment(lib, "dxgi.lib") 
 #pragma comment(lib, "d3d11.lib") 
 #pragma comment(lib, "d3dcompiler.lib")

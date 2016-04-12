@@ -15,8 +15,8 @@ Object::Object()
 	m_worldMatrix = XMMatrixIdentity();
 	vel = 5.0f;
 };
-Object::~Object(){};
 
+Object::~Object(){};
 
 //Fix for 'warning C4316: object allocated on the heap may not be aligned 16'
 //This kept giving me access violation errors using XMMatrix calculations
@@ -33,7 +33,6 @@ void Object::operator delete(void* memoryBlockPtr)
 	_aligned_free(memoryBlockPtr);
 	return;
 }
-
 
 void Object::Update(float dt)
 {

@@ -1,3 +1,14 @@
+/// <summary>
+/// FluidSolver3D.h
+///
+/// About:
+/// FluidSolver3D.h is a 3D adaptation of Stams solver seem within 
+/// FluidSolver2D.h. The implementation contained within this 
+/// class was guided by Mike Ash's article'Fluid Simulation for Dummies'
+///
+/// References:
+/// All functions guided by Mike Ash - https://mikeash.com/pyblog/fluid-simulation-for-dummies.html
+/// </summary>
 #ifndef FluidSolver3D_h__
 #define FluidSolver3D_h__
 

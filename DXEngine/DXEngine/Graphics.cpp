@@ -85,19 +85,22 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	#pragma region GPU Fluid
 	m_fluidGPU = new FluidGPU;
 	m_fluidGPU->Initialize(m_fluidSize, m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hwnd);
-	#pragma region AnTweak Bar vars
+
+#pragma region AnTweak Bar vars
 	TwStructMember _GPUFluidVars[] = {
 		{ "Impulse Radius", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_impulseRadius), "min=0.01 max=0.08 step=0.01" },
 		{ "Density", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_densityAmount), "min=0.1 max=10 step=0.1" },
 		{ "Temperature", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_TemperatureAmount), "min=1.0 max=1000 step=0.1" },
 		{ "Decay", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_decay), "min=0.0 max=100 step=0.1" },
-		{ "Dissipation", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_densityDissipation), "min=0.995 max=100 step=0.1" },
+		{ "Dissipation", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_densityDissipation), "min=0.0 max=1 step=0.01" },
+		{ "Velocity Dissipation", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_velocityDissipation), "min=0.0 max=1 step=0.01" },
+		{ "Temperature Dissipation", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_temperatureDissipation), "min=0.0 max=1 step=0.01" },
 		{ "Ambient Temperature", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_ambientTemperature), "min=0.995 max=1000 step=0.1" },
 		{ "Buoyancy", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_buoyancy), "min=0.995 max=100 step=0.1" },
 		{ "Smoke Weight", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_weight), "min=0.0125 max=100 step=0.1" },
 		{ "Vorticity Strength", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_VorticityStrength), "min=0.1 max=1000 step=0.1" }
 	};
-	TwAddVarRW(m_D3D->m_TwBar, "GPU3D Fluid Vars", TwDefineStruct("GPU3D", _GPUFluidVars, 9, sizeof(FluidGPU::SimulationVars), nullptr, nullptr), &m_fluidGPU->m_GPUFluidVars, NULL);
+	TwAddVarRW(m_D3D->m_TwBar, "GPU3D Fluid Vars", TwDefineStruct("GPU3D", _GPUFluidVars, 11, sizeof(FluidGPU::SimulationVars), nullptr, nullptr), &m_fluidGPU->m_GPUFluidVars, NULL);
 	#pragma endregion
 	#pragma endregion
 	m_VolumeRenderer = new VolumeRenderer;

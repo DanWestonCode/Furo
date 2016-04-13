@@ -68,8 +68,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>D:\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>D:\Documents\GitHub\InteractiveFluidDynamics\InteractiveFluidDyanmics;C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\DXEngine\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\..\InteractiveFluidDyanmics;$(SolutionDir)\DXEngine\lib;$(IncludePath)</IncludePath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -80,8 +80,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\Documents\GitHub\InteractiveFluidDynamics\InteractiveFluidDyanmics;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\..\InteractiveFluidDyanmics;$(SolutionDir)\DXEngine\lib;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\DXEngine\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -95,13 +95,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\Documents\GitHub\InteractiveFluidDynamics\DXEngine\Debug;C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\DXEngine\Debug;$(SolutionDir)\DXEngine\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\DXEngine\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>AntTweakBar.lib;AntTweakBar64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -131,14 +131,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\Documents\GitHub\InteractiveFluidDynamics\DXEngine\Debug;C:\Users\westo\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\DXEngine\Debug;$(SolutionDir)\DXEngine\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>D:\Documents\GitHub\InteractiveFluidDynamics\DXEngine\DXEngine\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\DXEngine\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

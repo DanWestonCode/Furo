@@ -240,7 +240,7 @@ void VolumeRenderer::Render(D3D* m_D3D, ID3D11ShaderResourceView* _vol)
 	// Draw the cube
 	m_D3D->GetDeviceContext()->DrawIndexed(36, 0, 0);
 
-	 //Un-bind textures
+	//Un-bind textures
 	ID3D11ShaderResourceView *nullRV[3] = { NULL, NULL,NULL };
 	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 3, nullRV);
 }
@@ -253,6 +253,6 @@ void VolumeRenderer::AlphaBlend(D3D* _d3d, bool _blend)
 	}
 	else
 	{
-		_d3d->GetDeviceContext()->OMSetBlendState(nullptr, nullptr, 0xffffffff);
+		_d3d->GetDeviceContext()->OMSetBlendState(_d3d->m_NoAlphaState, nullptr, 0xffffffff);
 	}
 }

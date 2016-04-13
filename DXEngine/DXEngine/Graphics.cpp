@@ -62,19 +62,17 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 	#pragma endregion
 
-	#pragma region DXEngine AnTweak Vars
-	m_ClearBackBufferColor = new float;
-	std::memset(m_ClearBackBufferColor, 0, sizeof(float) * 4);
-	float ClearBackBuffer[4] = { 0.f, 0.f, 0.f, 1.f };
-	TwAddSeparator(m_D3D->m_TwBar, "Engine", "");
-	TwAddVarRW(m_D3D->m_TwBar, "Camera Position", TW_TYPE_DIR3F, &Camera::Instance()->m_pos, "");
-	TwAddVarRW(m_D3D->m_TwBar, "Back Buffer", TW_TYPE_COLOR3F, &*m_ClearBackBufferColor, "");
-	#pragma endregion
-
 	/************************************/
 	/*USE THIS TO CHANGE SIMULATION TYPE*/
 	/************************************/
 	m_simType = GPU3D;
+	#pragma region DXEngine AnTweak Vars
+	m_ClearBackBufferColor = new float;
+	std::memset(m_ClearBackBufferColor, 0, sizeof(float) * 4);
+	float ClearBackBuffer[4] = { 0.f, 0.f, 0.f, 1.f };
+	TwAddVarRW(m_D3D->m_TwBar, "Camera Position", TW_TYPE_DIR3F, &Camera::Instance()->m_pos, "");
+	TwAddVarRW(m_D3D->m_TwBar, "Back Buffer", TW_TYPE_COLOR3F, &*m_ClearBackBufferColor, "");
+	#pragma endregion
 
 	#pragma region FURO SIM INIT
 	//2D CPU
@@ -99,7 +97,7 @@ HRESULT Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		{ "Smoke Weight", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_weight), "min=0.0125 max=100 step=0.1" },
 		{ "Vorticity Strength", TW_TYPE_FLOAT, offsetof(FluidGPU::SimulationVars, m_VorticityStrength), "min=0.1 max=1000 step=0.1" }
 	};
-	TwAddVarRW(m_D3D->m_TwBar, "Simulation Properties", TwDefineStruct("Simulation", _GPUFluidVars, 9, sizeof(FluidGPU::SimulationVars), nullptr, nullptr), &m_fluidGPU->m_GPUFluidVars, NULL);
+	TwAddVarRW(m_D3D->m_TwBar, "GPU3D Fluid Vars", TwDefineStruct("GPU3D", _GPUFluidVars, 9, sizeof(FluidGPU::SimulationVars), nullptr, nullptr), &m_fluidGPU->m_GPUFluidVars, NULL);
 	#pragma endregion
 	#pragma endregion
 	m_VolumeRenderer = new VolumeRenderer;
@@ -168,24 +166,32 @@ bool Graphics::Frame(float dt)
 
 void Graphics::Update(float dt)
 {
+	//change the fluid type? 
 	if (InputManager::Instance()->IsKeyPressed(DIK_1))
 	{
 		m_simType = GPU3D;
+		m_fluidGPU->Clear((m_D3D->GetDeviceContext()));
 		Camera::Instance()->m_pos = XMFLOAT3(0.0f, 0.0f, -25);
 		Camera::Instance()->m_LookAt = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_VolumeRenderer->AlphaBlend(m_D3D, true);
+		m_VolumeRenderer->m_RenderProps.absoprtion = 0.05f;
 	}
 	if (InputManager::Instance()->IsKeyPressed(DIK_2))
 	{
 		m_simType = CPU2D;
+		m_Quad->m_fluid->Empty();
+
 		Camera::Instance()->m_pos = XMFLOAT3(0.0f, 25.0f, 200);
-		Camera::Instance()->m_LookAt = XMFLOAT3(50.f, 25.0f, 0.0f);
+		Camera::Instance()->m_LookAt = XMFLOAT3(75.f, 25.0f, 0.0f);
 	}
 	if (InputManager::Instance()->IsKeyPressed(DIK_3))
 	{
 		m_simType = CPU3D;
+		m_VolumeTexture->m_CPUFluid3D->Empty();
 		Camera::Instance()->m_pos = XMFLOAT3(0.0f, 0.0f, -25);
 		Camera::Instance()->m_LookAt = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		m_VolumeRenderer->AlphaBlend(m_D3D, false);
+		m_VolumeRenderer->m_RenderProps.absoprtion = 0.60f;
 	}
 
 	//update scene camera

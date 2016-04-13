@@ -212,6 +212,17 @@ void FluidGPU::CompileShaders(ID3D11Device* _device, HWND _hwnd)
 	result = _device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_ProjectionCS);
 #pragma endregion
 
+#pragma region Clear
+	blob = nullptr;
+	// Compile and create the pixel shader
+	result = CompileShaderFromFile(L"../Shaders/ClearFields.hlsl", "ComputeClear", "cs_5_0", &blob);
+	if (FAILED(result))
+	{
+		MessageBox(_hwnd, L"Could not locate '../Shaders/ClearFields.hlsl'", L"Error", MB_OK);
+	}
+	result = _device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_ClearCS);
+#pragma endregion
+
 	blob->Release();
 }
 
@@ -748,4 +759,15 @@ void FluidGPU::ComputeProjection(ID3D11DeviceContext* _deviceContext)
 
 	// Disable Compute Shader
 	_deviceContext->CSSetShader(nullptr, nullptr, 0);
+}
+
+void FluidGPU::Clear(ID3D11DeviceContext* _deviceContext)
+{
+	//set the Compute shader
+	_deviceContext->CSSetShader(m_ClearCS, nullptr, 0);
+	//bind the UAV to the shader 
+	ID3D11UnorderedAccessView *const UAVS[11] = { m_VelocityUAV[READ], m_VelocityUAV[WRITE], m_DensityUAV[READ], m_DensityUAV[WRITE], m_VorticityUAV, m_TemperatureUAV[READ], m_TemperatureUAV[WRITE], m_DivergenceUAV, m_PressureUAV[READ], m_PressureUAV[WRITE], m_TempUAV[READ]};
+	_deviceContext->CSSetUnorderedAccessViews(0, 11, UAVS, 0);
+	//dispatch
+	_deviceContext->Dispatch((UINT)FluidSize / NUM_THREADS, (UINT)(FluidSize * 2) / NUM_THREADS, (UINT)FluidSize / NUM_THREADS);
 }

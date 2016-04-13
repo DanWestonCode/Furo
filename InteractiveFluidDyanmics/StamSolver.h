@@ -19,6 +19,7 @@ namespace Furo
 		virtual void Run(float){};
 		virtual void Shutdown();
 		virtual void Clear(){};
+		virtual void Empty(){};
 	public:
 		//Getters/Setters
 		int GetGridSize(){ return m_gridSize; }

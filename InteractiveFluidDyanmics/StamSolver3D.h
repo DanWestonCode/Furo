@@ -19,6 +19,7 @@ namespace Furo
 		void Clear();
 		void Initialize(int);
 		void ShutDown();
+		void Empty();
 
 		void SetDensity(int x, int y, int z, float val){ m_density[((x)+(y)* m_gridSize + (z)* m_gridSize * m_gridSize)] += val; }
 		void SetVelX(int x, int y, int z, float val){ m_velocityX[((x)+(y)* m_gridSize + (z)* m_gridSize * m_gridSize)] += val; }

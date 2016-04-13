@@ -13,9 +13,6 @@ Quad::Quad()
 	m_ColorShader = nullptr;
 	m_ColorVertLayout = nullptr;
 	m_fluid = nullptr;
-
-	veloMulti = 100;
-	densityMulti = 10.0f;
 }
 
 Quad::Quad(const Quad& other){}
@@ -88,10 +85,16 @@ HRESULT Quad::Initialise(D3D* _d3d, HWND hwnd)
 	m_fluid->Initialize(numTris);
 
 	TwAddSeparator(_d3d->m_TwBar, "Simulation Variables", "");
+	
+	m_props.densityMulti = 10.0f;
+	m_props.veloMulti = 100.0f;
 
-	TwAddVarRW(_d3d->m_TwBar, "Density", TW_TYPE_FLOAT, &densityMulti, "");
-	TwAddVarRW(_d3d->m_TwBar, "Velocity", TW_TYPE_FLOAT, &veloMulti, "");
-
+	TwStructMember _CPUFluidVars[] = {
+		{ "Velocity", TW_TYPE_FLOAT, offsetof(SimProps, veloMulti), "min=0.01 max=1000 step=0.5" },
+		{ "Density", TW_TYPE_FLOAT, offsetof(SimProps, densityMulti), "min=0.01 max=100 step=0.1" }
+	};
+	TwAddVarRW(_d3d->m_TwBar, "CPU2D Fluid Vars", TwDefineStruct("CPU2D", _CPUFluidVars, 2, sizeof(SimProps), nullptr, nullptr), &m_props, NULL);
+	
 	return S_OK;
 }
 
@@ -128,7 +131,6 @@ void Quad::Render(D3D* _d3d)
 }
 
 void Quad::Shutdown()
-
 {
 	if (m_ColorShader)
 	{
@@ -154,9 +156,9 @@ void Quad::Update(float dt, HWND hwnd)
 	m_fluid->Run(dt);
 	m_fluid->Clear();
 
-	m_fluid->SetDensity((int)numTris / 2.0f, 2, densityMulti);
-	m_fluid->SetVelX((int)numTris / 2.0f, 2, veloMulti);
-	m_fluid->SetVelY((int)numTris / 2.0f, 2, veloMulti);
+	m_fluid->SetDensity((int)numTris / 2.0f, 2, m_props.densityMulti);
+	m_fluid->SetVelX((int)numTris / 2.0f, 2, m_props.veloMulti);
+	m_fluid->SetVelY((int)numTris / 2.0f, 2, m_props.veloMulti);
 
 	//Copy the fluid into the struct ready for rendering
 	UpdateFluid(m_fluid->m_density);

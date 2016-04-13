@@ -23,6 +23,11 @@ protected:
 		XMFLOAT3 position;
 		XMFLOAT4 color;
 	};
+	struct SimProps
+	{
+		float veloMulti;
+		float densityMulti;
+	};
 
 public: 
 	Quad();
@@ -45,8 +50,7 @@ public:
 
 	StamSolver2D* m_fluid;
 protected:
-	float veloMulti;
-	float densityMulti;
+	SimProps m_props;
 };
 
 #endif // Quad_h__

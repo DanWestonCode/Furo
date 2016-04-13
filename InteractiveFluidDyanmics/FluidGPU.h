@@ -41,6 +41,8 @@ namespace Furo
 			void Initialize(int, ID3D11Device*, ID3D11DeviceContext*, HWND);
 			void Run(float, ID3D11DeviceContext*);
 			void Shutdown();
+			void Clear(ID3D11DeviceContext*);
+
 		private:
 			void CompileShaders(ID3D11Device*, HWND);
 			void CreateResources(ID3D11Device*);
@@ -125,6 +127,7 @@ namespace Furo
 			ID3D11ComputeShader* m_DivergenceCS;
 			ID3D11ComputeShader* m_JacobiCS;
 			ID3D11ComputeShader* m_ProjectionCS;
+			ID3D11ComputeShader* m_ClearCS;
 
 			//Textures
 			ID3D11Texture3D* m_BoundaryConditions;

@@ -49,11 +49,12 @@ public:
 	void Update(float, D3D*);
 	void UpdateBuffers(D3D*);
 	void Render(D3D*, ID3D11ShaderResourceView*);
+	RenderProps m_RenderProps;
+
 
 private:
 	void CreateSampler(ID3D11Device*);
 private:
-	RenderProps m_RenderProps;
 	RenderProps m_PrevProps;
 protected:
 	//objects

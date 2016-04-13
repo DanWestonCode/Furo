@@ -343,9 +343,11 @@ bool D3D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, b
 	// Create the blend state using the description.
 	result = m_device->CreateBlendState(&blendStateDescription, &m_AlphaState);
 
-	// Create the blend state using the description.
-	result = m_device->CreateBlendState(&blendStateDescription, &m_AlphaState);
+	// Create an alpha enabled blend state description.
+	blendStateDescription.RenderTarget[0].BlendEnable = FALSE;
 
+	// Create the blend state using the description.
+	result = m_device->CreateBlendState(&blendStateDescription, &m_NoAlphaState);
 	//Init AnTweakBar
 	TwInit(TW_DIRECT3D11, m_device);
 	TwWindowSize((float)screenWidth, (float)screenHeight);

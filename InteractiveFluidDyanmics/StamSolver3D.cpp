@@ -65,6 +65,21 @@ void StamSolver3D::Clear()
 	std::memset(m_prevDensity, 0, sizeof(float)*size);
 }
 
+void StamSolver3D::Empty()
+{
+	int size = (m_gridSize)* (m_gridSize)* (m_gridSize);
+	//change to memset
+	std::memset(m_prevVelX, 0, sizeof(float)*size);
+	std::memset(m_prevVelY, 0, sizeof(float)*size);
+	std::memset(m_prevDensity, 0, sizeof(float)*size);
+	std::memset(m_prevVelZ, 0, sizeof(float)*size);
+
+	std::memset(m_density, 0, sizeof(float)*size);
+	std::memset(m_velocityY, 0, sizeof(float)*size);
+	std::memset(m_velocityX, 0, sizeof(float)*size);
+	std::memset(m_velocityZ, 0, sizeof(float)*size);
+}
+
 void StamSolver3D::ShutDown()
 {
 	StamSolver::Shutdown();

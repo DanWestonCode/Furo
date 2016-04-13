@@ -45,6 +45,7 @@ public:
 
 	HRESULT Initialize(D3D*, HWND, int, int, bool);
 	void Shutdown();
+	void AlphaBlend(D3D*, bool);
 	void Update(float, D3D*);
 	void UpdateBuffers(D3D*);
 	void Render(D3D*, ID3D11ShaderResourceView*);

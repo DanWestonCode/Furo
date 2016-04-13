@@ -104,11 +104,8 @@ HRESULT VolumeRenderer::Initialize(D3D* _d3d, HWND _hWnd, int _width, int _heigh
 	TwAddVarRW(_d3d->m_TwBar, "Renderer", TwDefineStruct("Renderer", _TwFluidProps, 3, sizeof(RenderProps), nullptr, nullptr), &m_RenderProps, NULL);
 #pragma endregion
 
-	//// Turn on the alpha blending?
-	if (_alpha)
-	{	
-		_d3d->GetDeviceContext()->OMSetBlendState(_d3d->m_AlphaState, nullptr, 0xffffffff);
-	}
+	// Turn on the alpha blending?
+	AlphaBlend(_d3d, _alpha);
 
 	return result;
 }
@@ -246,4 +243,16 @@ void VolumeRenderer::Render(D3D* m_D3D, ID3D11ShaderResourceView* _vol)
 	 //Un-bind textures
 	ID3D11ShaderResourceView *nullRV[3] = { NULL, NULL,NULL };
 	m_D3D->GetDeviceContext()->PSSetShaderResources(0, 3, nullRV);
+}
+
+void VolumeRenderer::AlphaBlend(D3D* _d3d, bool _blend)
+{
+	if (_blend)
+	{
+		_d3d->GetDeviceContext()->OMSetBlendState(_d3d->m_AlphaState, nullptr, 0xffffffff);
+	}
+	else
+	{
+		_d3d->GetDeviceContext()->OMSetBlendState(nullptr, nullptr, 0xffffffff);
+	}
 }

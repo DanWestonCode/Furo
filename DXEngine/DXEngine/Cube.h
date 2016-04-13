@@ -21,10 +21,10 @@ public:
 	Cube();
 	~Cube();
 
-	virtual HRESULT Initialise(ID3D11Device*);
-	virtual void Render(ID3D11DeviceContext*);
-	virtual void Shutdown();
-	virtual void Update(float);
+	HRESULT Initialise(ID3D11Device*);
+	void Render(ID3D11DeviceContext*);
+	void Shutdown();
+	void Update(float);
 
 public:
 	ID3D11Buffer* m_IndexBuffer;

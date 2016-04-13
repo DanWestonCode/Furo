@@ -33,8 +33,8 @@ public:
 	Camera(const Camera&);
 	~Camera();
 
-	virtual void Render();
-	virtual void Update(float);
+	void Render();
+	void Update(float);
 
 public:
 	XMMATRIX m_ViewProjection;

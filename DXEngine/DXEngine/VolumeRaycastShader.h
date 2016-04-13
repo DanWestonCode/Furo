@@ -27,8 +27,8 @@ public:
 	VolumeRaycastShader(const VolumeRaycastShader&);
 	~VolumeRaycastShader();
 
-	virtual HRESULT Initialize(ID3D11Device*, HWND, int, int);
-	virtual void Shutdown();
+	HRESULT Initialize(ID3D11Device*, HWND, int, int);
+	void Shutdown();
 
 	ID3D11Buffer* m_WindowSizeCB;
 };

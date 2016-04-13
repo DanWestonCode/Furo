@@ -128,7 +128,12 @@ void Graphics::Shutdown()
 		delete m_fluidGPU;
 		m_fluidGPU = nullptr;
 	}
-
+	if (m_VolumeTexture)
+	{
+		m_VolumeTexture->Shutdown();
+		m_VolumeTexture = nullptr;
+		delete m_VolumeTexture;
+	}
 	if (m_VolumeRenderer){
 		m_VolumeRenderer->Shutdown();
 		delete m_VolumeRenderer;

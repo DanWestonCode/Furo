@@ -22,8 +22,8 @@ public:
 	ModelShader(const ModelShader&);
 	~ModelShader();
 
-	virtual HRESULT Initialize(ID3D11Device*, HWND);
-	virtual void Shutdown();
+	HRESULT Initialize(ID3D11Device*, HWND);
+	void Shutdown();
 
 	ID3D11Buffer* m_MatrixBuffer;
 };

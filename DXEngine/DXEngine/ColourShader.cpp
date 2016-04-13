@@ -25,7 +25,7 @@ HRESULT ColourShader::Initialize(ID3D11Device* _device, HWND _hwn)
 	ID3DBlob* blob = nullptr;
 
 #pragma region Vertex Shader
-	result = CompileShaderFromFile(L"../DXEngine/color.hlsl", "ColorVertexShader", "vs_5_0", &blob);
+	result = CompileShaderFromFile(L"../Shaders/color.hlsl", "ColorVertexShader", "vs_5_0", &blob);
 	result = _device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_VertexShader);
 #pragma endregion	
 
@@ -57,7 +57,7 @@ HRESULT ColourShader::Initialize(ID3D11Device* _device, HWND _hwn)
 #pragma region Pixel Shader
 	blob = nullptr;
 	// Compile and create the pixel shader
-	result = CompileShaderFromFile(L"../DXEngine/color.hlsl", "ColorPixelShader", "ps_5_0", &blob);
+	result = CompileShaderFromFile(L"../Shaders/color.hlsl", "ColorPixelShader", "ps_5_0", &blob);
 	result = _device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &m_PixelShader);
 	blob->Release();
 #pragma  endregion	

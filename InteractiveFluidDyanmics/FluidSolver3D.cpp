@@ -2,7 +2,7 @@
 /// FluidSolver3D.cpp
 ///
 /// About:
-/// FluidSolver3D.cpp is a 3D adaptation of Stams solver seem within 
+/// FluidSolver3D.cpp is a 3D adaptation of Stam's solver seem within 
 /// FluidSolver2D.cpp. The implementation contained within this 
 /// class was guided by Mike Ash's article'Fluid Simulation for Dummies'
 ///

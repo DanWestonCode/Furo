@@ -2,9 +2,10 @@
 /// ComputeProjection.hlsl
 ///
 /// About:
+/// ComputeProjection moves the fluid quantities around the fields
 ///
 /// Based from:
-/// cFluid3D.hlsl (Projection) - Valentin Hinov - https://github.com/Morji/Fluid-Simulation-DirectX11
+/// cFluid3D.hlsl (SubtractGradientComputeShader) - Valentin Hinov - https://github.com/Morji/Fluid-Simulation-DirectX11
 /// ComputeProjection.compute - Scrawk Blog - https://scrawkblog.com/2014/01/09/gpu-gems-to-unity-3d-fluid-simulation/
 /// </summary>
 #define NUM_THREADS 8

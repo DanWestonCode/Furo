@@ -79,9 +79,6 @@
     <None Include="..\DXEngine\Shaders\ComputeAdvection.hlsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\DXEngine\Shaders\ComputeAdvectionMacCormack.hlsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\DXEngine\Shaders\ComputeBoundaryConditions.hlsl">
       <Filter>Shaders</Filter>
     </None>
@@ -109,10 +106,6 @@
     <None Include="..\DXEngine\Shaders\ComputeVorticity.hlsl">
       <Filter>Shaders</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="ClearFields.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
+    <None Include="ClearFields.hlsl" />
   </ItemGroup>
 </Project>

@@ -97,11 +97,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\DXEngine\Shaders\ComputeAdvectionMacCormack.hlsl">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\DXEngine\Shaders\ComputeBoundaryConditions.hlsl">
       <FileType>Document</FileType>
     </None>
